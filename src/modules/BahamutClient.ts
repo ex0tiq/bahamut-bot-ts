@@ -6,6 +6,12 @@ import {BotConfig} from "../../typings.js";
 import Bahamut from "../bahamut.js";
 
 export default class BahamutClient extends Discord.Client {
+    // Bahamut parent class
+    private _bahamut: typeof Bahamut;
+
+    // ID of this shard
+    private _shardId = -1;
+
     constructor(bahamut: typeof Bahamut, options?: Discord.ClientOptions) {
         super({
             ...options,
@@ -38,11 +44,6 @@ export default class BahamutClient extends Discord.Client {
 
         this._bahamut = bahamut;
     }
-
-    // Bahamut parent class
-    private _bahamut: typeof Bahamut;
-
-    private _shardId = -1;
 
     public get bahamut() {
         return this._bahamut;
