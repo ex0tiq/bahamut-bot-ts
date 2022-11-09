@@ -4,6 +4,7 @@ import {numberWithCommas} from './toolFunctions.js';
 import BahamutClient from "../modules/BahamutClient.js";
 import Bahamut from "../bahamut.js";
 import {ActivityType} from "discord-api-types/v10";
+import logger from "../modules/Logger";
 
 const loadBotStuff = async (bahamut: typeof Bahamut) => {
     await registerCommands(bahamut);
@@ -14,8 +15,17 @@ const loadBotStuff = async (bahamut: typeof Bahamut) => {
 
 const loadGuildSettings = async (bahamut: typeof Bahamut) => {
     // Load guild settings
-    //bahamut.settings = await bahamut.dbHandler.getAllGuildSettings(client, null);
-    //logger.ready(bahamut.client.shardId, `${Object.keys(bahamut.settings).length} guild configs loaded successfully!`);
+    const settings = await bahamut.dbHandler.getAllGuildSettings();
+    if (!settings) return;
+
+    for (const [snowflake, gs] of settings) {
+        bahamut.settings.set(snowflake, {
+            ...bahamut.config.defaultSettings,
+            ...gs
+        })
+    }
+
+    logger.ready(bahamut.client.shardId, `${bahamut.settings.size} guild configs loaded successfully!`);
 };
 
 const setGuildPrefixes = (bahamut: typeof Bahamut) => {
