@@ -1,4 +1,5 @@
 import BahamutDBHandler from "./modules/BahamutDBHandler";
+import scheduler, {Job} from "node-schedule";
 
 process.env.TZ = 'UTC';
 
@@ -14,7 +15,7 @@ import WOK from "wokcommands";
 // Use bluebird as global promise library
 //global.Promise = require('bluebird');
 
-class Bahamut {
+export class Bahamut {
     private _client: BahamutClient = new BahamutClient(this);
     // Here we load the config file that contains our token and our prefix values.
     private _config: BotConfig = require("./config/config.json");
@@ -24,6 +25,10 @@ class Bahamut {
     private _dbHandler: BahamutDBHandler;
     // Save all handled guilds settings
     private _settings: Map<string, GuildSettings> = new Map<string, GuildSettings>;
+
+    // Set node-schedule object
+    private _scheduler: typeof scheduler = scheduler;
+    private _schedules: Map<string, Job> = new Map<string, Job>;
 
     constructor() {
         // Initiate dbhandler
@@ -87,6 +92,12 @@ class Bahamut {
     public get settings() {
         return this._settings;
     }
-}
+    public get scheduler() {
+        return this._scheduler;
+    }
+    public get schedules() {
+        return this._schedules;
+    }
+};
 
 export default new Bahamut();
