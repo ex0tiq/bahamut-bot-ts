@@ -30,9 +30,9 @@ const loadGuildSettings = async (bahamut: typeof Bahamut) => {
 
 const setGuildPrefixes = (bahamut: typeof Bahamut) => {
     // Set guild prefixes
-    //for (const [g, s] of Object.entries(bahamut.settings)) {
-    //    if (typeof s.prefix !== 'undefined') bahamut.cmdHandler.commandHandler.prefixHandler.set(bahamut.client.guilds.cache.get(g).id, s.prefix);
-    //}
+    for (const [g, s] of bahamut.settings.entries()) {
+        if (s.prefix !== bahamut.config.defaultSettings.prefix) bahamut.cmdHandler.commandHandler.prefixHandler.set(bahamut.client.guilds.cache.get(g)?.id, s.prefix);
+    }
 };
 
 const startBotActivityUpdates = async (bahamut: typeof Bahamut) => {
