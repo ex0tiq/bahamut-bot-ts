@@ -3,7 +3,7 @@ import Discord from "discord.js";
 import emoji from "node-emoji";
 import BahamutClient from "../modules/BahamutClient.js";
 import {CommandType} from "wokcommands";
-import {handleResponseToMessage} from "../lib/messageBuilders";
+import {handleResponseToMessage} from "../lib/messageHandlers";
 
 const config = {
     name: 'about',

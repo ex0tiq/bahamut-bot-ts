@@ -1,6 +1,6 @@
 import {CommandType} from "wokcommands";
 import Discord from "discord.js";
-import {handleResponseToMessage} from "../lib/messageBuilders";
+import {handleResponseToMessage} from "../lib/messageHandlers";
 import BahamutClient from "../modules/BahamutClient";
 
 const config = {
