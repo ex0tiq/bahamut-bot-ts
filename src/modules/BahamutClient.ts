@@ -3,16 +3,17 @@ import * as scheduler from "node-schedule";
 import Events from "events";
 
 import {BotConfig} from "../../typings.js";
-import Bahamut from "../bahamut.js";
+import {Bahamut} from "../bahamut";
+
 
 export default class BahamutClient extends Discord.Client {
     // Bahamut parent class
-    private _bahamut: typeof Bahamut;
+    private _bahamut: Bahamut;
 
     // ID of this shard
     private _shardId = -1;
 
-    constructor(bahamut: typeof Bahamut, options?: Discord.ClientOptions) {
+    constructor(bahamut: Bahamut, options?: Discord.ClientOptions) {
         super({
             ...options,
             makeCache: Discord.Options.cacheWithLimits({

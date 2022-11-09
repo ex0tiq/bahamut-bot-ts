@@ -1,5 +1,5 @@
 import {DataTypes, InferAttributes, InferCreationAttributes, Model, QueryTypes, Sequelize} from "sequelize";
-import Bahamut from "../bahamut";
+import {Bahamut} from "../bahamut";
 import Logger from "./Logger";
 import Discord from "discord.js";
 import {isInt, isJson} from "../lib/validateFunctions";
@@ -7,11 +7,11 @@ import {parseBool} from "../lib/parseFunctions";
 import {GuildSettings} from "../../typings";
 
 export default class BahamutDBHandler {
-    private _bahamut: typeof Bahamut;
+    private _bahamut: Bahamut;
 
     private _dbCon: Sequelize;
 
-    constructor(bahamut: typeof Bahamut) {
+    constructor(bahamut: Bahamut) {
         this._bahamut = bahamut;
 
         // Set db connector

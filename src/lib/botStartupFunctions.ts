@@ -2,18 +2,18 @@ import WOK from "wokcommands";
 import path from "path";
 import {numberWithCommas} from './toolFunctions.js';
 import BahamutClient from "../modules/BahamutClient.js";
-import Bahamut from "../bahamut.js";
 import {ActivityType} from "discord-api-types/v10";
 import logger from "../modules/Logger";
+import {Bahamut} from "../bahamut";
 
-const loadBotStuff = async (bahamut: typeof Bahamut) => {
+const loadBotStuff = async (bahamut: Bahamut) => {
     await registerCommands(bahamut);
     await loadGuildSettings(bahamut);
     await setGuildPrefixes(bahamut);
     await startBotActivityUpdates(bahamut);
 };
 
-const loadGuildSettings = async (bahamut: typeof Bahamut) => {
+const loadGuildSettings = async (bahamut: Bahamut) => {
     // Load guild settings
     const settings = await bahamut.dbHandler.getAllGuildSettings();
     if (!settings) return;
@@ -28,25 +28,31 @@ const loadGuildSettings = async (bahamut: typeof Bahamut) => {
     logger.ready(bahamut.client.shardId, `${bahamut.settings.size} guild configs loaded successfully!`);
 };
 
-const setGuildPrefixes = (bahamut: typeof Bahamut) => {
+const setGuildPrefixes = (bahamut: Bahamut) => {
     // Set guild prefixes
     for (const [g, s] of bahamut.settings.entries()) {
         if (s.prefix !== bahamut.config.defaultSettings.prefix) bahamut.cmdHandler.commandHandler.prefixHandler.set(bahamut.client.guilds.cache.get(g)?.id, s.prefix);
     }
 };
 
-const startBotActivityUpdates = async (bahamut: typeof Bahamut) => {
+/**
+ * Start bot activity
+ * @param bahamut
+ */
+const startBotActivityUpdates = async (bahamut: Bahamut) => {
     // Schedule a EorzeaTime Update every 12 seconds (5 times is max amount per minute, accepted by discord)
-    //bahamut.botActivityScheduler = bahamut.scheduler.scheduleJob('*/12 * * * * *', async () => {
-    //    const act = await getBotActivity(bahamut);
-    //    bahamut.client.user?.setActivity(`reigning over ${act.totalGuilds} servers with ${act.totalUsers} users`, { type: 'PLAYING' });
-    //});
+    bahamut.schedules.set("botActivityScheduler",
+        bahamut.scheduler.scheduleJob('*/12 * * * * *', async () => {
+            const act = await getBotActivity(bahamut.client);
+            bahamut.client.user?.setActivity(`reigning over ${act.totalGuilds} servers with ${act.totalUsers} users`, { type: ActivityType.Playing });
+        })
+    );
 
     const act = await getBotActivity(bahamut.client);
     bahamut.client.user?.setActivity(`reigning over ${act.totalGuilds} servers with ${act.totalUsers} users`, { type: ActivityType.Playing });
 };
 
-const registerCommands = (bahamut: typeof Bahamut) => {
+const registerCommands = (bahamut: Bahamut) => {
     bahamut.cmdHandler = new WOK({
         // @ts-ignore
         client: bahamut.client,
