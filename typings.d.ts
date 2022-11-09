@@ -91,7 +91,7 @@ export interface BootConfig {
     defaultSettings: GuildSettings
 }
 
-export interface BotConfig extends BotStaticConfig, Partial<BootConfig> {}
+export interface BotConfig extends BotStaticConfig, BootConfig {}
 
 export interface BotStaticConfig {
     uplink_api_url: string;
@@ -144,8 +144,8 @@ export interface GuildSettings {
     disabled_categories: string[];
     disabled_commands: string[];
     premium_user: string | null;
-    admin_role: string | null;
-    mod_role: string | null;
+    admin_roles: string[];
+    mod_roles: string[];
     mod_only_invites: boolean;
     mod_audit_log_channel: string | null;
     mod_audit_log_categories: string[];
@@ -213,7 +213,7 @@ export interface GuildSettings {
     character_verify_roles: string[];
     character_verify_achievement_roles_enabled: boolean;
     // Custom Object TODO
-    character_verify_achievement_roles: object;
+    character_verify_achievement_roles: Map<string, Discord.Role>;
     character_verify_auto_del_msg: boolean;
     ffxiv_lodestone_news_channel: string | null;
     ffxiv_fashion_report_channel: string | null;
@@ -224,7 +224,7 @@ export interface GuildSettings {
     music_leave_on_empty: boolean;
     user_levels: boolean;
     // Custom Object TODO
-    user_level_roles: object;
+    user_level_roles: Map<number, Discord.Role>;
     user_level_roles_replace: boolean;
     user_level_included_channels: string[];
     auto_delete_messages_timeout: number;
