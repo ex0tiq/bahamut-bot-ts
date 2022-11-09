@@ -4,6 +4,7 @@ import Logger from "./Logger";
 import Discord from "discord.js";
 import {isInt, isJson} from "../lib/validateFunctions";
 import {parseBool} from "../lib/parseFunctions";
+import {GuildSettings} from "../../typings";
 
 export default class BahamutDBHandler {
     private _bahamut: typeof Bahamut;
@@ -57,18 +58,18 @@ export default class BahamutDBHandler {
     }
 
     getAllGuildSettings = async() => {
-        const obj: Map<string, any> = new Map<string, any>;
+        const obj: Map<string, GuildSettings> = new Map<string, GuildSettings>;
         // eslint-disable-next-line no-unused-vars
         for (const [snowflake,] of this._bahamut.client.guilds.cache) {
             let res = null;
             if ((res = await this.getGuildSettings(snowflake))) {
-                obj.set(snowflake, Object.assign({}, ...res));
+                obj.set(snowflake, res);
             }
         }
         return obj;
     }
 
-    getGuildSettings = async (guild: Discord.Guild | string) => {
+    getGuildSettings = async (guild: Discord.Guild | string): Promise<GuildSettings | null> => {
         try {
             const settings = await DBGuildSettings.findAll({
                 where: {
@@ -77,7 +78,7 @@ export default class BahamutDBHandler {
                 raw: true
             });
 
-            return settings.map((e: DBGuildSettings) => {
+            const mappedSettings = settings.map((e: DBGuildSettings) => {
                 let val: any;
                 console.log(e.val_type);
                 switch (e.val_type) {
@@ -112,11 +113,12 @@ export default class BahamutDBHandler {
                             [e.setting]: e.val
                         };
                 }
-
-                return {
-                    [e.setting]: e.val
-                };
             });
+
+            return {
+                ...this._bahamut.config.defaultSettings,
+                ...(Object.assign({}, ...mappedSettings) as GuildSettings)
+            }
         } catch (error) {
             console.error('An error occured while querying guild settings:', error);
             return null;
