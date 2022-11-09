@@ -1,4 +1,4 @@
-import BahamutDBHandler from "./modules/Database";
+import BahamutDBHandler from "./modules/BahamutDBHandler";
 
 process.env.TZ = 'UTC';
 
@@ -8,7 +8,7 @@ import BahamutClient from "./modules/BahamutClient.js";
 //const lang = require('./lib/languageMessageHandlers');
 import { loadBotStuff }  from "./lib/botStartupFunctions.js";
 import Logger from "./modules/Logger.js";
-import {BotConfig, StartupMessage} from "../typings.js";
+import {BotConfig, GuildSettings, StartupMessage} from "../typings.js";
 import WOK from "wokcommands";
 
 // Use bluebird as global promise library
@@ -22,6 +22,8 @@ class Bahamut {
     private _cmdHandler!: WOK;
     // DB Handler
     private _dbHandler: BahamutDBHandler;
+    // Save all handled guilds settings
+    private _settings: Map<string, GuildSettings> = new Map<string, GuildSettings>;
 
     constructor() {
         // Initiate dbhandler
@@ -81,6 +83,9 @@ class Bahamut {
     }
     public get dbHandler() {
         return this._dbHandler;
+    }
+    public get settings() {
+        return this._settings;
     }
 }
 
