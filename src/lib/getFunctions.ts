@@ -12,7 +12,7 @@ const getGuildSettings = async (client: BahamutClient, guild: Discord.Guild | st
     if (!guild) return client.bahamut.config.defaultSettings;
 
     if (forceDb) {
-        guildConf = await client.bahamut.dbHandler.getGuildSettings(guild);
+        guildConf = await client.bahamut.dbHandler.getDBGuildSettings(guild);
     }
     else {
         guildConf = (client.bahamut.settings.has(guild.id) ? client.bahamut.settings.get(guild.id) : null);

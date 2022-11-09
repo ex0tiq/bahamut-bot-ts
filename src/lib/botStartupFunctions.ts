@@ -15,7 +15,7 @@ const loadBotStuff = async (bahamut: Bahamut) => {
 
 const loadGuildSettings = async (bahamut: Bahamut) => {
     // Load guild settings
-    const settings = await bahamut.dbHandler.getAllGuildSettings();
+    const settings = await bahamut.dbHandler.getDBAllGuildSettings();
     if (!settings) return;
 
     for (const [snowflake, gs] of settings) {

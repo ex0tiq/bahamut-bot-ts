@@ -57,61 +57,67 @@ export default class BahamutDBHandler {
         return results[0].version;
     }
 
-    getAllGuildSettings = async() => {
+    getDBAllGuildSettings = async() => {
         const obj: Map<string, GuildSettings> = new Map<string, GuildSettings>;
         // eslint-disable-next-line no-unused-vars
         for (const [snowflake,] of this._bahamut.client.guilds.cache) {
             let res = null;
-            if ((res = await this.getGuildSettings(snowflake))) {
+            if ((res = await this.getDBGuildSettings(snowflake))) {
                 obj.set(snowflake, res);
             }
         }
         return obj;
     }
 
-    getGuildSettings = async (guild: Discord.Guild | string): Promise<GuildSettings | null> => {
+    getDBGuildSettings = async (guild: Discord.Guild | string): Promise<GuildSettings> => {
         try {
             const settings = await DBGuildSettings.findAll({
                 where: {
                     guild_id: (typeof guild === "string" ? guild : guild.id)
                 },
                 raw: true
-            });
+            }), types = this._bahamut.config.config_types;
 
             const mappedSettings = settings.map((e: DBGuildSettings) => {
-                let val: any;
+                let val: any, type: string;
                 console.log(e.val_type);
-                switch (e.val_type) {
-                    case 'string':
-                        return {
-                            [e.setting]: e.val
-                        };
-                    case 'json':
-                        if (isJson(e.val)) return {
-                            [e.setting]: JSON.parse(e.val)
-                        };
-                        else return {
-                            [e.setting]: e.val
-                        };
-                    case 'bool':
-                        if ((val = parseBool(e.val)) !== null) return {
-                            [e.setting]: val
-                        };
-                        else return {
-                            [e.setting]: e.val
-                        };
-                    case 'int':
-                        console.log(isInt(e.val) );
-                        if (isInt(e.val) && (val = parseInt(e.val, 10))) return {
-                            [e.setting]: val
-                        };
-                        else return {
-                            [e.setting]: e.val
-                        };
-                    default:
-                        return {
-                            [e.setting]: e.val
-                        };
+                if ((type = types[e.setting])) {
+                    switch (e.val_type) {
+                        case 'string':
+                            return {
+                                [e.setting]: e.val
+                            };
+                        case 'json':
+                            if (isJson(e.val)) return {
+                                [e.setting]: JSON.parse(e.val)
+                            };
+                            else return {
+                                [e.setting]: e.val
+                            };
+                        case 'bool':
+                            if ((val = parseBool(e.val)) !== null) return {
+                                [e.setting]: val
+                            };
+                            else return {
+                                [e.setting]: e.val
+                            };
+                        case 'int':
+                            console.log(isInt(e.val));
+                            if (isInt(e.val) && (val = parseInt(e.val, 10))) return {
+                                [e.setting]: val
+                            };
+                            else return {
+                                [e.setting]: e.val
+                            };
+                        default:
+                            return {
+                                [e.setting]: e.val
+                            };
+                    }
+                } else {
+                    return {
+                        [e.setting]: e.val
+                    };
                 }
             });
 
@@ -121,10 +127,44 @@ export default class BahamutDBHandler {
             }
         } catch (error) {
             console.error('An error occured while querying guild settings:', error);
-            return null;
+            return this._bahamut.config.defaultSettings;
         }
     };
 
+    setDBGuildSetting = async (guild: Discord.Guild | string, setting: string, value: any, value_type?: string): Promise<boolean> => {
+        const types = this._bahamut.config.config_types, type = types[setting] || "string";
+
+        return new Promise((resolve) => {
+            return DBGuildSettings
+                .findOne({
+                    where: {
+                        guild_id: (typeof guild === "string" ? guild : guild.id),
+                        setting: setting
+                    }})
+                .then(async (obj: DBGuildSettings | null) => {
+                    if (obj) {
+                        // update
+                        await obj.update({
+                            val: value,
+                            val_type: value_type
+                        });
+                    } else {
+                        // insert
+                        await DBGuildSettings.create({
+                            guild_id: (typeof guild === "string" ? guild : guild.id),
+                            setting: setting,
+                            val: value,
+                            val_type: type
+                        });
+                    }
+
+                    resolve(true);
+                }).catch(e => {
+                    console.error('Error while saving guild setting:', e);
+                    resolve(false);
+                });
+        });
+    }
 
 
 
