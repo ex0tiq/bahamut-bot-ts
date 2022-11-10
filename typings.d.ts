@@ -255,6 +255,7 @@ export interface UserGuild {
 }
 
 export interface HandleMessageOptions {
+    title?: string,
     content?: string,
     files?: any[],
     embeds?: Discord.EmbedBuilder[]
