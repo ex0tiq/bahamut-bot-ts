@@ -1,0 +1,30 @@
+{
+    "counting": {
+        "error": {
+            "title": "Fout code",
+            "two": "Je kan geen twee nummers achter elkaar sturen.",
+            "wrong": "Dit is het verkeerde nummer.",
+            "sec": "Dit bericht zal verwijderd worden in 5 seconden",
+            "perms": ":warning: De bot heeft de rechten `Manage Messages` en `Manage Channels` nodig"
+        },
+        "topic": "Dit is het tel kanaal",
+        "noChannel": "|------------------------------------------------|\n|                                                |\n| DISCORDJS-SYSTEMS: Geen tel kanaal meegegeven. |\n|                                                |\n|------------------------------------------------|",
+        "noBot": "|-----------------------------------------|\n|                                         |\n| DISCORDJS-SYSTEMS: Bot niet meegegeven. |\n|                                         |\n|-----------------------------------------|",
+        "noMessage": "|---------------------------------------------|\n|                                             |\n| DISCORDJS-SYSTEMS: Message niet meegegeven. |\n|                                             |\n|---------------------------------------------|"
+    },
+    "facts": {
+        "title": "Weetje",
+        "footer": "discordjs-systems"
+    },
+    "hangman": {
+        "title": "Galgje",
+        "guessed": "Letters gebruikt",
+        "how": "Reageer op dit bericht met de emoji's die op letters lijken",
+        "footer": "discordjs-systems",
+    
+        "over": "Spel is over",
+        "wins": "Jij wint ",
+        "losses": "Jij verliest ",
+        "was": "Het woord was:"
+    }
+}

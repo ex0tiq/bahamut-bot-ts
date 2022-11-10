@@ -1,0 +1,13 @@
+{
+    "hangman": {
+        "title": "Hangman",
+        "guessed": "Letters guessed",
+        "how": "React to this message using the emojis that look like letters (🇦, 🇹, ...)",
+    
+        "over": "Game Over",
+        "wins": "You win!",
+        "losses": "You loose!",
+        "was": "The word was:",
+        "stopped": "Game has been manually stopped."
+    }
+}

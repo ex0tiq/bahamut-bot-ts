@@ -1,0 +1,5 @@
+{
+    "error_fetching_gif": "Fehler beim Abrufen eines passenden GIFs.",
+    "commands_emotes_annoyed_target_text": "%user1% ist genervt von %user2%! %emoji%",
+    "commands_emotes_annoyed_text": "%user1% ist genervt von etwas! %emoji%"
+}

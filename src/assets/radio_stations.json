@@ -1,0 +1,258 @@
+{
+  "technobasefm": {
+	"name": "Technobase.FM",
+	"icon": "https://a.image.web.tb-group.fm//www/facebook/technobase.jpg",
+	"stream_url": "https://mp3.stream.tb-group.fm/tb.mp3",
+	"website_url": "https://www.technobase.fm/",
+	"tracklist": "https://www.technobase.fm/tracklist/",
+	"music_types": "Techno"
+  },
+  "housetimefm": {
+	"name": "Housetime.FM",
+	"icon": "https://a.image.web.tb-group.fm//www/facebook/housetime.jpg",
+	"stream_url": "https://mp3.stream.tb-group.fm/ht.mp3",
+	"website_url": "https://www.housetime.fm/",
+	"tracklist": "https://www.housetime.fm/tracklist/",
+	"music_types": "House"
+  },
+  "hardbasefm": {
+	"name": "Hardbase.FM",
+	"icon": "https://a.image.web.tb-group.fm//www/facebook/hardbase.jpg",
+	"stream_url": "https://mp3.stream.tb-group.fm/hb.mp3",
+	"website_url": "https://www.hardbase.fm/",
+	"tracklist": "https://www.hardbase.fm/tracklist/",
+	"music_types": "Hardstyle"
+  },
+  "trancebasefm": {
+	"name": "Trancebase.FM",
+	"icon": "https://a.image.web.tb-group.fm//www/facebook/trancebase.jpg",
+	"stream_url": "https://mp3.stream.tb-group.fm/trb.mp3",
+	"website_url": "https://www.trancebase.fm/",
+	"tracklist": "https://www.trancebase.fm/tracklist/",
+	"music_types": "Trance"
+  },
+  "coretimefm": {
+	"name": "Coretime.FM",
+	"icon": "https://a.image.web.tb-group.fm//www/facebook/coretime.jpg",
+	"stream_url": "https://mp3.stream.tb-group.fm/ct.mp3",
+	"website_url": "https://www.coretime.fm/",
+	"tracklist": "https://www.coretime.fm/tracklist/",
+	"music_types": "Hardcore"
+  },
+  "clubtimefm": {
+	"name": "Clubtime.FM",
+	"icon": "https://a.image.web.tb-group.fm//www/facebook/clubtime.jpg",
+	"stream_url": "https://mp3.stream.tb-group.fm/clt.mp3",
+	"website_url": "https://www.clubtime.fm/",
+	"tracklist": "https://www.clubtime.fm/tracklist/",
+	"music_types": "House"
+  },
+  "teatimefm": {
+	"name": "Teatime.FM",
+	"icon": "https://a.image.web.tb-group.fm//www/facebook/teatime.jpg",
+	"stream_url": "https://mp3.stream.tb-group.fm/tt.mp3",
+	"website_url": "https://www.teatime.fm/",
+	"tracklist": "https://www.teatime.fm/tracklist/",
+	"music_types": "Happy Hardcore (UK Hardcore)"
+  },
+  "burnfm": {
+	"name": "BurnFM",
+	"icon": "https://www.burn-fm.de/images/logo.png",
+	"stream_url": "https://burnfm.radionetz.de/burn-fm.mp3",
+	"website_url": "https://www.burn-fm.de/",
+	"tracklist": "https://www.burn-fm.de/playlist.html",
+	"music_types": "Rock"
+  },
+  "rockantenne": {
+	"name": "Rock Antenne",
+	"icon": "https://cdn.antenne.de/rockantenne-de/uploads/images/homepage/vorschau_logo_1200x630.jpg",
+	"stream_url": "https://stream.rockantenne.de/rockantenne/stream/aacp",
+	"website_url": "https://www.rockantenne.de/",
+	"tracklist": "https://www.rockantenne.de/musik/unsere-streams",
+	"music_types": "Rock"
+  },
+  "rockantenne_heavymetal": {
+	"name": "Rock Antenne (Heavy Metal)",
+	"icon": "https://cdn.antenne.de/rockantenne-de/uploads/images/homepage/vorschau_logo_1200x630.jpg",
+	"stream_url": "https://stream.rockantenne.de/heavy-metal/stream/aacp",
+	"website_url": "https://www.rockantenne.de/",
+	"tracklist": "https://www.rockantenne.de/musik/unsere-streams",
+	"music_types": "Metal"
+  },
+  "top40": {
+	"name": "Top 40",
+	"icon": "https://www.wackenradio.com/wp-content/uploads/2019/12/logo-wr-2019-150x60.png",
+	"stream_url": "http://top40-aacp.rautemusik.fm/",
+	"website_url": "https://www.rautemusik.fm/top40/",
+	"tracklist": "https://www.rautemusik.fm/radio/playlist/top40/",
+	"music_types": "Charts"
+  },
+  "wackenradio": {
+	"name": "Wacken Radio",
+	"icon": "https://www.wackenradio.com/wp-content/uploads/2019/12/logo-wr-2019-150x60.png",
+	"stream_url": "http://wackenradio-aacp.rautemusik.fm/",
+	"website_url": "https://www.wackenradio.com/",
+	"tracklist": "https://www.rautemusik.fm/radio/playlist/wackenradio/",
+	"music_types": "Metal"
+  },
+  "bigfmdeutschland": {
+	"name": "bigFM DEUTSCHLAND",
+	"icon": "",
+	"stream_url": "http://streams.bigfm.de/bigfm-deutschland-128-aac?usid=0-0-H-A-D-30",
+	"website_url": "https://www.bigfm.de/",
+	"tracklist": "https://www.bigfm.de/playlist",
+	"music_types": "Mainstream"
+  },
+  "bigfmcharts": {
+	"name": "bigFM CHARTS",
+	"icon": "",
+	"stream_url": "http://streams.bigfm.de/bigfm-charts-128-aac?usid=0-0-H-A-D-30",
+	"website_url": "https://www.bigfm.de/",
+	"tracklist": "https://www.bigfm.de/playlist",
+	"music_types": "Charts"
+  },
+  "bigfmhiphop": {
+	"name": "bigFM HIP-HOP",
+	"icon": "",
+	"stream_url": "http://streams.bigfm.de/bigfm-hiphop-128-aac?usid=0-0-H-A-D-30",
+	"website_url": "https://www.bigfm.de/",
+	"tracklist": "https://www.bigfm.de/playlist",
+	"music_types": "Hip-Hop"
+  },
+  "shunshinelive": {
+	"name": "sunshine live",
+	"icon": "",
+	"stream_url": "http://sunshinelive.hoerradar.de/sunshinelive-live-mp3-hq",
+	"website_url": "https://www.sunshine-live.de/",
+	"tracklist": "https://www.sunshine-live.de/programm/playlist",
+	"music_types": "Techno"
+  },
+  "dasding": {
+	"name": "DasDing",
+	"icon": "",
+	"stream_url": "https://dispatcher.rndfnk.com/swr/dasding/live/mp3/128/stream.mp3",
+	"website_url": "https://www.dasding.de/",
+	"tracklist": "https://www.dasding.de/03-playlistsuche/index.html",
+	"music_types": "Mainstream"
+  },
+  "radiowuppertal": {
+	"name": "Radio Wuppertal",
+	"icon": "https://d3kle7qwymxpcy.cloudfront.net/images/broadcasts/1b/11/2543/1/c175.png",
+	"stream_url": "http://radiowuppertal-ais-edge-4002-fra-dtag-cdn.cast.addradio.de/radiowuppertal/live/mp3/high",
+	"website_url": "https://www.radiowuppertal.de/",
+	"tracklist": "https://www.radiowuppertal.de/musik/playlist.html",
+	"music_types": "Mainstream"
+  },
+  "m1fmcharts": {
+	"name": "M1.FM TOP OF THE CHARTS",
+	"icon": "http://m1.fm/assets/images/m1-logo.png",
+	"stream_url": "http://tuner.m1.fm/charts.mp3",
+	"website_url": "http://m1.fm/",
+	"tracklist": "",
+	"music_types": "Charts"
+  },
+  "1live": {
+	"name": "1LIVE",
+	"icon": "https://d3kle7qwymxpcy.cloudfront.net/images/broadcasts/4e/0d/1382/4/c175.png",
+	"stream_url": "https://wdr-1live-live.icecastssl.wdr.de/wdr/1live/live/mp3/128/stream.mp3",
+	"website_url": "https://www1.wdr.de/radio/1live/",
+	"tracklist": "https://www1.wdr.de/radio/1live/on-air/1live-playlist/index.html",
+	"music_types": "Mainstream"
+  },
+  "energymastermix": {
+	"name": "Energy Mastermix",
+	"icon": "https://www.energy.de/webradio/ENERGY_LOGO_MASTERMIX.png",
+	"stream_url": "http://nrj.de/master",
+	"website_url": "https://www.energy.de/digital",
+	"tracklist": "https://www.energy.de/national/playlist",
+	"music_types": "Mainstream"
+  },
+  "swr3": {
+	"name": "SWR3",
+	"icon": "https://d3kle7qwymxpcy.cloudfront.net/images/broadcasts/cd/0c/2275/3/c175.png",
+	"stream_url": "https://swr-swr3-live.cast.addradio.de/swr/swr3/live/mp3/128/stream.mp3",
+	"website_url": "https://www.swr3.de/",
+	"tracklist": "https://www.swr3.de/playlisten/index.html",
+	"music_types": "Charts"
+  },
+  "hitradioantenne1": {
+	"name": "Hitradio antenne 1",
+	"icon": "https://d3kle7qwymxpcy.cloudfront.net/images/broadcasts/ac/1a/2417/2/c175.png",
+	"stream_url": "http://stream.antenne1.de/a1stg/livestream2.mp3",
+	"website_url": "https://www.antenne1.de/",
+	"tracklist": "https://www.antenne1.de/musik/on-air/playlist-was-lief-gerade/",
+	"music_types": "Pop"
+  },
+  "1005dashitradio": {
+	"name": "100,5 DAS HITRADIO.",
+	"icon": "https://d3kle7qwymxpcy.cloudfront.net/images/broadcasts/90/0e/9857/3/c175.png",
+	"stream_url": "https://stream.dashitradio.de/dashitradio/mp3-128/stream.mp3",
+	"website_url": "https://dashitradio.de/",
+	"tracklist": "https://dashitradio.de/playlist/",
+	"music_types": "Mainstream"
+  },
+  "planetradio": {
+	"name": "planet radio",
+	"icon": "https://d3kle7qwymxpcy.cloudfront.net/images/broadcasts/aa/eb/4597/1/c175.png",
+	"stream_url": "http://mp3.planetradio.de/planetradio/hqlivestream.aac",
+	"website_url": "https://www.planetradio.de/",
+	"tracklist": "https://www.planetradio.de/musik/playlist.html",
+	"music_types": "Mainstream"
+  },
+  "electroswingradio": {
+	"name": "Electro Swing Radio",
+	"icon": "https://www.electroswing-radio.com/wp-content/uploads/2019/12/Radio_Logo_2020.png",
+	"stream_url": "https://streamer.radio.co/s2c3cc784b/listen",
+	"website_url": "https://www.electroswing-radio.com/",
+	"tracklist": "https://www.electroswing-radio.com/playlist/",
+	"music_types": "Electro Swing"
+  },
+  "adr_jrockpowerplay": {
+	"name": "J-Rock Powerplay (asia DREAM radio)",
+	"icon": "https://asiadreamradio.torontocast.stream/stations/en/images/en/logo.jpeg",
+	"stream_url": "https://kathy.torontocast.com/jrock",
+	"website_url": "https://asiadreamradio.torontocast.stream/stations/en/index.html",
+	"tracklist": "",
+	"music_types": "J-Rock"
+  },
+  "adr_jpoppowerplay": {
+	"name": "J-Pop Powerplay (asia DREAM radio)",
+	"icon": "https://asiadreamradio.torontocast.stream/stations/en/images/en/logo.jpeg",
+	"stream_url": "https://kathy.torontocast.com/powerplay",
+	"website_url": "https://asiadreamradio.torontocast.stream/stations/en/index.html",
+	"tracklist": "",
+	"music_types": "J-Pop"
+  },
+  "adr_japanhits": {
+	"name": "Japan Hits Powerplay (asia DREAM radio)",
+	"icon": "https://asiadreamradio.torontocast.stream/stations/en/images/en/logo.jpeg",
+	"stream_url": "https://igor.torontocast.com/JapanHits",
+	"website_url": "https://asiadreamradio.torontocast.stream/stations/en/index.html",
+	"tracklist": "",
+	"music_types": "Mainstream (Japanese)"
+  },
+  "lautfm_kpophits": {
+	"name": "kpophits (laut.fm)",
+	"icon": "",
+	"stream_url": "https://kpophits.stream.laut.fm/kpophits",
+	"website_url": "https://laut.fm/kpophits",
+	"tracklist": "https://laut.fm/kpophits",
+	"music_types": "K-Pop"
+  },
+  "bbr_kpop": {
+	"name": "Big B Radio #Kpop Station",
+	"icon": "https://d3kle7qwymxpcy.cloudfront.net/images/broadcasts/52/c0/12918/2/c175.png",
+	"stream_url": "https://antares.dribbcast.com/proxy/kpop?mp=/s",
+	"website_url": "https://bigbradio.net/kpop",
+	"tracklist": "https://bigbradio.net/kpop",
+	"music_types": "K-Pop"
+  },
+  "bbr_jpop": {
+	"name": "Big B Radio #Jpop Station",
+	"icon": "https://d3kle7qwymxpcy.cloudfront.net/images/broadcasts/17/25/7561/2/c175.png",
+	"stream_url": "https://antares.dribbcast.com/proxy/jpop?mp=/s",
+	"website_url": "https://bigbradio.net/jpop",
+	"tracklist": "https://bigbradio.net/jpop",
+	"music_types": "J-Pop"
+  }
+}
