@@ -123,6 +123,15 @@ export interface LavalinkNode {
     port: number;
 }
 
+export interface RadioStation {
+    name: string;
+    icon: string;
+    stream_url: string;
+    website_url: string;
+    tracklist: string;
+    music_types: string;
+}
+
 export interface RedditSettings {
     userAgent: string;
     appid: string;
