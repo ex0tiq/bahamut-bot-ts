@@ -538,7 +538,7 @@ export default class LavaManager {
 
     };
 
-    getUserNoDJPermMessage = (message: Discord.Message) => {
+    getUserNoDJPermMessage = () => {
         return createErrorResponse(this._bahamut.client, "This command can only be used by members with the DJ role!");
     };
     getChannelNotMusicChannelMessage = async (message: Discord.Message | Discord.CommandInteraction) => {
