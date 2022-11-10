@@ -11,6 +11,7 @@ import { loadBotStuff }  from "./lib/botStartupFunctions.js";
 import Logger from "./modules/Logger.js";
 import {BotConfig, GuildSettings, StartupMessage} from "../typings.js";
 import WOK from "wokcommands";
+import PremiumManager from "./modules/PremiumManager";
 
 // Use bluebird as global promise library
 //global.Promise = require('bluebird');
@@ -23,6 +24,8 @@ export class Bahamut {
     private _cmdHandler!: WOK;
     // DB Handler
     private _dbHandler: BahamutDBHandler;
+    // Premium Manager
+    private _premiumHandler: PremiumManager;
     // Save all handled guilds settings
     private _settings: Map<string, GuildSettings> = new Map<string, GuildSettings>;
 
@@ -33,6 +36,8 @@ export class Bahamut {
     constructor() {
         // Initiate dbhandler
         this._dbHandler = new BahamutDBHandler(this);
+        // Init premium handler
+        this._premiumHandler = new PremiumManager(this);
 
         // Register functions
         this._client.on("ready", () => {
@@ -88,6 +93,9 @@ export class Bahamut {
     }
     public get dbHandler() {
         return this._dbHandler;
+    }
+    public get premiumHandler() {
+        return this._premiumHandler;
     }
     public get settings() {
         return this._settings;
