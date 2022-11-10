@@ -166,6 +166,28 @@ export default class BahamutDBHandler {
         });
     }
 
+    /**
+     * Delete a guild setting and restore default
+     * @param {Discord.Guild|string} guild
+     * @param {string} setting
+     * @returns {Promise<boolean>}
+     */
+    deleteDBGuildSetting = async (guild: Discord.Guild | string, setting: string) => {
+        try {
+            await DBGuildSettings.destroy({
+                where: {
+                    guild_id: ((typeof guild === 'string') ? guild : guild.id),
+                    setting: setting
+                },
+                force: true
+            });
+
+            return true;
+        } catch (ex) {
+            console.error('Error while deleting guild setting:', ex);
+            return false;
+        }
+    };
 
 
 
