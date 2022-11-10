@@ -1,4 +1,4 @@
-import WOK from "wokcommands";
+import WOK, {DefaultCommands} from "wokcommands";
 import path from "path";
 import {numberWithCommas} from './toolFunctions.js';
 import BahamutClient from "../modules/BahamutClient.js";
@@ -90,13 +90,11 @@ const registerCommands = (bahamut: Bahamut) => {
         // Note that you can overwrite a command as well by using
         // the same name as the command file name.
         disabledDefaultCommands: [
-            "channelcommand",
-            "customcommand",
-            "delcustomcommand",
-            //"prefix",
-            "requiredpermissions",
-            "requiredroles",
-            "togglecommand",
+            DefaultCommands.ChannelCommand,
+            DefaultCommands.CustomCommand,
+            DefaultCommands.RequiredPermissions,
+            DefaultCommands.RequiredRoles,
+            DefaultCommands.ToggleCommand
         ],
     });
 };
