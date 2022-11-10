@@ -72,7 +72,14 @@ const handleErrorResponseToMessage = async(
         }
     }
 
-    response = await handleResponseToMessage(client, initMessage, overwriteInitMessage, deferReply, (typeof newMessageContent === "string" ? {
+    response = await handleResponseToMessage(client, initMessage, overwriteInitMessage, deferReply, createErrorResponse(client, newMessageContent), deleteOptions);
+
+    await handleDeleteMessage(client, initMessage, response, deleteOptions);
+
+    return response;
+}
+const createErrorResponse = (client: BahamutClient, newMessageContent: HandleMessageOptions | string) => {
+    return (typeof newMessageContent === "string" ? {
         embeds: [
             new Discord.EmbedBuilder()
                 .setAuthor({ name: "Error", iconURL: client.bahamut.config.message_icons.error })
@@ -80,11 +87,7 @@ const handleErrorResponseToMessage = async(
                 // @ts-ignore
                 .setColor(client.bahamut.config.error_message_color)
         ]
-    } : newMessageContent), deleteOptions);
-
-    await handleDeleteMessage(client, initMessage, response, deleteOptions);
-
-    return response;
+    } : newMessageContent)
 }
 
 const handleSuccessResponseToMessage = async (
@@ -106,7 +109,14 @@ const handleSuccessResponseToMessage = async (
         }
     }
 
-    response = await handleResponseToMessage(client, initMessage, overwriteInitMessage, deferReply, (typeof newMessageContent === "string" ? {
+    response = await handleResponseToMessage(client, initMessage, overwriteInitMessage, deferReply, createSuccessResponse(client, newMessageContent), deleteOptions);
+
+    await handleDeleteMessage(client, initMessage, response, deleteOptions);
+
+    return response;
+};
+const createSuccessResponse = (client: BahamutClient, newMessageContent: HandleMessageOptions | string) => {
+    return (typeof newMessageContent === "string" ? {
         embeds: [
             new Discord.EmbedBuilder()
                 .setAuthor({ name: "Success", iconURL: client.bahamut.config.message_icons.success })
@@ -114,12 +124,8 @@ const handleSuccessResponseToMessage = async (
                 // @ts-ignore
                 .setColor(client.bahamut.config.error_message_color)
         ]
-    } : newMessageContent), deleteOptions);
-
-    await handleDeleteMessage(client, initMessage, response, deleteOptions);
-
-    return response;
-};
+    } : newMessageContent)
+}
 
 /**
  * Handle message response to channel
@@ -153,4 +159,4 @@ const handleDeleteMessage = async(
     // implement delete message checks
 }
 
-export { handleInfoResponseToChannel, handleResponseToMessage, handleErrorResponseToMessage, handleSuccessResponseToMessage }
+export { handleInfoResponseToChannel, handleResponseToMessage, handleErrorResponseToMessage, handleSuccessResponseToMessage, createErrorResponse, createSuccessResponse }
