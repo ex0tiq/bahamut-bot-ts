@@ -89,13 +89,10 @@ const createErrorResponse = (client: BahamutClient, newMessageContent: HandleMes
     } : {
         content: newMessageContent.content || null,
         files: newMessageContent.files || null,
-        embeds: newMessageContent.embeds?.map(e => {
-            return new Discord.EmbedBuilder()
-                // @ts-ignore
-                .setColor(client.bahamut.config.error_message_color)
-                .setDescription(e.data.description)
-                .setAuthor((newMessageContent.title ? null : { name: "Error", iconURL: client.bahamut.config.message_icons.error }))
-                .setTitle(newMessageContent.title || null)
+        embeds: newMessageContent.embeds?.map((e) => {
+            e.setAuthor((newMessageContent.title ? null : { name: "Error", iconURL: client.bahamut.config.message_icons.error }));
+            e.setColor(client.bahamut.config.error_message_color);
+            return e;
         }) || null,
     }) as HandleMessageOptions;
 }
@@ -155,13 +152,10 @@ const createSuccessResponse = (client: BahamutClient, newMessageContent: HandleM
     } : {
         content: newMessageContent.content || null,
         files: newMessageContent.files || null,
-        embeds: newMessageContent.embeds?.map(e => {
-            return new Discord.EmbedBuilder()
-                // @ts-ignore
-                .setColor(client.bahamut.config.primary_message_color)
-                .setDescription(e.data.description || null)
-                .setAuthor((newMessageContent.title ? null : { name: "Success", iconURL: client.bahamut.config.message_icons.success }))
-                .setTitle(newMessageContent.title || null)
+        embeds: newMessageContent.embeds?.map((e) => {
+            e.setAuthor((newMessageContent.title ? null : { name: "Success", iconURL: client.bahamut.config.message_icons.success }));
+            e.setColor(client.bahamut.config.primary_message_color);
+            return e;
         }) || null,
     }) as HandleMessageOptions;
 }
