@@ -18,8 +18,8 @@ const config = {
 
 export default {
     ...config,
-    callback: async ({ client, message, interaction }: { client: BahamutClient, message: Discord.Message, interaction: Discord.CommandInteraction }) => {
-        await handleResponseToMessage(client, message || interaction, false, config.deferReply, {
+    callback: async ({ client, message }: { client: BahamutClient, message: Discord.Message }) => {
+        await handleResponseToMessage(client, message, false, config.deferReply, {
             "embeds": [
                 new Discord.EmbedBuilder()
                     .setAuthor({name: "About", iconURL: client.bahamut.config.message_icons!.info})
