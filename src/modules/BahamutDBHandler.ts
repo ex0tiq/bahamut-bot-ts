@@ -154,7 +154,7 @@ export default class BahamutDBHandler {
                         // update
                         await obj.update({
                             val: value,
-                            val_type: value_type
+                            val_type: value_type || type
                         });
                     } else {
                         // insert
@@ -162,7 +162,7 @@ export default class BahamutDBHandler {
                             guild_id: (typeof guild === "string" ? guild : guild.id),
                             setting: setting,
                             val: value,
-                            val_type: type
+                            val_type: value_type || type
                         });
                     }
 
