@@ -1,6 +1,7 @@
 import {Guild} from "discord.js";
 import UplinkAPIHandler from "./src/modules/UplinkAPIHandler.js";
 import BahamutShardingManager from "./src/modules/BahamutShardingManager.js";
+import {Track} from "erela.js";
 
 export interface StartupMessage {
     type: string | null;
@@ -130,6 +131,12 @@ export interface RadioStation {
     website_url: string;
     tracklist: string;
     music_types: string;
+}
+
+export interface ExtendedTrack extends Track {
+    website_url?; string;
+    tracklist?: string;
+    title?: string;
 }
 
 export interface RedditSettings {
@@ -264,7 +271,6 @@ export interface UserGuild {
 }
 
 export interface HandleMessageOptions {
-    title?: string,
     content?: string,
     files?: any[],
     embeds?: Discord.EmbedBuilder[]
