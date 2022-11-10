@@ -1,4 +1,12 @@
-import {DataTypes, InferAttributes, InferCreationAttributes, Model, QueryTypes, Sequelize} from "sequelize";
+import {
+    CreationOptional,
+    DataTypes,
+    InferAttributes,
+    InferCreationAttributes,
+    Model,
+    QueryTypes,
+    Sequelize
+} from "sequelize";
 import {Bahamut} from "../bahamut";
 import Logger from "./Logger";
 import Discord from "discord.js";
@@ -189,6 +197,47 @@ export default class BahamutDBHandler {
         }
     };
 
+    /**
+     * Increase a bot stat by x
+     * @param guild
+     * @param user
+     * @param stat
+     * @param value
+     * @returns {Promise<boolean>}
+     */
+        // eslint-disable-next-line no-unused-vars
+    addDBGuildUserStat = async (guild: Discord.Guild, user: Discord.GuildMember, stat: string, value = 1) => {
+        return new Promise((resolve) => {
+            return DBGuildUserStats
+                .findOne({
+                    where: {
+                        guild_id: guild.id,
+                        guild_user: user.user.id,
+                        stat: stat
+                    }})
+                .then(async (obj: DBGuildUserStats | null) => {
+                    if (obj) {
+                        // update
+                        await obj.update({
+                            val: obj.val + value
+                        });
+                    } else {
+                        // insert
+                        await DBGuildUserStats.create({
+                            guild_id: guild.id,
+                            guild_user: user.user.id,
+                            stat: stat,
+                            val: value,
+                        });
+                    }
+
+                    resolve(true);
+                }).catch(e => {
+                    console.error('Error while saving guild setting:', e);
+                    resolve(false);
+                });
+        });
+    }
 
 
 
@@ -215,11 +264,7 @@ export default class BahamutDBHandler {
                 allowNull: false,
                 defaultValue: 0
             },
-            last_set: {
-                type: "TIMESTAMP",
-                allowNull: false,
-                defaultValue: this._dbCon.literal("CURRENT_TIMESTAMP")
-            }
+            updatedAt: DataTypes.DATE,
         }, {
             sequelize: this._dbCon,
             modelName: "guild_stats"
@@ -415,7 +460,7 @@ class DBGuildStats extends Model<InferAttributes<DBGuildStats>, InferCreationAtt
     declare guild_id: string;
     declare stat: string;
     declare val: number;
-    declare last_set: string;
+    declare updatedAt: CreationOptional<Date>;
 }
 class DBGuildSettings extends Model<InferAttributes<DBGuildSettings>, InferCreationAttributes<DBGuildSettings>> {
     declare guild_id: string;
@@ -433,14 +478,14 @@ class DBGuildUserLevels extends Model<InferAttributes<DBGuildUserLevels>, InferC
     declare guild_user: string;
     declare user_xp: number;
     declare user_level: number;
-    declare updatedAt: string;
+    declare updatedAt: CreationOptional<Date>;
 }
-class DBGuildUserStats extends Model<InferAttributes<DBGuildUserStats>, InferCreationAttributes<DBGuildUserLevels>> {
+class DBGuildUserStats extends Model<InferAttributes<DBGuildUserStats>, InferCreationAttributes<DBGuildUserStats>> {
     declare guild_id: string;
     declare guild_user: string;
     declare stat: string;
     declare val: number;
-    declare updatedAt: string;
+    declare updatedAt: CreationOptional<Date>;
 }
 class DBGuildPlaylists extends Model<InferAttributes<DBGuildPlaylists>, InferCreationAttributes<DBGuildPlaylists>> {
     declare id: string;
@@ -462,5 +507,5 @@ class DBGuildCommandLog extends Model<InferAttributes<DBGuildCommandLog>, InferC
     declare guild_channel: string;
     declare command: string;
     declare args: string;
-    declare createdAt: string;
+    declare createdAt: CreationOptional<Date>;
 }
