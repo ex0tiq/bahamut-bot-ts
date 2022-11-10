@@ -31,7 +31,7 @@ const config = {
     deferReply: true
 };
 
-module.exports = {
+export default {
     ...config,
     callback: async ({ client, message, channel, args, member, interaction }: { client: BahamutClient, message: Discord.Message, channel: Discord.GuildTextBasedChannel, args: string[], member: Discord.GuildMember, interaction: Discord.CommandInteraction }) => {
         const settings = await getGuildSettings(client, channel.guild);
