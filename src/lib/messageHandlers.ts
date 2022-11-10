@@ -2,6 +2,7 @@ import BahamutClient from "../modules/BahamutClient";
 import Discord from "discord.js";
 import {HandleMessageOptions, MessageDeleteOptions} from "../../typings";
 import {CommandObject} from "wokcommands";
+import {send} from "process";
 
 /**
  * Handle message response to message or interaction
@@ -11,14 +12,16 @@ import {CommandObject} from "wokcommands";
  * @param deferReply
  * @param newMessageContent
  * @param deleteOptions
+ * @param sendToAuthor
  */
 const handleResponseToMessage = async(
     client: BahamutClient,
     initMessage: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse,
     overwriteInitMessage: boolean = false,
-    deferReply: boolean | "ephemeral",
+    deferReply: string | boolean,
     newMessageContent: HandleMessageOptions | string,
     deleteOptions?: MessageDeleteOptions,
+    sendToAuthor?: boolean
 ) => {
     let response: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse;
 
@@ -33,20 +36,20 @@ const handleResponseToMessage = async(
     }
 
     if ((initMessage instanceof Discord.Message) && overwriteInitMessage) {
-        response = await initMessage.edit(newMessageContent);
+        response = (!sendToAuthor ? await initMessage.edit(newMessageContent) : await initMessage.author.send(newMessageContent));
     }
     else if ((initMessage instanceof Discord.Message) && !overwriteInitMessage) {
-        response = await initMessage.reply(newMessageContent);
+        response = (!sendToAuthor ? await initMessage.reply(newMessageContent) : await initMessage.author.send(newMessageContent));
     }
     else if (initMessage instanceof Discord.CommandInteraction) {
         if (deferReply) {
             response = initMessage;
 
-            await initMessage.editReply({
+            !sendToAuthor ? await initMessage.editReply({
                 ...newMessageContent
-            });
+            }) : await initMessage.user.send(newMessageContent);
         }
-        else response = await initMessage.reply(newMessageContent);
+        else response = (!sendToAuthor ? await initMessage.reply(newMessageContent) : await initMessage.user.send(newMessageContent));
     } else {
         // Return error message
         return initMessage;
@@ -61,9 +64,10 @@ const handleErrorResponseToMessage = async(
     client: BahamutClient,
     initMessage: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse,
     overwriteInitMessage: boolean = false,
-    deferReply: boolean | "ephemeral",
+    deferReply: string | boolean,
     newMessageContent: HandleMessageOptions | string,
     deleteOptions?: MessageDeleteOptions,
+    sendToUser?: boolean
 ) => {
     let response: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse;
 
@@ -75,7 +79,7 @@ const handleErrorResponseToMessage = async(
         }
     }
 
-    response = await handleResponseToMessage(client, initMessage, overwriteInitMessage, deferReply, createErrorResponse(client, newMessageContent), deleteOptions);
+    response = await handleResponseToMessage(client, initMessage, overwriteInitMessage, deferReply, createErrorResponse(client, newMessageContent), deleteOptions, sendToUser);
 
     await handleDeleteMessage(client, initMessage, response, deleteOptions);
 
@@ -140,9 +144,10 @@ const handleSuccessResponseToMessage = async (
     client: BahamutClient,
     initMessage: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse,
     overwriteInitMessage: boolean = false,
-    deferReply: boolean | "ephemeral",
+    deferReply: string | boolean,
     newMessageContent: HandleMessageOptions | string,
     deleteOptions?: MessageDeleteOptions,
+    sendToAuthor?: boolean
 ) => {
     let response: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse;
 
@@ -155,7 +160,7 @@ const handleSuccessResponseToMessage = async (
         }
     }
 
-    response = await handleResponseToMessage(client, initMessage, overwriteInitMessage, deferReply, createSuccessResponse(client, newMessageContent), deleteOptions);
+    response = await handleResponseToMessage(client, initMessage, overwriteInitMessage, deferReply, createSuccessResponse(client, newMessageContent), deleteOptions, sendToAuthor);
 
     await handleDeleteMessage(client, initMessage, response, deleteOptions);
 
