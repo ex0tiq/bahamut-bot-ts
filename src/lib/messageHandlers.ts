@@ -17,15 +17,19 @@ const handleResponseToMessage = async(
     initMessage: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse,
     overwriteInitMessage: boolean = false,
     deferReply: boolean | "ephemeral",
-    newMessageContent: HandleMessageOptions,
+    newMessageContent: HandleMessageOptions | string,
     deleteOptions?: MessageDeleteOptions,
 ) => {
     let response: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse;
 
-    if (newMessageContent.embeds && newMessageContent.embeds.length > 0) {
-        for (const e of newMessageContent.embeds!) {
-            if (!e.data.color) e.setColor(client.bahamut.config.primary_message_color);
+    if (!(typeof newMessageContent === "string")) {
+        if (newMessageContent.embeds && newMessageContent.embeds.length > 0) {
+            for (const e of newMessageContent.embeds!) {
+                if (!e.data.color) e.setColor(client.bahamut.config.primary_message_color);
+            }
         }
+    } else {
+        newMessageContent = createSuccessResponse(client, newMessageContent, true);
     }
 
     if ((initMessage instanceof Discord.Message) && overwriteInitMessage) {
