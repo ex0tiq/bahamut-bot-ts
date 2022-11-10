@@ -43,4 +43,4 @@ const isUserModOfGuild = async (client: BahamutClient, user: Discord.GuildMember
     return false;
 };
 
-export { isUserAdminOfGuild }
+export { isUserAdminOfGuild, isUserModOfGuild }
