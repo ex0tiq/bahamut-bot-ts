@@ -80,4 +80,8 @@ const getAllJSFiles = (path: string, foldersOnly = false) => {
     return getAllFiles(path, foldersOnly).filter(e => e.filePath.endsWith(".js"));
 }
 
-export { randomIntBetween, flipString, numberWithCommas, flattenArray, bigintValuesToString, encodeYoutubeURL, getAllFiles, getAllJSFiles };
+const toProperCase = (str: string) => {
+    return str.replace(/([^\W_]+[^\s-]*) */g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+}
+
+export { randomIntBetween, flipString, numberWithCommas, flattenArray, bigintValuesToString, encodeYoutubeURL, getAllFiles, getAllJSFiles, toProperCase };
