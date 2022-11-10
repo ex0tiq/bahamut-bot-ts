@@ -90,7 +90,7 @@ const createErrorResponse = (client: BahamutClient, newMessageContent: HandleMes
         content: newMessageContent.content || null,
         files: newMessageContent.files || null,
         embeds: newMessageContent.embeds?.map((e) => {
-            e.setAuthor((newMessageContent.title ? null : { name: "Error", iconURL: client.bahamut.config.message_icons.error }));
+            e.setAuthor((!e.data.title ? { name: "Error", iconURL: client.bahamut.config.message_icons.error } : null));
             e.setColor(client.bahamut.config.error_message_color);
             return e;
         }) || null,
@@ -140,11 +140,11 @@ const handleSuccessResponseToMessage = async (
 
     return response;
 };
-const createSuccessResponse = (client: BahamutClient, newMessageContent: HandleMessageOptions | string) => {
+const createSuccessResponse = (client: BahamutClient, newMessageContent: HandleMessageOptions | string, disableTitleOverride = false) => {
     return (typeof newMessageContent === "string" ? {
         embeds: [
             new Discord.EmbedBuilder()
-                .setAuthor({ name: "Success", iconURL: client.bahamut.config.message_icons.success })
+                .setAuthor(!disableTitleOverride ? { name: "Success", iconURL: client.bahamut.config.message_icons.success } : null)
                 .setDescription(newMessageContent)
                 // @ts-ignore
                 .setColor(client.bahamut.config.primary_message_color)
@@ -153,7 +153,7 @@ const createSuccessResponse = (client: BahamutClient, newMessageContent: HandleM
         content: newMessageContent.content || null,
         files: newMessageContent.files || null,
         embeds: newMessageContent.embeds?.map((e) => {
-            e.setAuthor((newMessageContent.title ? null : { name: "Success", iconURL: client.bahamut.config.message_icons.success }));
+            e.setAuthor(((!e.data.title || disableTitleOverride) ? { name: "Success", iconURL: client.bahamut.config.message_icons.success } : null));
             e.setColor(client.bahamut.config.primary_message_color);
             return e;
         }) || null,
@@ -167,11 +167,26 @@ const createSuccessResponse = (client: BahamutClient, newMessageContent: HandleM
  * @param newMessageContent
  * @param deleteOptions
  */
-const handleInfoResponseToChannel = async(client: BahamutClient, sourceChannel: Discord.GuildTextBasedChannel, newMessageContent: HandleMessageOptions, deleteOptions?: MessageDeleteOptions) => {
+const handleResponseToChannel = async(client: BahamutClient, sourceChannel: Discord.GuildTextBasedChannel, newMessageContent: HandleMessageOptions, deleteOptions?: MessageDeleteOptions) => {
     let response: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse;
 
     for (const e of newMessageContent.embeds!) {
         if (!e.data.color) e.setColor(client.bahamut.config.primary_message_color);
+    }
+
+    response = await sourceChannel.send(newMessageContent)
+
+    await handleDeleteMessage(client, null, response, deleteOptions);
+
+    return response;
+}
+const handleErrorResponseToChannel = async(client: BahamutClient, sourceChannel: Discord.GuildTextBasedChannel, newMessageContent: HandleMessageOptions, deleteOptions?: MessageDeleteOptions) => {
+    let response: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse;
+
+    if (newMessageContent.embeds && newMessageContent.embeds.length > 0) {
+        for (const e of newMessageContent.embeds!) {
+            e.setColor(client.bahamut.config.error_message_color);
+        }
     }
 
     response = await sourceChannel.send(newMessageContent)
@@ -192,4 +207,4 @@ const handleDeleteMessage = async(
     // implement delete message checks
 }
 
-export { handleInfoResponseToChannel, handleResponseToMessage, handleErrorResponseToMessage, handleSuccessResponseToMessage, createErrorResponse, createSuccessResponse, createMissingParamsErrorResponse }
+export { handleResponseToChannel, handleResponseToMessage, handleErrorResponseToMessage, handleSuccessResponseToMessage, createErrorResponse, createSuccessResponse, createMissingParamsErrorResponse, handleErrorResponseToChannel }
