@@ -114,6 +114,23 @@ const createMissingParamsErrorResponse = (
         ]
     } as HandleMessageOptions
 }
+const createMissingPermErrorResponse = (
+    client: BahamutClient,
+    perm: string
+) => {
+    return {
+        embeds: [
+            new Discord.EmbedBuilder()
+                .setAuthor({ name: "Error", iconURL: client.bahamut.config.message_icons.error })
+                .setDescription('I couldn\'t invoke this command, because of missing permissions!')
+                // @ts-ignore
+                .setColor(client.bahamut.config.error_message_color)
+                .setFields([
+                    { name: "Missing Permissions", value: `\`\`\`${perm}\`\`\`` }
+                ])
+        ]
+    } as HandleMessageOptions
+}
 
 const handleSuccessResponseToMessage = async (
     client: BahamutClient,
@@ -207,4 +224,14 @@ const handleDeleteMessage = async(
     // implement delete message checks
 }
 
-export { handleResponseToChannel, handleResponseToMessage, handleErrorResponseToMessage, handleSuccessResponseToMessage, createErrorResponse, createSuccessResponse, createMissingParamsErrorResponse, handleErrorResponseToChannel }
+export {
+    handleResponseToChannel,
+    handleResponseToMessage,
+    handleErrorResponseToMessage,
+    handleSuccessResponseToMessage,
+    createErrorResponse,
+    createSuccessResponse,
+    createMissingParamsErrorResponse,
+    handleErrorResponseToChannel,
+    createMissingPermErrorResponse
+}
