@@ -322,6 +322,12 @@ export default class LavaManager {
         });
     }
 
+    // Getter & Setter
+    public get manager() {
+        return this._manager;
+    }
+
+    // Misc functions
     getTrackStartEmbed = async (player: Player, track: Track, requester: Discord.GuildMember) => {
         const textChannel = player?.textChannel ? this._bahamut.client.channels.cache.get(player.textChannel) as Discord.GuildTextBasedChannel : null;
         if (!textChannel) return;
@@ -417,10 +423,9 @@ export default class LavaManager {
             const settings = await getGuildSettings(this._bahamut.client, channel.guild);
 
             let link = "", song = {
-                ...track,
                 website_url: undefined,
                 tracklist: undefined,
-                title: undefined
+                ...track,
             } as ExtendedTrack;
 
             // eslint-disable-next-line prefer-const
@@ -529,8 +534,9 @@ export default class LavaManager {
         return settings.music_channels.includes(channel.id);
 
     };
+
     getUserNoDJPermMessage = (message: Discord.Message) => {
-        return handleErrorResponseToMessage(this._bahamut.client, message, false, true, "This command can only be used by members with the DJ role!");
+        return createErrorResponse(this._bahamut.client, "This command can only be used by members with the DJ role!");
     };
     getChannelNotMusicChannelMessage = async (message: Discord.Message | Discord.CommandInteraction) => {
         const settings = await getGuildSettings(this._bahamut.client, message.guild!);
@@ -542,6 +548,6 @@ export default class LavaManager {
             }
         }
 
-        return handleErrorResponseToMessage(this._bahamut.client, message, false, true, `This command can only be used in a music channel${ch.length > 0 ? `: ${ch.join(", ")}` : ""}`);
+        return createErrorResponse(this._bahamut.client, `This command can only be used in a music channel${ch.length > 0 ? `: ${ch.join(", ")}` : ""}`);
     };
 };
