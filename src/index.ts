@@ -73,6 +73,9 @@ async function startup() {
 
         // your bot token
         token: bootConf.token,
+
+        // Stringify bootconf
+        shardArgs: [JSON.stringify(bootConf)]
     }, uplinkApiHandler);
 
     // Combine ShardingManager with bootManager
@@ -97,7 +100,7 @@ async function startup() {
     botManager.on('shardCreate', async (shard) => {
         shard.on('spawn', async () => {
             // Sending the data to the shard. Required for successful shard spawn
-            await shard.send({ type: 'startupData', data: { shardId: shard.id, startupTime: botManager.startTime, conf: bootConf } });
+            await shard.send({ type: 'startupData', data: { shardId: shard.id } });
         });
         shard.on('ready', () => {
             if (!botManager.shardReady) manager.emit('shardReady');
