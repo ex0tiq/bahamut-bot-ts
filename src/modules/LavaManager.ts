@@ -516,11 +516,9 @@ export default class LavaManager {
 
     /**
      * If message channel is music channel
-     * @param {Discord.Message} message
      * @param {string|null} channel
-     * @returns {boolean}
      */
-    isChannelMusicChannel = async (channel: Discord.VoiceBasedChannel) => {
+    isChannelMusicChannel = async (channel: Discord.GuildTextBasedChannel) => {
         const settings = await getGuildSettings(this._bahamut.client, channel.guild);
 
         // if no music channel is set, every channel is a music channel
