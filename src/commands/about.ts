@@ -7,12 +7,12 @@ import {handleResponseToMessage} from "../lib/messageHandlers";
 
 const config = {
     name: 'about',
-    type: CommandType.BOTH,
+    type: CommandType.LEGACY,
     description: 'Get infos about the bot',
     category: 'System',
     cooldown: '10s',
     guildOnly: true,
-    testOnly: true,
+    testOnly: false,
     deferReply: true
 };
 

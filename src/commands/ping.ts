@@ -6,12 +6,12 @@ import BahamutClient from "../modules/BahamutClient";
 const config = {
     name: 'ping',
     aliases: [],
-    type: CommandType.BOTH,
+    type: CommandType.LEGACY,
     description: 'It like... Pings. Then Pongs. And it\'s not Ping Pong.',
     category: 'Miscellaneous',
     cooldown: '10s',
     guildOnly: true,
-    testOnly: true,
+    testOnly: false,
     deferReply: true
 };
 

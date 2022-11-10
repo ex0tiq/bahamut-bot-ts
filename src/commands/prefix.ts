@@ -27,7 +27,7 @@ const config = {
     category: 'System',
     cooldown: '10s',
     guildOnly: true,
-    testOnly: true,
+    testOnly: false,
     deferReply: true
 };
 
