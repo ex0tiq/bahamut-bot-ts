@@ -1,8 +1,7 @@
 import BahamutClient from "../modules/BahamutClient";
 import Discord from "discord.js";
 import {HandleMessageOptions, MessageDeleteOptions} from "../../typings";
-import {hexToDecimal} from "./parseFunctions";
-import {hex} from "chalk";
+import {CommandObject} from "wokcommands";
 
 /**
  * Handle message response to message or interaction
@@ -87,7 +86,36 @@ const createErrorResponse = (client: BahamutClient, newMessageContent: HandleMes
                 // @ts-ignore
                 .setColor(client.bahamut.config.error_message_color)
         ]
-    } : newMessageContent)
+    } : {
+        content: newMessageContent.content || null,
+        files: newMessageContent.files || null,
+        embeds: newMessageContent.embeds?.map(e => {
+            return new Discord.EmbedBuilder()
+                // @ts-ignore
+                .setColor(client.bahamut.config.error_message_color)
+                .setDescription(e.data.description)
+                .setAuthor((newMessageContent.title ? null : { name: "Error", iconURL: client.bahamut.config.message_icons.error }))
+                .setTitle(newMessageContent.title || null)
+        }) || null,
+    }) as HandleMessageOptions;
+}
+const createMissingParamsErrorResponse = (
+    client: BahamutClient,
+    command: Omit<CommandObject, "callback">
+) => {
+    return {
+        embeds: [
+            new Discord.EmbedBuilder()
+                .setAuthor({ name: "Error", iconURL: client.bahamut.config.message_icons.error })
+                .setDescription("I couldn\\'t invoke this command, because of missing or wrong parameters!")
+                // @ts-ignore
+                .setColor(client.bahamut.config.error_message_color)
+                .setFields([
+                    { name: "Usage", value: `\`\`\`${(command.correctSyntax ? (command.name + " " + command.correctSyntax) : (command.expectedArgs ?
+                            command.name + " " + command.expectedArgs : "No usage information found. Please inform the bot author of this issue!"))}\`\`\`` }
+                ])
+        ]
+    } as HandleMessageOptions
 }
 
 const handleSuccessResponseToMessage = async (
@@ -122,9 +150,20 @@ const createSuccessResponse = (client: BahamutClient, newMessageContent: HandleM
                 .setAuthor({ name: "Success", iconURL: client.bahamut.config.message_icons.success })
                 .setDescription(newMessageContent)
                 // @ts-ignore
-                .setColor(client.bahamut.config.error_message_color)
+                .setColor(client.bahamut.config.primary_message_color)
         ]
-    } : newMessageContent)
+    } : {
+        content: newMessageContent.content || null,
+        files: newMessageContent.files || null,
+        embeds: newMessageContent.embeds?.map(e => {
+            return new Discord.EmbedBuilder()
+                // @ts-ignore
+                .setColor(client.bahamut.config.primary_message_color)
+                .setDescription(e.data.description || null)
+                .setAuthor((newMessageContent.title ? null : { name: "Success", iconURL: client.bahamut.config.message_icons.success }))
+                .setTitle(newMessageContent.title || null)
+        }) || null,
+    }) as HandleMessageOptions;
 }
 
 /**
@@ -159,4 +198,4 @@ const handleDeleteMessage = async(
     // implement delete message checks
 }
 
-export { handleInfoResponseToChannel, handleResponseToMessage, handleErrorResponseToMessage, handleSuccessResponseToMessage, createErrorResponse, createSuccessResponse }
+export { handleInfoResponseToChannel, handleResponseToMessage, handleErrorResponseToMessage, handleSuccessResponseToMessage, createErrorResponse, createSuccessResponse, createMissingParamsErrorResponse }
