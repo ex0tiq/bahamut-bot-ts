@@ -37,7 +37,7 @@ export default {
         const settings = await getGuildSettings(client, channel.guild);
 
         if (args.length <= 0) {
-            return handleResponseToMessage(client, message || interaction, false, true, {
+            return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
                 "embeds": [
                     new Discord.EmbedBuilder()
                         .setTitle("Prefix")
@@ -46,20 +46,20 @@ export default {
             });
         }
         else {
-            if (!(await isUserAdminOfGuild(client, member, channel.guild))) return handleErrorResponseToMessage(client, message || interaction, false, true,'You don\'t have permission to do that.');
-            if (args[0].length > 4) return handleErrorResponseToMessage(client, message || interaction, false , true, 'Prefix can only be up to four characters.');
+            if (!(await isUserAdminOfGuild(client, member, channel.guild))) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply,'You don\'t have permission to do that.');
+            if (args[0].length > 4) return handleErrorResponseToMessage(client, message || interaction, false , config.deferReply, 'Prefix can only be up to four characters.');
 
-            if (settings.prefix === args[0].toLowerCase()) return handleErrorResponseToMessage(client, message || interaction, false,true, 'The prefix is already set to that.');
+            if (settings.prefix === args[0].toLowerCase()) return handleErrorResponseToMessage(client, message || interaction, false,config.deferReply, 'The prefix is already set to that.');
 
             if (await client.bahamut.dbHandler.setDBGuildSetting(channel.guild, 'prefix', args[0].toLowerCase())) {
                 client.bahamut.settings.set(channel.guild.id, await client.bahamut.dbHandler.getDBGuildSettings(channel.guild));
 
                 client.bahamut.cmdHandler.commandHandler.prefixHandler.set(channel.guild.id, args[0].toLowerCase())
 
-                return handleSuccessResponseToMessage(client, message || interaction, false, true, `Successfully changed the value of \`Prefix\` to \`${args[0].toLowerCase()}\`!`);
+                return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `Successfully changed the value of \`Prefix\` to \`${args[0].toLowerCase()}\`!`);
             }
             else {
-                return handleErrorResponseToMessage(client, message || interaction, false, true,'Error while updating the Prefix. Please try again later!');
+                return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply,'Error while updating the Prefix. Please try again later!');
             }
         }
     },

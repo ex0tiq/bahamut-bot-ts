@@ -51,7 +51,7 @@ const config = {
 
 export default {
     ...config,
-    callback: async ({ client, args, message, channel, member }: { client: BahamutClient, args: string[], message: Discord.Message, channel: Discord.GuildTextBasedChannel, member: Discord.GuildMember }) => {
+    callback: async ({ client, args, message, channel, member, interaction }: { client: BahamutClient, args: string[], message: Discord.Message, channel: Discord.GuildTextBasedChannel, member: Discord.GuildMember, interaction: Discord.CommandInteraction }) => {
         let embed;
 
         if (args.length <= 0) {
@@ -81,7 +81,7 @@ export default {
             embed = createMissingParamsErrorResponse(client, config);
         }
 
-        return handleResponseToMessage(client, message, false, true, embed);
+        return handleResponseToMessage(client, message || interaction, false, config.deferReply, embed);
     },
 };
 
