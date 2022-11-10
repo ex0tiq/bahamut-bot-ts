@@ -326,6 +326,9 @@ export default class LavaManager {
     public get manager() {
         return this._manager;
     }
+    public get radioStations() {
+        return this._radioStations;
+    }
 
     // Misc functions
     getTrackStartEmbed = async (player: Player, track: Track, requester: Discord.GuildMember) => {
@@ -394,7 +397,7 @@ export default class LavaManager {
 
     musicStatus = async (player: Player, embed: Discord.EmbedBuilder) => {
         const textChannel = player?.textChannel ? this._bahamut.client.channels.cache.get(player.textChannel) as Discord.GuildTextBasedChannel : null;
-        if (!textChannel) return;
+        if (!textChannel) return embed;
 
         const settings = await getGuildSettings(this._bahamut.client, textChannel.guild);
 
