@@ -37,7 +37,7 @@ const config: CommandConfig = {
     deferReply: true
 };
 
-module.exports = {
+export default {
     ...config,
     callback: async ({
                          client,
