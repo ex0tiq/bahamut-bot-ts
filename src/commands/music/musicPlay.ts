@@ -3,9 +3,7 @@ import {CommandType} from "wokcommands";
 import {getGuildSettings} from "../../lib/getFunctions";
 import BahamutClient from "../../modules/BahamutClient";
 import {
-    createMissingParamsErrorResponse,
-    createMissingPermErrorResponse,
-    handleErrorResponseToMessage
+    handleErrorResponseToMessage, handleResponseToMessage
 } from "../../lib/messageHandlers";
 import {CommandConfig} from "../../../typings";
 import {BahamutCommandPreChecker, PreCheckType} from "../../modules/BahamutCommandPreChecker";
@@ -67,6 +65,9 @@ export default {
             {type: PreCheckType.MUSIC_NODES_AVAILABLE}
         ]);
         if (await checks.runChecks()) return;
+
+        // TODO
+        //if (typeof client.runningGames[channel.guild.id] !== 'undefined') return handleBotMessage(client, message, 'error', 'There is a running music quiz on this guild. Please finish it before playing music.', false, null, channel);
 
         let res;
 
@@ -135,7 +136,7 @@ export default {
 
         // ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        if (lastEmbed) return lastEmbed;
+        if (lastEmbed) return handleResponseToMessage(client, message || interaction, false, config.deferReply, lastEmbed);
         return;
     },
 };
