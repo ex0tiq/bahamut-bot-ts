@@ -49,7 +49,7 @@ const config: CommandConfig = {
     guildOnly: true,
 };
 
-module.exports = {
+export default {
     ...config,
     callback: async ({
                          client,

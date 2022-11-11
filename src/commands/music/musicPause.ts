@@ -17,7 +17,7 @@ const config: CommandConfig = {
     testOnly: false,
 };
 
-module.exports = {
+export default {
     ...config,
     callback: async ({ client, message, channel, member , interaction}: { client: BahamutClient, message: Discord.Message, channel: Discord.TextChannel, member: Discord.GuildMember, interaction: Discord.CommandInteraction }) => {
         const settings = await getGuildSettings(client, channel.guild);
