@@ -161,6 +161,22 @@ export interface BahamutCommandUsage extends CommandUsage {
     client: BahamutClient
 }
 
+export interface LevelConfig {
+    xp_per_message_very_low: number;
+    xp_per_message_low: number;
+    xp_per_message_mid: number;
+    xp_per_message_high: number;
+    xp_per_message_very_high: number;
+    rank_name_very_low: number;
+    rank_name_low: number;
+    rank_name_mid: number;
+    rank_name_high: number;
+    rank_name_very_high: number;
+    rank_name_max: number;
+    levels: {
+        [key: string]: number
+    }
+}
 
 export interface GuildSettings {
     prefix: string;
