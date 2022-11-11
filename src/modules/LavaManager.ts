@@ -14,8 +14,7 @@ import {
     createErrorResponse,
     createSuccessResponse,
     handleErrorResponseToChannel,
-    handleErrorResponseToMessage,
-    handleResponseToChannel, handleResponseToMessage
+    handleResponseToChannel
 } from "../lib/messageHandlers";
 import logger from "./Logger";
 import {isUserAdminOfGuild, isUserModOfGuild} from "../lib/checkFunctions";
@@ -328,6 +327,9 @@ export default class LavaManager {
     }
     public get radioStations() {
         return this._radioStations;
+    }
+    public get filters() {
+        return this._filters;
     }
 
     // Misc functions
