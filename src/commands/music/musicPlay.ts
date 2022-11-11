@@ -122,8 +122,6 @@ export default {
 
             lastEmbed = await client.bahamut.musicHandler.getTrackStartEmbed(player, res.tracks[0], member);
         } else {
-            player.set('skip_trackstart', true);
-
             lastEmbed = await client.bahamut.musicHandler.getListStartEmbed(player, res, member);
         }
 
