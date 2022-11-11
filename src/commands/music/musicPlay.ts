@@ -8,6 +8,7 @@ import {
     handleErrorResponseToMessage
 } from "../../lib/messageHandlers";
 import {CommandConfig} from "../../../typings";
+import {BahamutCommandPreChecker, PreCheckType} from "../../modules/BahamutCommandPreChecker";
 
 const config: CommandConfig = {
     name: 'play',
@@ -32,21 +33,40 @@ const config: CommandConfig = {
 
 export default {
     ...config,
-    callback: async ({ client, message, channel, member, args, interaction }: { client: BahamutClient, message: Discord.Message, channel: Discord.GuildTextBasedChannel, member: Discord.GuildMember, args: string[], interaction: Discord.CommandInteraction }) => {
-        const settings = await getGuildSettings(client, channel.guild);
+    callback: async ({
+                         client,
+                         message,
+                         channel,
+                         member,
+                         args,
+                         interaction
+                     }: { client: BahamutClient, message: Discord.Message, channel: Discord.TextChannel, member: Discord.GuildMember, args: string[], interaction: Discord.CommandInteraction }) => {
+        const settings = await getGuildSettings(client, channel.guild),
+            search = args.join(' ');
         // Abort if module is disabled
         if (settings.disabled_categories.includes('music')) return;
 
-        if (!await client.bahamut.musicHandler.isChannelMusicChannel(channel)) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, await client.bahamut.musicHandler.getChannelNotMusicChannelMessage(message));
-        if (!client.bahamut.musicHandler.isUserInVoiceChannel(member)) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'You\'re not in a voice channel!');
-        if (!client.bahamut.musicHandler.isUserInSameVoiceChannelAsBot(channel.guild, member)) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'You\'re not in the same voice channel as the bot!');
-        if (!channel.guild.members.me!.permissions.has(Discord.PermissionFlagsBits.Connect)) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, createMissingPermErrorResponse(client, "CONNECT"));
-        if (!channel.guild.members.me!.permissions.has(Discord.PermissionFlagsBits.Speak)) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, createMissingPermErrorResponse(client, "SPEAK"));
-        //if (typeof client.runningGames[channel.guild.id] !== 'undefined') return handleBotMessage(client, message, 'error', 'There is a running music quiz on this guild. Please finish it before playing music.', false, null, channel);
-        const search = args.join(' ');
-        if (!search) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, createMissingParamsErrorResponse(client, config));
-
-        if (!client.bahamut.musicHandler.manager.leastUsedNodes.first()) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply,'There are no music nodes available. Please try again later.');
+        const checks = new BahamutCommandPreChecker(client, {
+            client,
+            message,
+            channel,
+            args,
+            member,
+            interaction
+        }, config, [
+            {type: PreCheckType.CHANNEl_IS_MUSIC_CHANNEL},
+            {type: PreCheckType.USER_IN_VOICE_CHANNEL},
+            {type: PreCheckType.USER_IN_SAME_VOICE_CHANNEL_AS_BOT},
+            {
+                type: PreCheckType.BOT_HAS_PERMISSIONS, requiredPermissions: [
+                    {bitField: Discord.PermissionFlagsBits.Connect, name: "CONNECT"},
+                    {bitField: Discord.PermissionFlagsBits.Speak, name: "SPEAK"}
+                ]
+            },
+            {type: PreCheckType.ALL_PARAMS_PROVIDED, paramsCheck: !(search)},
+            {type: PreCheckType.MUSIC_NODES_AVAILABLE}
+        ]);
+        if (!(await checks.runChecks())) return;
 
         let res;
 
@@ -57,8 +77,7 @@ export default {
             // Check the load type as this command is not that advanced for basics
             if (res.loadType === 'LOAD_FAILED') return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'An internal error occurred while doing that. Please try again later.');
             else if (res.loadType === 'NO_MATCHES') return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'This search did not return any results! Please try again!');
-        }
-        catch (err) {
+        } catch (err) {
             return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'An internal error occurred while doing that. Please try again later.');
         }
 
@@ -93,20 +112,16 @@ export default {
                 player.set('skip_trackstart', true);
 
                 lastEmbed = await client.bahamut.musicHandler.getTrackStartEmbed(player, res.tracks[0], member);
-            }
-            else if (res.loadType === 'SEARCH_RESULT' || res.loadType === 'TRACK_LOADED' || res.tracks.length === 1) {
+            } else if (res.loadType === 'SEARCH_RESULT' || res.loadType === 'TRACK_LOADED' || res.tracks.length === 1) {
                 lastEmbed = await client.bahamut.musicHandler.getTrackAddEmbed(player, res.tracks[0], member);
-            }
-            else {
+            } else {
                 lastEmbed = await client.bahamut.musicHandler.getListAddEmbed(player, res, member);
             }
-        }
-        else if (res.loadType === 'SEARCH_RESULT' || res.loadType === 'TRACK_LOADED' || res.tracks.length === 1) {
+        } else if (res.loadType === 'SEARCH_RESULT' || res.loadType === 'TRACK_LOADED' || res.tracks.length === 1) {
             player.set('skip_trackstart', true);
 
             lastEmbed = await client.bahamut.musicHandler.getTrackStartEmbed(player, res.tracks[0], member);
-        }
-        else {
+        } else {
             player.set('skip_trackstart', true);
 
             lastEmbed = await client.bahamut.musicHandler.getListStartEmbed(player, res, member);
@@ -114,11 +129,11 @@ export default {
 
         if (player.playing && player.queue.current?.isStream) {
             player.stop();
-        }
-        else if (!player.playing && !player.paused && !player.queue.size) {
+        } else if (!player.playing && !player.paused && !player.queue.size) {
+            await player.play();
+        } else if (!player.playing) {
             await player.play();
         }
-        else if (!player.playing) {await player.play();}
 
         // ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

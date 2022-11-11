@@ -10,6 +10,7 @@ import {
     handleSuccessResponseToMessage
 } from "../../lib/messageHandlers";
 import {CommandConfig} from "../../../typings";
+import {BahamutCommandPreChecker, PreCheckType} from "../../modules/BahamutCommandPreChecker";
 
 const config: CommandConfig = {
     name: 'filter',
@@ -57,27 +58,21 @@ module.exports = {
                          args,
                          member,
                          interaction
-                     }: { client: BahamutClient, message: Discord.Message, channel: Discord.GuildTextBasedChannel, member: Discord.GuildMember, args: string[], interaction: Discord.CommandInteraction }) => {
+                     }: { client: BahamutClient, message: Discord.Message, channel: Discord.TextChannel, member: Discord.GuildMember, args: string[], interaction: Discord.CommandInteraction }) => {
         const settings = await getGuildSettings(client, channel.guild);
         // Abort if module is disabled
         if (settings.disabled_categories.includes('music')) return;
 
-        if (!settings.premium_user) {
-            // Streams not allowed for non premium users
-            return handleErrorResponseToMessage(client,
-                message || interaction,
-                false,
-                config.deferReply,
-                await client.bahamut.premiumHandler.getGuildNotPremiumMessage(`Using music filters requires an active premium subscription.\nIf you want to know more about this, please check out our [website](${client.bahamut.config.website_link}).`)
-            );
-        }
-
-        if (!await client.bahamut.musicHandler.userHasDJRights(member, channel.guild)) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, client.bahamut.musicHandler.getUserNoDJPermMessage());
-        if (!await client.bahamut.musicHandler.isChannelMusicChannel(channel)) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, await client.bahamut.musicHandler.getChannelNotMusicChannelMessage(message || interaction));
-        if (!client.bahamut.musicHandler.isUserInVoiceChannel(member)) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'You\'re not in a voice channel!');
-        if (!client.bahamut.musicHandler.isUserInSameVoiceChannelAsBot(channel.guild, member)) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'You\'re not in the same voice channel as the bot!');
-
-        if (!client.bahamut.musicHandler.manager.leastUsedNodes.first()) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'There are no music nodes available. Please try again later.');
+        // Run command pre checks
+        const checks = new BahamutCommandPreChecker(client, { client, message, channel, args, member, interaction }, config, [
+            { type: PreCheckType.GUILD_IS_PREMIUM, customErrorMessage: `Using music filters requires an active premium subscription.\nIf you want to know more about this, please check out our [website](${client.bahamut.config.website_link}).` },
+            { type: PreCheckType.USER_IS_DJ },
+            { type: PreCheckType.CHANNEl_IS_MUSIC_CHANNEL },
+            { type: PreCheckType.USER_IN_VOICE_CHANNEL },
+            { type: PreCheckType.USER_IN_SAME_VOICE_CHANNEL_AS_BOT },
+            { type: PreCheckType.MUSIC_NODES_AVAILABLE }
+        ]);
+        if (!(await checks.runChecks())) return;
 
         const filters = client.bahamut.musicHandler.filters;
         let filterText = '';

@@ -10,6 +10,7 @@ import {
     handleResponseToMessage
 } from "../../lib/messageHandlers";
 import {CommandConfig} from "../../../typings";
+import {BahamutCommandPreChecker, PreCheckType} from "../../modules/BahamutCommandPreChecker";
 
 const config: CommandConfig = {
     name: 'autoplay',
@@ -44,13 +45,16 @@ const config: CommandConfig = {
 
 export default {
     ...config,
-    callback: async ({ client, message, channel, args, member, interaction }: { client: BahamutClient, message: Discord.Message, channel: Discord.GuildTextBasedChannel, member: Discord.GuildMember, args: string[], interaction: Discord.CommandInteraction }) => {
+    callback: async ({ client, message, channel, args, member, interaction }: { client: BahamutClient, message: Discord.Message, channel: Discord.TextChannel, member: Discord.GuildMember, args: string[], interaction: Discord.CommandInteraction }) => {
         const settings = await getGuildSettings(client, channel.guild);
         // Abort if module is disabled
         if (settings.disabled_categories.includes('music')) return;
 
-        if (!await client.bahamut.musicHandler.isChannelMusicChannel(channel)) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, await client.bahamut.musicHandler.getChannelNotMusicChannelMessage(message));
-        if (!await client.bahamut.musicHandler.userHasDJRights(member, channel.guild)) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, client.bahamut.musicHandler.getUserNoDJPermMessage());
+        const checks = new BahamutCommandPreChecker(client, { client, message, channel, args, member, interaction }, config, [
+            { type: PreCheckType.USER_IS_DJ },
+            { type: PreCheckType.CHANNEl_IS_MUSIC_CHANNEL },
+        ]);
+        if (!(await checks.runChecks())) return;
 
         let autoplay = false;
 

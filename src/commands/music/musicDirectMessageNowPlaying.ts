@@ -10,6 +10,7 @@ import {
     handleSuccessResponseToMessage
 } from "../../lib/messageHandlers";
 import {CommandConfig, ExtendedTrack} from "../../../typings";
+import {BahamutCommandPreChecker, PreCheckType} from "../../modules/BahamutCommandPreChecker";
 // No ES import support
 const radio = require('node-internet-radio');
 
@@ -31,12 +32,15 @@ module.exports = {
                          message,
                          channel,
                          interaction
-                     }: { client: BahamutClient, message: Discord.Message, channel: Discord.GuildTextBasedChannel, interaction: Discord.CommandInteraction }) => {
+                     }: { client: BahamutClient, message: Discord.Message, channel: Discord.TextChannel, interaction: Discord.CommandInteraction }) => {
         const settings = await getGuildSettings(client, channel.guild);
         // Abort if module is disabled
         if (settings.disabled_categories.includes('music')) return;
 
-        if (!client.bahamut.musicHandler.manager.leastUsedNodes.first()) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'There are no music nodes available. Please try again later.');
+        const checks = new BahamutCommandPreChecker(client, { client, message, channel, interaction }, config, [
+            { type: PreCheckType.MUSIC_NODES_AVAILABLE }
+        ]);
+        if (!(await checks.runChecks())) return;
 
         const player = client.bahamut.musicHandler.manager.create({
             guild: channel.guild.id,
