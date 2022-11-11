@@ -28,6 +28,8 @@ export default class LavaManager {
     private _filters: {}
     // Contains all music timers
     private _leaveTimers: Map<string, ReturnType<typeof setTimeout>> = new Map<string, ReturnType<typeof setTimeout>>;
+    // Contains all vote skips
+    private _voteSkips: Map<string, string[]> = new Map<string, string[]>;
     
     // Contains the genius client
     private _geniusClient: Client;
@@ -330,6 +332,9 @@ export default class LavaManager {
     }
     public get filters() {
         return this._filters;
+    }
+    public get voteSkips() {
+        return this._voteSkips;
     }
 
     // Misc functions
