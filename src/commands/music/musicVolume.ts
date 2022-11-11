@@ -67,8 +67,8 @@ export default {
 
         if (player.queue.current || player.queue.size > 0) player.setVolume(volume);
 
-        if (await client.bahamut.dbHandler.setDBGuildSetting(channel.guild, 'music_volume', args[0])) {
-            client.bahamut.settings.set(channel.guild.id, await client.bahamut.dbHandler.getDBGuildSettings(channel.guild));
+        if (await client.bahamut.dbHandler.guildSettings.setDBGuildSetting(channel.guild, 'music_volume', args[0])) {
+            client.bahamut.settings.set(channel.guild.id, await client.bahamut.dbHandler.guildSettings.getDBGuildSettings(channel.guild));
 
             return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${volume <= 0 ? emoji.get('mute') : (volume < 50 ? emoji.get('sound') : emoji.get('loud_sound'))} Volume has been set to \`${volume}\`%!`);
         }

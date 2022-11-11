@@ -9,15 +9,19 @@ import {
 } from "sequelize";
 import {Bahamut} from "../bahamut";
 import Logger from "./Logger";
-import Discord from "discord.js";
-import {isInt, isJson} from "../lib/validateFunctions";
-import {parseBool} from "../lib/parseFunctions";
-import {GuildSettings} from "../../typings";
+import GuildSettingsHandler from "./databaseHandler/guildSettingsHandler";
+import GuildUserStatHandler from "./databaseHandler/guildUserStatHandler";
+import UserLevelDataHandler from "./databaseHandler/userLevelDataHandler";
 
 export default class BahamutDBHandler {
-    private _bahamut: Bahamut;
+    private readonly _bahamut: Bahamut;
 
-    private _dbCon: Sequelize;
+    private readonly _dbCon: Sequelize;
+
+    // Other db handlers
+    private readonly _guildSettings: GuildSettingsHandler;
+    private readonly _guildUserStat: GuildUserStatHandler;
+    private readonly _userLevelData: UserLevelDataHandler;
 
     constructor(bahamut: Bahamut) {
         this._bahamut = bahamut;
@@ -30,6 +34,27 @@ export default class BahamutDBHandler {
         });
 
         this.defineModels();
+
+        // Load other db handlers
+        this._guildSettings = new GuildSettingsHandler(this);
+        this._guildUserStat = new GuildUserStatHandler(this);
+        this._userLevelData = new UserLevelDataHandler(this);
+    }
+
+    public get bahamut() {
+        return this._bahamut;
+    }
+    public get dbCon() {
+        return this._dbCon;
+    }
+    public get guildSettings() {
+        return this._guildSettings;
+    }
+    public get guildUserStat() {
+        return this._guildUserStat;
+    }
+    public get userLevelData() {
+        return this._userLevelData;
     }
 
     /**
@@ -65,179 +90,7 @@ export default class BahamutDBHandler {
         return results[0].version;
     }
 
-    getDBAllGuildSettings = async() => {
-        const obj: Map<string, GuildSettings> = new Map<string, GuildSettings>;
-        // eslint-disable-next-line no-unused-vars
-        for (const [snowflake,] of this._bahamut.client.guilds.cache) {
-            let res = null;
-            if ((res = await this.getDBGuildSettings(snowflake))) {
-                obj.set(snowflake, res);
-            }
-        }
-        return obj;
-    }
 
-    getDBGuildSettings = async (guild: Discord.Guild | string): Promise<GuildSettings> => {
-        try {
-            const settings = await DBGuildSettings.findAll({
-                where: {
-                    guild_id: (typeof guild === "string" ? guild : guild.id)
-                },
-                raw: true
-            }), types = this._bahamut.config.config_types;
-
-            const mappedSettings = settings.map((e: DBGuildSettings) => {
-                let val: any, type: string;
-                console.log(e.val_type);
-                if ((type = types[e.setting])) {
-                    switch (e.val_type) {
-                        case 'string':
-                            return {
-                                [e.setting]: e.val
-                            };
-                        case 'json':
-                            if (isJson(e.val)) return {
-                                [e.setting]: JSON.parse(e.val)
-                            };
-                            else return {
-                                [e.setting]: e.val
-                            };
-                        case 'bool':
-                            if ((val = parseBool(e.val)) !== null) return {
-                                [e.setting]: val
-                            };
-                            else return {
-                                [e.setting]: e.val
-                            };
-                        case 'int':
-                            console.log(isInt(e.val));
-                            if (isInt(e.val) && (val = parseInt(e.val, 10))) return {
-                                [e.setting]: val
-                            };
-                            else return {
-                                [e.setting]: e.val
-                            };
-                        default:
-                            return {
-                                [e.setting]: e.val
-                            };
-                    }
-                } else {
-                    return {
-                        [e.setting]: e.val
-                    };
-                }
-            });
-
-            return {
-                ...this._bahamut.config.defaultSettings,
-                ...(Object.assign({}, ...mappedSettings) as GuildSettings)
-            }
-        } catch (error) {
-            console.error('An error occured while querying guild settings:', error);
-            return this._bahamut.config.defaultSettings;
-        }
-    };
-
-    setDBGuildSetting = async (guild: Discord.Guild | string, setting: string, value: any, value_type?: string): Promise<boolean> => {
-        const types = this._bahamut.config.config_types, type = types[setting] || "string";
-
-        return new Promise((resolve) => {
-            return DBGuildSettings
-                .findOne({
-                    where: {
-                        guild_id: (typeof guild === "string" ? guild : guild.id),
-                        setting: setting
-                    }})
-                .then(async (obj: DBGuildSettings | null) => {
-                    if (obj) {
-                        // update
-                        await obj.update({
-                            val: value,
-                            val_type: value_type || type
-                        });
-                    } else {
-                        // insert
-                        await DBGuildSettings.create({
-                            guild_id: (typeof guild === "string" ? guild : guild.id),
-                            setting: setting,
-                            val: value,
-                            val_type: value_type || type
-                        });
-                    }
-
-                    resolve(true);
-                }).catch(e => {
-                    console.error('Error while saving guild setting:', e);
-                    resolve(false);
-                });
-        });
-    }
-
-    /**
-     * Delete a guild setting and restore default
-     * @param {Discord.Guild|string} guild
-     * @param {string} setting
-     * @returns {Promise<boolean>}
-     */
-    deleteDBGuildSetting = async (guild: Discord.Guild | string, setting: string) => {
-        try {
-            await DBGuildSettings.destroy({
-                where: {
-                    guild_id: ((typeof guild === 'string') ? guild : guild.id),
-                    setting: setting
-                },
-                force: true
-            });
-
-            return true;
-        } catch (ex) {
-            console.error('Error while deleting guild setting:', ex);
-            return false;
-        }
-    };
-
-    /**
-     * Increase a bot stat by x
-     * @param guild
-     * @param user
-     * @param stat
-     * @param value
-     * @returns {Promise<boolean>}
-     */
-        // eslint-disable-next-line no-unused-vars
-    addDBGuildUserStat = async (guild: Discord.Guild, user: Discord.GuildMember, stat: string, value = 1) => {
-        return new Promise((resolve) => {
-            return DBGuildUserStats
-                .findOne({
-                    where: {
-                        guild_id: guild.id,
-                        guild_user: user.user.id,
-                        stat: stat
-                    }})
-                .then(async (obj: DBGuildUserStats | null) => {
-                    if (obj) {
-                        // update
-                        await obj.update({
-                            val: obj.val + value
-                        });
-                    } else {
-                        // insert
-                        await DBGuildUserStats.create({
-                            guild_id: guild.id,
-                            guild_user: user.user.id,
-                            stat: stat,
-                            val: value,
-                        });
-                    }
-
-                    resolve(true);
-                }).catch(e => {
-                    console.error('Error while saving guild setting:', e);
-                    resolve(false);
-                });
-        });
-    }
 
 
 
@@ -456,50 +309,50 @@ export default class BahamutDBHandler {
 }
 
 // Sequelize DB Types
-class DBGuildStats extends Model<InferAttributes<DBGuildStats>, InferCreationAttributes<DBGuildStats>> {
+export class DBGuildStats extends Model<InferAttributes<DBGuildStats>, InferCreationAttributes<DBGuildStats>> {
     declare guild_id: string;
     declare stat: string;
     declare val: number;
     declare updatedAt: CreationOptional<Date>;
 }
-class DBGuildSettings extends Model<InferAttributes<DBGuildSettings>, InferCreationAttributes<DBGuildSettings>> {
+export class DBGuildSettings extends Model<InferAttributes<DBGuildSettings>, InferCreationAttributes<DBGuildSettings>> {
     declare guild_id: string;
     declare setting: string;
     declare val: string;
     declare val_type: string;
 }
-class DBGuildCharacters extends Model<InferAttributes<DBGuildCharacters>, InferCreationAttributes<DBGuildCharacters>> {
+export class DBGuildCharacters extends Model<InferAttributes<DBGuildCharacters>, InferCreationAttributes<DBGuildCharacters>> {
     declare guild_id: string;
     declare guild_user: string;
     declare lodestone_char: string;
 }
-class DBGuildUserLevels extends Model<InferAttributes<DBGuildUserLevels>, InferCreationAttributes<DBGuildUserLevels>> {
+export class DBGuildUserLevels extends Model<InferAttributes<DBGuildUserLevels>, InferCreationAttributes<DBGuildUserLevels>> {
     declare guild_id: string;
     declare guild_user: string;
     declare user_xp: number;
     declare user_level: number;
     declare updatedAt: CreationOptional<Date>;
 }
-class DBGuildUserStats extends Model<InferAttributes<DBGuildUserStats>, InferCreationAttributes<DBGuildUserStats>> {
+export class DBGuildUserStats extends Model<InferAttributes<DBGuildUserStats>, InferCreationAttributes<DBGuildUserStats>> {
     declare guild_id: string;
     declare guild_user: string;
     declare stat: string;
     declare val: number;
     declare updatedAt: CreationOptional<Date>;
 }
-class DBGuildPlaylists extends Model<InferAttributes<DBGuildPlaylists>, InferCreationAttributes<DBGuildPlaylists>> {
+export class DBGuildPlaylists extends Model<InferAttributes<DBGuildPlaylists>, InferCreationAttributes<DBGuildPlaylists>> {
     declare id: string;
     declare guild_id: string;
     declare name: string;
 }
-class DBGuildSongs extends Model<InferAttributes<DBGuildSongs>, InferCreationAttributes<DBGuildSongs>> {
+export class DBGuildSongs extends Model<InferAttributes<DBGuildSongs>, InferCreationAttributes<DBGuildSongs>> {
     declare id: string;
     declare playlist_id: string;
     declare name: string;
     declare link: string;
     declare runtime: number;
 }
-class DBGuildCommandLog extends Model<InferAttributes<DBGuildCommandLog>, InferCreationAttributes<DBGuildCommandLog>> {
+export class DBGuildCommandLog extends Model<InferAttributes<DBGuildCommandLog>, InferCreationAttributes<DBGuildCommandLog>> {
     declare entry_id: string;
     declare guild_id: string;
     declare guild_user: string;

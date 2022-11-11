@@ -22,7 +22,7 @@ const addLevelRole = async (client: BahamutClient, guild: Discord.Guild, level: 
         return false;
     }
 
-    if (await client.bahamut.dbHandler.setDBGuildSetting(guild, 'user_level_roles', JSON.stringify(groups))) {
+    if (await client.bahamut.dbHandler.guildSettings.setDBGuildSetting(guild, 'user_level_roles', JSON.stringify(groups))) {
         return true;
     }
     else {
@@ -51,7 +51,7 @@ const removeLevelRole = async (client: BahamutClient, guild: Discord.Guild, leve
         return false;
     }
 
-    if (await client.bahamut.dbHandler.setDBGuildSetting(guild, 'user_level_roles', JSON.stringify(groups))) {
+    if (await client.bahamut.dbHandler.guildSettings.setDBGuildSetting(guild, 'user_level_roles', JSON.stringify(groups))) {
         return role;
     }
     else {

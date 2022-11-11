@@ -247,7 +247,7 @@ export default class LavaManager {
 
             // Apply filter if enabled
 
-            if (typeof track.requester !== "undefined") await this._bahamut.dbHandler.addDBGuildUserStat(textChannel.guild, track.requester as GuildMember, "played_songs", 1);
+            if (typeof track.requester !== "undefined") await this._bahamut.dbHandler.guildUserStat.addDBGuildUserStat(textChannel.guild, track.requester as GuildMember, "played_songs", 1);
 
             await handleResponseToChannel(this._bahamut.client, textChannel, (await this.getPlaySongEmbed(textChannel, player, track, track.requester as GuildMember)))
         });

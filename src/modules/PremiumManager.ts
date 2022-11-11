@@ -178,8 +178,8 @@ export default class PremiumManager {
         if (settings.premium_user === user) return null;
         if (settings.premium_user !== null && settings.premium_user !== user) return false;
 
-        await this._bahamut.dbHandler.setDBGuildSetting(guild, 'premium_user', user);
-        this._bahamut.settings.set(guild.id, await this._bahamut.dbHandler.getDBGuildSettings(guild));
+        await this._bahamut.dbHandler.guildSettings.setDBGuildSetting(guild, 'premium_user', user);
+        this._bahamut.settings.set(guild.id, await this._bahamut.dbHandler.guildSettings.getDBGuildSettings(guild));
 
         return true;
     };
@@ -235,7 +235,7 @@ export default class PremiumManager {
         if (settings.premium_user === null && !force) return false;
 
         try {
-            await this._bahamut.dbHandler.deleteDBGuildSetting(guild, 'premium_user');
+            await this._bahamut.dbHandler.guildSettings.deleteDBGuildSetting(guild, 'premium_user');
             this._bahamut.settings.set(guild.id, await getGuildSettings(this._bahamut.client, guild));
             return true;
         } catch (ex) {
