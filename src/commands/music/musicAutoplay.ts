@@ -9,8 +9,9 @@ import {
     handleErrorResponseToMessage,
     handleResponseToMessage
 } from "../../lib/messageHandlers";
+import {CommandConfig} from "../../../typings";
 
-const config = {
+const config: CommandConfig = {
     name: 'autoplay',
     aliases: ['ap', 'auto'],
     type: CommandType.LEGACY,
@@ -49,7 +50,7 @@ export default {
         if (settings.disabled_categories.includes('music')) return;
 
         if (!await client.bahamut.musicHandler.isChannelMusicChannel(channel)) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, await client.bahamut.musicHandler.getChannelNotMusicChannelMessage(message));
-        if (!await client.bahamut.musicHandler.userHasDJRights(member, channel.guild)) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, client.bahamut.musicHandler.getUserNoDJPermMessage(message));
+        if (!await client.bahamut.musicHandler.userHasDJRights(member, channel.guild)) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, client.bahamut.musicHandler.getUserNoDJPermMessage());
 
         let autoplay = false;
 

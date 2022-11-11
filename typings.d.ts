@@ -2,6 +2,7 @@ import {Guild} from "discord.js";
 import UplinkAPIHandler from "./src/modules/UplinkAPIHandler.js";
 import BahamutShardingManager from "./src/modules/BahamutShardingManager.js";
 import {Track} from "erela.js";
+import {CommandObject} from "wokcommands";
 
 export interface StartupMessage {
     type: string | null;
@@ -150,6 +151,10 @@ export type FileData = {
     filePath: string;
     fileContents: any;
 };
+
+export interface CommandConfig extends Omit<CommandObject, "callback"> {
+    category: string;
+}
 
 
 export interface GuildSettings {

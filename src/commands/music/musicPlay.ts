@@ -7,8 +7,9 @@ import {
     createMissingPermErrorResponse,
     handleErrorResponseToMessage
 } from "../../lib/messageHandlers";
+import {CommandConfig} from "../../../typings";
 
-const config = {
+const config: CommandConfig = {
     name: 'play',
     aliases: ['p'],
     type: CommandType.LEGACY,

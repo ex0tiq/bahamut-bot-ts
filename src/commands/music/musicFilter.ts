@@ -9,8 +9,9 @@ import {
     handleResponseToMessage,
     handleSuccessResponseToMessage
 } from "../../lib/messageHandlers";
+import {CommandConfig} from "../../../typings";
 
-const config = {
+const config: CommandConfig = {
     name: 'filter',
     aliases: ['fil', 'flt'],
     type: CommandType.LEGACY,

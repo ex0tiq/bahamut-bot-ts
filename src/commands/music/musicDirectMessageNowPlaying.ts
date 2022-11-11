@@ -9,11 +9,11 @@ import {
     handleErrorResponseToMessage, handleResponseToMessage,
     handleSuccessResponseToMessage
 } from "../../lib/messageHandlers";
-import {ExtendedTrack} from "../../../typings";
+import {CommandConfig, ExtendedTrack} from "../../../typings";
 // No ES import support
 const radio = require('node-internet-radio');
 
-const config = {
+const config: CommandConfig = {
     name: 'dmnowplaying',
     aliases: ['dmnp'],
     type: CommandType.LEGACY,
