@@ -2,7 +2,7 @@ import Discord from "discord.js";
 //const { handleBotMessage, constructMessageEmbed } = require('../lib/messageConstructors');
 import emoji from "node-emoji";
 import BahamutClient from "../modules/BahamutClient.js";
-import {CommandType} from "wokcommands";
+import {CommandType, CooldownTypes} from "wokcommands";
 import {handleResponseToMessage} from "../lib/messageHandlers";
 
 const config = {
@@ -10,7 +10,10 @@ const config = {
     type: CommandType.LEGACY,
     description: 'Get infos about the bot',
     category: 'System',
-    cooldown: '10s',
+    cooldowns: {
+        type: CooldownTypes.perUserPerGuild,
+        duration: "10 s"
+    },
     guildOnly: true,
     testOnly: false,
     deferReply: true

@@ -1,4 +1,4 @@
-import {CommandType} from "wokcommands";
+import {CommandType, CooldownTypes} from "wokcommands";
 import BahamutClient from "../modules/BahamutClient";
 import Discord from "discord.js";
 import {
@@ -8,8 +8,9 @@ import {
 } from "../lib/messageHandlers";
 import {getGuildSettings} from "../lib/getFunctions";
 import {resolveUser} from "../lib/resolveFunctions";
+import {CommandConfig} from "../../typings";
 
-const config = {
+const config: CommandConfig = {
     name: 'premium',
     aliases: ['shard'],
     type: CommandType.BOTH,
@@ -20,7 +21,7 @@ const config = {
         {
             name: 'option',
             description: 'Configure premium options.',
-            type: 3,
+            type: Discord.ApplicationCommandOptionType.String,
             required: false,
             choices: [
                 {
@@ -43,7 +44,10 @@ const config = {
         }
     ],
     category: 'System',
-    cooldown: '10s',
+    cooldowns: {
+        type: CooldownTypes.perUserPerGuild,
+        duration: "10 s"
+    },
     guildOnly: true,
     testOnly: false,
     deferReply: true

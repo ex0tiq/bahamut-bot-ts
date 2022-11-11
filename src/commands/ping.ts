@@ -1,4 +1,4 @@
-import {CommandType} from "wokcommands";
+import {CommandType, CooldownTypes} from "wokcommands";
 import Discord from "discord.js";
 import {handleResponseToMessage} from "../lib/messageHandlers";
 import BahamutClient from "../modules/BahamutClient";
@@ -9,7 +9,10 @@ const config = {
     type: CommandType.LEGACY,
     description: 'It like... Pings. Then Pongs. And it\'s not Ping Pong.',
     category: 'Miscellaneous',
-    cooldown: '10s',
+    cooldowns: {
+        type: CooldownTypes.perUserPerGuild,
+        duration: "10 s"
+    },
     guildOnly: true,
     testOnly: false,
     deferReply: true

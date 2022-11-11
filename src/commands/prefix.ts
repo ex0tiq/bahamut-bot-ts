@@ -7,7 +7,7 @@ import {
 import Discord from "discord.js";
 import BahamutClient from "../modules/BahamutClient";
 import {getGuildSettings} from "../lib/getFunctions";
-import {CommandType} from "wokcommands";
+import {CommandType, CooldownTypes} from "wokcommands";
 import {isUserAdminOfGuild} from "../lib/checkFunctions";
 
 const config = {
@@ -20,12 +20,15 @@ const config = {
         {
             name: 'prefix',
             description: 'Set the new bot prefix for this server.',
-            type: 3,
+            type: Discord.ApplicationCommandOptionType.String,
             required: false,
         }
     ],
     category: 'System',
-    cooldown: '10s',
+    cooldowns: {
+        type: CooldownTypes.perUserPerGuild,
+        duration: "10 s"
+    },
     guildOnly: true,
     testOnly: false,
     deferReply: true
