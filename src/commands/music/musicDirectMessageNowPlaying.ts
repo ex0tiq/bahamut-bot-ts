@@ -6,8 +6,8 @@ import BahamutClient from "../../modules/BahamutClient";
 import Discord from "discord.js";
 import {getGuildSettings} from "../../lib/getFunctions";
 import {
-    handleErrorResponseToMessage,
-    handleResponseToMessage, handleSuccessResponseToMessage
+    handleErrorResponseToMessage, handleResponseToMessage,
+    handleSuccessResponseToMessage
 } from "../../lib/messageHandlers";
 import {ExtendedTrack} from "../../../typings";
 // No ES import support
@@ -43,12 +43,12 @@ module.exports = {
             textChannel: channel.id,
         });
 
-        if (!player.playing) return handleResponseToMessage(client, message || interaction, false, config.deferReply, 'There is nothing playing at the moment!');
+        if (!player.playing) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'There is nothing playing at the moment!');
 
         let track = player.queue.current,
             running_time = formatDuration(player.position);
 
-        if (!track) return handleResponseToMessage(client, message || interaction, false, config.deferReply, 'Error fetching playing song! Please try again later.');
+        if (!track) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'Error fetching playing song! Please try again later.');
 
         const full_time = formatDuration(track.duration!);
 
@@ -94,7 +94,7 @@ module.exports = {
 
             if (!res) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'Error while fetching now playing data. Please try again later.');
 
-            handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, {embeds: [res]}, undefined, true).then(async() => {
+            handleResponseToMessage(client, message || interaction, false, config.deferReply, {embeds: [res]}, undefined, true).then(async() => {
                 await handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, "Message sent!");
             }).catch(async() => {
                 await handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Error sending private message.\n\nPlease check if you allow users of this server to send private messages to you.`);
@@ -118,7 +118,7 @@ module.exports = {
             // Add status fields
             embed = await client.bahamut.musicHandler.musicStatus(player, embed);
 
-            handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, {embeds: [embed]}, undefined, true).then(async() => {
+            handleResponseToMessage(client, message || interaction, false, config.deferReply, {embeds: [embed]}, undefined, true).then(async() => {
                 await handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, "Message sent!");
             }).catch(async() => {
                 await handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Error sending private message.\n\nPlease check if you allow users of this server to send private messages to you.`);
