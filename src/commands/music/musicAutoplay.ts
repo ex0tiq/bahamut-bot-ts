@@ -54,7 +54,7 @@ export default {
             { type: PreCheckType.USER_IS_DJ },
             { type: PreCheckType.CHANNEl_IS_MUSIC_CHANNEL },
         ]);
-        if (!(await checks.runChecks())) return;
+        if (await checks.runChecks()) return;
 
         let autoplay = false;
 

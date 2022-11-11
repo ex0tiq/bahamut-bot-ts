@@ -118,7 +118,7 @@ export class BahamutCommandPreChecker {
             } else if (check.type === PreCheckType.ALL_PARAMS_PROVIDED) {
                 if (!check.paramsCheck) {
                     error = true;
-                    return handleErrorResponseToMessage(
+                    await handleErrorResponseToMessage(
                         this._client,
                         this._command.message || this._command.interaction,
                         false, this._commandConf.deferReply,
@@ -127,14 +127,14 @@ export class BahamutCommandPreChecker {
                 }
             }
 
-            if (error) return false;
+            if (error) return error;
         }
 
         return error;
     }
 
     private botHasPerm = (perm: bigint) => {
-        return !this._command.channel!.guild.members.me!.permissions.has(perm);
+        return this._command.channel!.guild.members.me!.permissions.has(perm);
     }
 }
 

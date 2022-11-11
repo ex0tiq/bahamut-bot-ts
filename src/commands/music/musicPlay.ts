@@ -63,10 +63,10 @@ export default {
                     {bitField: Discord.PermissionFlagsBits.Speak, name: "SPEAK"}
                 ]
             },
-            {type: PreCheckType.ALL_PARAMS_PROVIDED, paramsCheck: !(search)},
+            {type: PreCheckType.ALL_PARAMS_PROVIDED, paramsCheck: !!(search)},
             {type: PreCheckType.MUSIC_NODES_AVAILABLE}
         ]);
-        if (!(await checks.runChecks())) return;
+        if (await checks.runChecks()) return;
 
         let res;
 

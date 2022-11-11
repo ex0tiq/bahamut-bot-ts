@@ -72,7 +72,7 @@ module.exports = {
             { type: PreCheckType.USER_IN_SAME_VOICE_CHANNEL_AS_BOT },
             { type: PreCheckType.MUSIC_NODES_AVAILABLE }
         ]);
-        if (!(await checks.runChecks())) return;
+        if (await checks.runChecks()) return;
 
         const filters = client.bahamut.musicHandler.filters;
         let filterText = '';

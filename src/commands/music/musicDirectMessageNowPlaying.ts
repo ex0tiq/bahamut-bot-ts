@@ -40,7 +40,7 @@ module.exports = {
         const checks = new BahamutCommandPreChecker(client, { client, message, channel, interaction }, config, [
             { type: PreCheckType.MUSIC_NODES_AVAILABLE }
         ]);
-        if (!(await checks.runChecks())) return;
+        if (await checks.runChecks()) return;
 
         const player = client.bahamut.musicHandler.manager.create({
             guild: channel.guild.id,
