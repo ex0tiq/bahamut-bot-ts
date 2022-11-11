@@ -7,7 +7,7 @@ import {getGuildSettings} from "../../lib/getFunctions";
 import {BahamutCommandPreChecker, PreCheckType} from "../../modules/BahamutCommandPreChecker";
 import {
     handleErrorResponseToMessage,
-    handleResponseToMessage
+    handleSuccessResponseToMessage
 } from "../../lib/messageHandlers";
 
 const config: CommandConfig = {
@@ -58,6 +58,6 @@ module.exports = {
 
         player.seek(0);
 
-        return handleResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get('repeat')} Current track has been restarted!`);
+        return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get('repeat')} Current track has been restarted!`);
     },
 };

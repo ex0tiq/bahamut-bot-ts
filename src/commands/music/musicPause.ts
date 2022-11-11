@@ -5,7 +5,10 @@ import BahamutClient from "../../modules/BahamutClient";
 import Discord from "discord.js";
 import {getGuildSettings} from "../../lib/getFunctions";
 import {BahamutCommandPreChecker, PreCheckType} from "../../modules/BahamutCommandPreChecker";
-import {handleErrorResponseToMessage, handleResponseToMessage} from "../../lib/messageHandlers";
+import {
+    handleErrorResponseToMessage,
+    handleSuccessResponseToMessage
+} from "../../lib/messageHandlers";
 
 const config: CommandConfig = {
     name: 'pause',
@@ -46,6 +49,6 @@ export default {
 
         player.pause(true);
 
-        return handleResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get('pause_button')} Playback has been paused!`);
+        return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get('pause_button')} Playback has been paused!`);
     },
 };

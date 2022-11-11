@@ -8,7 +8,7 @@ import {BahamutCommandPreChecker, PreCheckType} from "../../modules/BahamutComma
 import {
     createMissingParamsErrorResponse,
     handleErrorResponseToMessage,
-    handleResponseToMessage
+    handleSuccessResponseToMessage
 } from "../../lib/messageHandlers";
 
 const config: CommandConfig = {
@@ -91,6 +91,6 @@ export default {
 
         stringMode = mode ? mode == 2 ? 'Repeat queue' : 'Repeat song' : 'Off';
 
-        return handleResponseToMessage(client, message || interaction, false, config.deferReply, `${mode == 1 ? emoji.get('repeat_one') : emoji.get('repeat')} Repeat mode set to \`${stringMode}\`!`);
+        return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${mode == 1 ? emoji.get('repeat_one') : emoji.get('repeat')} Repeat mode set to \`${stringMode}\`!`);
     },
 };

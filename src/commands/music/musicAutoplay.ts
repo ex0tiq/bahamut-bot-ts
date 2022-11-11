@@ -7,7 +7,7 @@ import {
     createMissingParamsErrorResponse,
     createSuccessResponse,
     handleErrorResponseToMessage,
-    handleResponseToMessage
+    handleResponseToMessage, handleSuccessResponseToMessage
 } from "../../lib/messageHandlers";
 import {CommandConfig} from "../../../typings";
 import {BahamutCommandPreChecker, PreCheckType} from "../../modules/BahamutCommandPreChecker";
@@ -88,7 +88,7 @@ export default {
         if (await client.bahamut.dbHandler.setDBGuildSetting(channel.guild, 'music_autoplay', args[0].toLowerCase() === 'on')) {
             client.bahamut.settings.set(channel.guild.id, await client.bahamut.dbHandler.getDBGuildSettings(channel.guild));
 
-            return handleResponseToMessage(client, message || interaction, false, config.deferReply, `${autoplay ? emoji.get('white_check_mark') : emoji.get('x')} Autoplay has been ${autoplay ? 'enabled' : 'disabled'}!`);
+            return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${autoplay ? emoji.get('white_check_mark') : emoji.get('x')} Autoplay has been ${autoplay ? 'enabled' : 'disabled'}!`);
         }
         else {
             return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'Error while updating the Prefix. Please try again later!');
