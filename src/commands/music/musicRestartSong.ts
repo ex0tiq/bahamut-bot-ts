@@ -20,7 +20,7 @@ const config: CommandConfig = {
     testOnly: false,
 };
 
-module.exports = {
+export default {
     ...config,
     callback: async ({
                          client,
