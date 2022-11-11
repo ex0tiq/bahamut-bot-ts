@@ -1,0 +1,237 @@
+import emoji from 'node-emoji';
+import {CommandConfig} from "../../../typings";
+import {formatDuration} from '../../lib/durationFunctions';
+import {CommandType} from "wokcommands";
+import BahamutClient from "../../modules/BahamutClient";
+import Discord from "discord.js";
+import {getGuildSettings} from "../../lib/getFunctions";
+import {BahamutCommandPreChecker, PreCheckType} from "../../modules/BahamutCommandPreChecker";
+import {
+    createMissingParamsErrorResponse,
+    handleErrorResponseToMessage,
+    handleResponseToMessage
+} from "../../lib/messageHandlers";
+
+const config: CommandConfig = {
+    name: 'queue',
+    aliases: ['q'],
+    type: CommandType.LEGACY,
+    description: 'Show the current music queue.',
+    minArgs: 0,
+    expectedArgs: '[option] [pos 1] [pos 2]',
+    options: [
+        {
+            name: 'page-or-action',
+            description: 'Page of queue or queue action (see /help for all possible actions).',
+            type: 3,
+            required: false
+        },
+        {
+            name: 'position-1',
+            description: 'First position.',
+            type: 4,
+            required: false
+        },
+        {
+            name: 'position-2',
+            description: 'Second position.',
+            type: 4,
+            required: false
+        }
+    ],
+    category: 'Music',
+    guildOnly: true,
+    testOnly: false,
+    deferReply: true
+};
+
+export default {
+    ...config,
+    callback: async ({
+                         client,
+                         message,
+                         channel,
+                         member,
+                         args,
+                         interaction
+                     }: { client: BahamutClient, message: Discord.Message, channel: Discord.TextChannel, member: Discord.GuildMember, args: string[], interaction: Discord.CommandInteraction }) => {
+        const settings = await getGuildSettings(client, channel.guild);
+        // Abort if module is disabled
+        if (settings.disabled_categories.includes('music')) return;
+
+        const checks = new BahamutCommandPreChecker(client, {
+            client,
+            message,
+            channel,
+            args,
+            member,
+            interaction
+        }, config, [
+            {type: PreCheckType.CHANNEl_IS_MUSIC_CHANNEL},
+            {type: PreCheckType.MUSIC_NODES_AVAILABLE}
+        ]), djCheck = new BahamutCommandPreChecker(client, {
+            client,
+            message,
+            channel,
+            args,
+            member,
+            interaction
+        }, config, [
+            {type: PreCheckType.USER_IS_DJ}
+        ]);
+        if (await checks.runChecks()) return;
+
+        const player = client.bahamut.musicHandler.manager.create({
+            guild: channel.guild.id,
+            textChannel: channel.id,
+        });
+
+        const musicPlayingCheck = new BahamutCommandPreChecker(client, { client, message, channel, interaction }, config, [
+            { type: PreCheckType.MUSIC_IS_PLAYING, player: player }
+        ]);
+        if (await musicPlayingCheck.runChecks()) return;
+
+        let max_page = 1;
+        if (player.queue.length > 11) max_page = Math.ceil((player.queue.length - 1) / 10);
+
+        if (args.length === 0 || (args.length === 1 && parseInt(args[0]))) {
+            let page = 1;
+
+            if (args.length > 0) {
+                try {
+                    page = parseInt(args[0]);
+                }
+                catch(e) {
+                    page = 1;
+                }
+            }
+
+            if (page > max_page) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `The current queue only has \`${max_page}\` pages!`);
+
+            const from = ((page === 1) ? 0 : ((page * 10) - 10));
+            const to = (page * 10);
+            let queueString = '';
+            for(let i = from; i < ((page != max_page) ? to : player.queue.size); i++) {
+                queueString += `\`${i + 1}\` [${player.queue[i].title}](${player.queue[i].uri}) \`[${formatDuration(player.queue[i].duration!)}]\` ${player.queue[i].requester}${player.queue[i].isStream ? ` ${emoji.get('radio')}` : ` ${emoji.get('musical_note')}`}\n`;
+            }
+
+            let embed = new Discord.EmbedBuilder()
+                .setTitle(`${emoji.get('page_facing_up')}  Music Queue`)
+                .setDescription(`**Now Playing**\n${player.queue.current!.isStream ? `${emoji.get('radio')} ` : `${emoji.get('musical_note')} `}[${player.queue.current!.title}](${player.queue.current!.uri})\n\n**Up Next**\n${player.queue.size >= 1 ? queueString : 'Nothing'}`)
+                .setFields(
+                    { name: "Entries", value: '' + player.queue.size, inline: true },
+                    { name: "Total Duration", value: (player.queue.current!.isStream ? '∞' : formatDuration(player.queue.duration)), inline: true },
+                    { name: "\u200B", value: "\u200B", inline: true }
+                )
+                .setFooter({text: `Page ${page}/${max_page}`})
+
+            // Add status fields
+            embed = await client.bahamut.musicHandler.musicStatus(player, embed);
+
+            return handleResponseToMessage(client, message || interaction, false, config.deferReply, {embeds: [embed]});
+        }
+        else if (args.length === 1) {
+            if (['clear', 'cls', 'delall', 'remall', 'rma'].includes(args[0].toLowerCase())) {
+                if (await djCheck.runChecks()) return;
+
+                const size = player.queue.size;
+
+                player.queue.clear();
+
+                return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
+                    embeds: [
+                        new Discord.EmbedBuilder()
+                            .setTitle(`${emoji.get('page_facing_up')}  Music Queue`)
+                            .setDescription(`${emoji.get('white_check_mark')} Successfully cleared \`${size}\` entries from the queue!`)
+                    ]
+                });
+            }
+            else {
+                return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, createMissingParamsErrorResponse(client, config));
+            }
+        }
+        else if (args.length === 2) {
+            if (['remove', 'delete', 'rm', 'rmv', 'del'].includes(args[0].toLowerCase())) {
+                if (await djCheck.runChecks()) return;
+
+                if (!parseInt(args[1])) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Second parameter must be a number between \`1\` and \`${player.queue.size}\`!`);
+                if ((player.queue.size) < (parseInt(args[1]) - 1) || (parseInt(args[1]) - 1) < 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Second parameter must be a number between \`1\` and \`${player.queue.size}\`!`);
+
+                try {
+                    player.queue.remove(parseInt(args[1]) - 1);
+
+                    return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
+                        embeds: [
+                            new Discord.EmbedBuilder()
+                                .setTitle(`${emoji.get('page_facing_up')}  Music Queue`)
+                                .setDescription(`${emoji.get('white_check_mark')} Successfully removed queue item at position \`${args[1]}\`!\n${emoji.get('arrow_right')} \`${player.queue.size}\` entries remaining!`)
+                        ]
+                    })
+                }
+                catch (e) {
+                    console.error("Error while removing queue item:", e);
+                    return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Error removing queue item at position \`${args[1]}\`!`);
+                }
+            }
+            else if (['jump', 'goto'].includes(args[0].toLowerCase())) {
+                if (await djCheck.runChecks()) return;
+
+                let id;
+                try {
+                    id = parseInt(args[1]);
+                }
+                catch (e) {
+                    id = -1;
+                }
+
+                if (id > 0) {
+                    if (player.queue.size < id || id > player.queue.size) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Second parameter must be a number between \`1\` and \`${player.queue.size}\`!`);
+
+                    for (let i = 0; i < (id - 1); i++) {
+                        player.queue.remove(0);
+                    }
+
+                    player.stop();
+
+                    return handleResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get('twisted_rightwards_arrows')} Jumped to song number \`${id}\` in the queue!`);
+                }
+                else {
+                    return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'Invalid id provided, please check the queue for all available songs!');
+                }
+            }
+            else {
+                return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, createMissingParamsErrorResponse(client, config));
+            }
+        }
+        else if (args.length === 3) {
+            if (['move', 'mv'].includes(args[0].toLowerCase())) {
+                if (await djCheck.runChecks()) return;
+                if (!parseInt(args[1]) || !parseInt(args[2])) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Second and third parameter must be numbers between \`1\` and \`${player.queue.size}\` and can't be the same!`);
+                if ((((player.queue.size) < (parseInt(args[1]) - 1) || (parseInt(args[1]) - 1) < 0) || ((player.queue.size) < (parseInt(args[2]) - 1) || (parseInt(args[2]) - 1) < 0)) || ((parseInt(args[2]) - 1) === (parseInt(args[1]) - 1)))
+                    return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Second and third parameter must be numbers between \`1\` and \`${player.queue.size}\` and can't be the same!`);
+
+                try {
+                    const track = player.queue[parseInt(args[1]) - 1];
+
+                    player.queue.remove(parseInt(args[1]) - 1);
+                    player.queue.add(track, parseInt(args[2]) - 1);
+
+                    return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
+                        embeds: [
+                            new Discord.EmbedBuilder()
+                                .setTitle(`${emoji.get('page_facing_up')}  Music Queue`)
+                                .setDescription(`${emoji.get('white_check_mark')} Successfully moved queue item \`${args[1]}\` to position \`${args[2]}\`!`)
+                        ]
+                    })
+                }
+                catch (e) {
+                    console.error(`Error swapping queue items:`, e);
+                    return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Error swapping items at positions \`${args[1]}\` and \`${args[2]}\`!`);
+                }
+            }
+            else {
+                return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, createMissingParamsErrorResponse(client, config));
+            }
+        }
+    },
+};
