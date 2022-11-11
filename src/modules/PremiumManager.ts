@@ -108,7 +108,7 @@ export default class PremiumManager {
 
         // Delete
         let data = (await this._bahamut.client.shard?.broadcastEval((_client, obj) => {
-            return this.disablePremiumGuild(obj.guildId, obj.userId);
+            return this._bahamut.premiumHandler.disablePremiumGuild(obj.guildId, obj.userId);
         }, { context: { guildId: guild.id, userId: member.user.id } }));
         data = (Array.isArray(data) ? data.filter((e) => (e !== null)) : data);
         let resdata = (Array.isArray(data) && data.length === 1) ? data[0] : data;
@@ -198,7 +198,7 @@ export default class PremiumManager {
         }
 
         let data = (await this._bahamut.client.shard?.broadcastEval((_client, obj) => {
-            return this.disablePremiumGuild(obj.guildId, obj.userId);
+            return this._bahamut.premiumHandler.disablePremiumGuild(obj.guildId, obj.userId);
         }, { context: { guildId: guild.id, userId: user.user.id } }));
         data = (Array.isArray(data) ? data.filter((e) => (e !== null)) : data);
         let resdata = (Array.isArray(data) && data.length === 1) ? data[0] : data,
