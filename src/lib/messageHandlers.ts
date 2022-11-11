@@ -18,7 +18,7 @@ const handleResponseToMessage = async(
     client: BahamutClient,
     initMessage: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse,
     overwriteInitMessage: boolean = false,
-    deferReply: string | boolean,
+    deferReply: "ephemeral" | boolean = "ephemeral",
     newMessageContent: HandleMessageOptions | string,
     deleteOptions?: MessageDeleteOptions,
     sendToAuthor?: boolean
@@ -64,7 +64,7 @@ const handleErrorResponseToMessage = async(
     client: BahamutClient,
     initMessage: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse,
     overwriteInitMessage: boolean = false,
-    deferReply: string | boolean,
+    deferReply: "ephemeral" | boolean = "ephemeral",
     newMessageContent: HandleMessageOptions | string,
     deleteOptions?: MessageDeleteOptions,
     sendToUser?: boolean
@@ -144,7 +144,7 @@ const handleSuccessResponseToMessage = async (
     client: BahamutClient,
     initMessage: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse,
     overwriteInitMessage: boolean = false,
-    deferReply: string | boolean,
+    deferReply: "ephemeral" | boolean = "ephemeral",
     newMessageContent: HandleMessageOptions | string,
     deleteOptions?: MessageDeleteOptions,
     sendToAuthor?: boolean
