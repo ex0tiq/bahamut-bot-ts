@@ -58,7 +58,10 @@ export default {
                 textChannel: channel.id,
             });
 
-            if (!player.playing) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get('control_knobs')} There is nothing playing at the moment!`);
+            const musicPlayingCheck = new BahamutCommandPreChecker(client, { client, message, channel, interaction }, config, [
+                { type: PreCheckType.MUSIC_IS_PLAYING, player: player }
+            ]);
+            if (await musicPlayingCheck.runChecks()) return;
             if (player.queue.current!.isStream) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'Lyrics cannot be searched for webstreams!');
 
             const search = await searchLyrics(client, GeniusClient, player.queue.current!.title);

@@ -87,6 +87,10 @@ module.exports = {
             textChannel: channel.id,
         });
 
+        const musicPlayingCheck = new BahamutCommandPreChecker(client, { client, message, channel, interaction }, config, [
+            { type: PreCheckType.MUSIC_IS_PLAYING, player: player }
+        ]);
+
         if (args.length <= 0) {
             if (message) await message.reactions.removeAll();
 
@@ -109,7 +113,7 @@ module.exports = {
                 });
             }
             if ((Object.keys(filters).includes(args[0].toLowerCase())) || args[0].toLowerCase() === 'off') {
-                if (!player.playing) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'There is nothing playing at the moment!');
+                if (await musicPlayingCheck.runChecks()) return;
                 if (!player.queue.current) return handleResponseToMessage(client, message || interaction, false, config.deferReply, 'There are no songs in the queue to apply a filter!');
 
                 if (['off', 'reset'].includes(args[0].toLowerCase())) {

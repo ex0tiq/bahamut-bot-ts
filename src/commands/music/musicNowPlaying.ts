@@ -48,7 +48,10 @@ export default {
             textChannel: channel.id,
         });
 
-        if (!player.playing) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'There is nothing playing at the moment!');
+        const musicPlayingCheck = new BahamutCommandPreChecker(client, { client, message, channel, interaction }, config, [
+            { type: PreCheckType.MUSIC_IS_PLAYING, player: player }
+        ]);
+        if (await musicPlayingCheck.runChecks()) return;
 
         let track = player.queue.current,
             running_time = formatDuration(player.position);

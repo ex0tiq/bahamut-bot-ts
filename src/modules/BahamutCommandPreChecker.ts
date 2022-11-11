@@ -9,6 +9,7 @@ import {
     handleErrorResponseToMessage
 } from "../lib/messageHandlers";
 import {getGuildSettings} from "../lib/getFunctions";
+import {Player} from "erela.js";
 
 export class BahamutCommandPreChecker {
     // Bahamut Client
@@ -125,6 +126,16 @@ export class BahamutCommandPreChecker {
                         createMissingParamsErrorResponse(this._client, this._commandConf)
                     );
                 }
+            } else if (check.type === PreCheckType.MUSIC_IS_PLAYING) {
+                if (!check.player || !check.player.playing) {
+                    error = true;
+                    await handleErrorResponseToMessage(
+                        this._client,
+                        this._command.message || this._command.interaction,
+                        false, this._commandConf.deferReply,
+                        check.customErrorMessage ? check.customErrorMessage : 'There is nothing playing at the moment!'
+                    );
+                }
             }
 
             if (error) return error;
@@ -142,7 +153,8 @@ export interface PreCheck {
     type: PreCheckType,
     customErrorMessage?: string,
     requiredPermissions?: UserPermission[],
-    paramsCheck?: boolean
+    paramsCheck?: boolean,
+    player?: Player
 }
 
 export interface UserPermission {
@@ -158,5 +170,6 @@ export enum PreCheckType {
     USER_IN_VOICE_CHANNEL = "USER_IN_VOICE_CHANNEL",
     USER_IN_SAME_VOICE_CHANNEL_AS_BOT = "USER_IN_SAME_VOICE_CHANNEL_AS_BOT",
     MUSIC_NODES_AVAILABLE = "MUSIC_NODES_AVAILABLE",
-    ALL_PARAMS_PROVIDED = "ALL_PARAMS_PROVIDED"
+    ALL_PARAMS_PROVIDED = "ALL_PARAMS_PROVIDED",
+    "MUSIC_IS_PLAYING" = "MUSIC_IS_PLAYING"
 }
