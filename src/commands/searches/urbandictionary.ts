@@ -24,7 +24,7 @@ const config: CommandConfig = {
         {
             name: 'search-term',
             description: 'Search term.',
-            type: 3,
+            type: Discord.ApplicationCommandOptionType.String,
             required: true
         }
     ],

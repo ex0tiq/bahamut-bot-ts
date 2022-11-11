@@ -6,10 +6,7 @@ import BahamutClient from "../../modules/BahamutClient";
 import Discord from "discord.js";
 import {getGuildSettings} from "../../lib/getFunctions";
 import {BahamutCommandPreChecker, PreCheckType} from "../../modules/BahamutCommandPreChecker";
-import {
-    handleErrorResponseToMessage,
-    handleSuccessResponseToMessage
-} from "../../lib/messageHandlers";
+import {handleErrorResponseToMessage, handleSuccessResponseToMessage} from "../../lib/messageHandlers";
 
 const config: CommandConfig = {
     name: 'seek',
@@ -20,7 +17,7 @@ const config: CommandConfig = {
         {
             name: 'seconds',
             description: 'Seek the current song to X seconds (can be prepended with + or -)',
-            type: 3,
+            type: Discord.ApplicationCommandOptionType.String,
             required: true
         }
     ],

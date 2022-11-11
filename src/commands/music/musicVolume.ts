@@ -8,7 +8,8 @@ import {BahamutCommandPreChecker, PreCheckType} from "../../modules/BahamutComma
 import {
     createMissingParamsErrorResponse,
     handleErrorResponseToMessage,
-    handleResponseToMessage, handleSuccessResponseToMessage
+    handleResponseToMessage,
+    handleSuccessResponseToMessage
 } from "../../lib/messageHandlers";
 
 const config: CommandConfig = {
@@ -21,7 +22,7 @@ const config: CommandConfig = {
         {
             name: 'volume-percent',
             description: 'Set volume percentage (1 to 100%).',
-            type: 4,
+            type: Discord.ApplicationCommandOptionType.Integer,
             minValue: 1,
             maxValue: 100,
             required: false

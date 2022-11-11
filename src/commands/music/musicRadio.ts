@@ -20,7 +20,7 @@ const config: CommandConfig = {
         {
             name: 'list-or-name',
             description: 'Set radio station (use "list" for a list of all available stations).',
-            type: 3,
+            type: Discord.ApplicationCommandOptionType.String,
             required: true
         }
     ],

@@ -23,19 +23,19 @@ const config: CommandConfig = {
         {
             name: 'page-or-action',
             description: 'Page of queue or queue action (see /help for all possible actions).',
-            type: 3,
+            type: Discord.ApplicationCommandOptionType.String,
             required: false
         },
         {
             name: 'position-1',
             description: 'First position.',
-            type: 4,
+            type: Discord.ApplicationCommandOptionType.Integer,
             required: false
         },
         {
             name: 'position-2',
             description: 'Second position.',
-            type: 4,
+            type: Discord.ApplicationCommandOptionType.Integer,
             required: false
         }
     ],

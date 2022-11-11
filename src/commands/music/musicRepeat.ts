@@ -21,7 +21,7 @@ const config: CommandConfig = {
         {
             name: 'mode',
             description: 'Set repeat mode.',
-            type: 3,
+            type: Discord.ApplicationCommandOptionType.String,
             required: true,
             choices: [
                 { name: "Queue", value: "queue" },

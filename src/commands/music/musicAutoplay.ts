@@ -7,7 +7,8 @@ import {
     createMissingParamsErrorResponse,
     createSuccessResponse,
     handleErrorResponseToMessage,
-    handleResponseToMessage, handleSuccessResponseToMessage
+    handleResponseToMessage,
+    handleSuccessResponseToMessage
 } from "../../lib/messageHandlers";
 import {CommandConfig} from "../../../typings";
 import {BahamutCommandPreChecker, PreCheckType} from "../../modules/BahamutCommandPreChecker";
@@ -22,7 +23,7 @@ const config: CommandConfig = {
         {
             name: 'state',
             description: 'Set autoplay on or off.',
-            type: 3,
+            type: Discord.ApplicationCommandOptionType.String,
             required: false,
             choices: [
                 {

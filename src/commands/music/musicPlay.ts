@@ -2,9 +2,7 @@ import Discord from 'discord.js';
 import {CommandType} from "wokcommands";
 import {getGuildSettings} from "../../lib/getFunctions";
 import BahamutClient from "../../modules/BahamutClient";
-import {
-    handleErrorResponseToMessage, handleResponseToMessage
-} from "../../lib/messageHandlers";
+import {handleErrorResponseToMessage, handleResponseToMessage} from "../../lib/messageHandlers";
 import {CommandConfig} from "../../../typings";
 import {BahamutCommandPreChecker, PreCheckType} from "../../modules/BahamutCommandPreChecker";
 
@@ -18,7 +16,7 @@ const config: CommandConfig = {
         {
             name: 'link-or-search',
             description: 'Link to or search for video.',
-            type: 3,
+            type: Discord.ApplicationCommandOptionType.String,
             required: true
         }
     ],

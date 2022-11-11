@@ -1,24 +1,35 @@
 
-import {CommandType} from "wokcommands";
+import {CommandType, CooldownTypes} from "wokcommands";
 import BahamutClient from "../../modules/BahamutClient";
 import Discord from "discord.js";
 import {getGuildSettings} from "../../lib/getFunctions";
 import {BahamutCommandPreChecker, PreCheckType} from "../../modules/BahamutCommandPreChecker";
 import {handleErrorResponseToMessage, handleResponseToMessage} from "../../lib/messageHandlers";
-import emoji from "node-emoji";
+import {CommandConfig} from "../../../typings";
 // Not ES compatible imports
 const Genius = require('genius-lyrics');
 
-const config = {
+const config: CommandConfig = {
     name: 'lyrics',
     aliases: ['ap', 'auto'],
     type: CommandType.LEGACY,
     testOnly: false,
     description: 'Get the lyrics to the currently playing song or search for another song',
     expectedArgs: '[song name]',
+    options: [
+        {
+            name: 'name',
+            description: 'Name of the song to search for.',
+            type: Discord.ApplicationCommandOptionType.String,
+            required: false
+        },
+    ],
     minArgs: 0,
     category: 'Music',
-    cooldown: '10s',
+    cooldowns: {
+        type: CooldownTypes.perUserPerGuild,
+        duration: "10 s"
+    },
     deferReply: true,
     guildOnly: true,
 };

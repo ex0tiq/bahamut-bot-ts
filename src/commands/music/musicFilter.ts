@@ -22,7 +22,7 @@ const config: CommandConfig = {
         {
             name: 'name',
             description: 'Set audio filter.',
-            type: 3,
+            type: Discord.ApplicationCommandOptionType.String,
             required: false,
             choices: (() => {
                 const choices = [];
@@ -36,7 +36,7 @@ const config: CommandConfig = {
         {
             name: 'intensity',
             description: 'Set filter intensity in % (this does not work for every filter).',
-            type: 4,
+            type: Discord.ApplicationCommandOptionType.Integer,
             required: false,
             minValue: 1,
             maxValue: 100
