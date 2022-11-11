@@ -13,7 +13,7 @@ const config: CommandConfig = {
     type: CommandType.SLASH,
     description: 'Manage music on this server.',
     options: (() => {
-        return allMusicCommands.filter(e => e.fileContents.type !== 'SLASH').map(e => {
+        return allMusicCommands.filter(e => e.fileContents.type !== CommandType.SLASH).map(e => {
             return {
                 name: e.fileContents.name,
                 type: 1,
