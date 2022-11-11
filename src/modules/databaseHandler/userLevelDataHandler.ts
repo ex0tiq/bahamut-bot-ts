@@ -41,7 +41,7 @@ export default class UserLevelDataHandler {
      * @param {Discord.User|string} user
      * @returns {Promise<null|*>}
      */
-    getDBGuildUserLevel = async(guild: Discord.Guild, user: Discord.GuildMember) => {
+    getDBGuildUserLevel = async(guild: Discord.Guild, user: Discord.GuildMember): Promise<number | null> => {
         const levelData = await this.getDBGuildUserLevelData(guild, user);
 
         if (levelData) return levelData.user_level;
@@ -54,7 +54,7 @@ export default class UserLevelDataHandler {
      * @param {Discord.User|string} user
      * @returns {Promise<null|*>}
      */
-    getDBGuildUserXp = async(guild: Discord.Guild, user: Discord.GuildMember) => {
+    getDBGuildUserXp = async(guild: Discord.Guild, user: Discord.GuildMember): Promise<number | null> => {
         const levelData = await this.getDBGuildUserLevelData(guild, user);
 
         if (levelData) return levelData.user_xp;
@@ -69,7 +69,7 @@ export default class UserLevelDataHandler {
      * @param {Number} level
      * @returns {Promise<boolean>}
      */
-    setDBGuildUserLevelData = async(guild: Discord.Guild, user: Discord.GuildMember, xp = 0, level = 1) => {
+    setDBGuildUserLevelData = async(guild: Discord.Guild, user: Discord.GuildMember, xp = 0, level = 1): Promise<boolean> => {
         return new Promise((resolve) => {
             return DBGuildUserLevels
                 .findOne({
@@ -109,7 +109,7 @@ export default class UserLevelDataHandler {
      * @param {Number} level
      * @returns {Promise<boolean>}
      */
-    setDBGuildUserLevel = async(guild: Discord.Guild, user: Discord.GuildMember, level = 1) => {
+    setDBGuildUserLevel = async(guild: Discord.Guild, user: Discord.GuildMember, level = 1): Promise<boolean> => {
         return new Promise((resolve) => {
             return DBGuildUserLevels
                 .findOne({
@@ -148,7 +148,7 @@ export default class UserLevelDataHandler {
      * @param {Number} xp
      * @returns {Promise<boolean>}
      */
-    setDBGuildUserXP = async(guild: Discord.Guild, user: Discord.GuildMember, xp = 1) => {
+    setDBGuildUserXP = async(guild: Discord.Guild, user: Discord.GuildMember, xp = 1): Promise<boolean> => {
         return new Promise((resolve) => {
             return DBGuildUserLevels
                 .findOne({
@@ -187,7 +187,7 @@ export default class UserLevelDataHandler {
      * @param level_to_add
      * @returns {Promise<boolean>}
      */
-    addDBGuildUserLevel = async(guild: Discord.Guild, user: Discord.GuildMember, level_to_add = 1) => {
+    addDBGuildUserLevel = async(guild: Discord.Guild, user: Discord.GuildMember, level_to_add = 1): Promise<boolean> => {
         return new Promise((resolve) => {
             return DBGuildUserLevels
                 .findOne({
@@ -226,7 +226,7 @@ export default class UserLevelDataHandler {
      * @param level_to_sub
      * @returns {Promise<boolean>}
      */
-    subDBGuildUserLevel = async(guild: Discord.Guild, user: Discord.GuildMember, level_to_sub = 1) => {
+    subDBGuildUserLevel = async(guild: Discord.Guild, user: Discord.GuildMember, level_to_sub = 1): Promise<boolean> => {
         return new Promise((resolve) => {
             return DBGuildUserLevels
                 .findOne({
@@ -268,7 +268,7 @@ export default class UserLevelDataHandler {
      * @param xp_to_add
      * @returns {Promise<boolean>}
      */
-    addDBGuildUserXP = async(guild: Discord.Guild, user: Discord.GuildMember, xp_to_add = 1) => {
+    addDBGuildUserXP = async(guild: Discord.Guild, user: Discord.GuildMember, xp_to_add = 1): Promise<boolean> => {
         return new Promise((resolve) => {
             return DBGuildUserLevels
                 .findOne({
@@ -307,7 +307,7 @@ export default class UserLevelDataHandler {
      * @param xp_to_sub
      * @returns {Promise<boolean>}
      */
-    subDBGuildUserXP = async(guild: Discord.Guild, user: Discord.GuildMember, xp_to_sub = 1) => {
+    subDBGuildUserXP = async(guild: Discord.Guild, user: Discord.GuildMember, xp_to_sub = 1): Promise<boolean> => {
         return new Promise((resolve) => {
             return DBGuildUserLevels
                 .findOne({

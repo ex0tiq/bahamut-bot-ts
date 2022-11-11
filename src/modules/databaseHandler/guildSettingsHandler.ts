@@ -16,7 +16,6 @@ export default class GuildSettingsHandler {
 
     getDBAllGuildSettings = async() => {
         const obj: Map<string, GuildSettings> = new Map<string, GuildSettings>;
-        // eslint-disable-next-line no-unused-vars
         for (const [snowflake,] of this._dbHandler.bahamut.client.guilds.cache) {
             let res = null;
             if ((res = await this.getDBGuildSettings(snowflake))) {
@@ -123,7 +122,7 @@ export default class GuildSettingsHandler {
      * @param {string} setting
      * @returns {Promise<boolean>}
      */
-    deleteDBGuildSetting = async (guild: Discord.Guild | string, setting: string) => {
+    deleteDBGuildSetting = async (guild: Discord.Guild | string, setting: string): Promise<boolean> => {
         try {
             await DBGuildSettings.destroy({
                 where: {

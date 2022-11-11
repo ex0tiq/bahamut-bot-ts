@@ -15,7 +15,7 @@ export default class GuildUserStatHandler {
      * @param guild
      * @param user
      */
-    getDBGuildUserStats = async(guild: Discord.Guild, user: Discord.GuildMember) => {
+    getDBGuildUserStats = async(guild: Discord.Guild, user: Discord.GuildMember): Promise<DBGuildUserStats | null> => {
         return new Promise((resolve) => {
             return DBGuildUserStats
                 .findOne({
@@ -25,10 +25,10 @@ export default class GuildUserStatHandler {
                     }})
                 .then(async (obj: DBGuildUserStats | null) => {
                     if (obj)  resolve(obj);
-                    else resolve(false);
+                    else resolve(null);
                 }).catch(e => {
                     console.error('Error while saving guild user stat:', e);
-                    resolve(false);
+                    resolve(null);
                 });
         });
     };
@@ -41,7 +41,7 @@ export default class GuildUserStatHandler {
      * @param {string|boolean} value
      * @returns {Promise<boolean>}
      */
-    setDBGuildUserStat = async (guild: Discord.Guild, user: Discord.GuildMember, stat: string, value: number) => {
+    setDBGuildUserStat = async (guild: Discord.Guild, user: Discord.GuildMember, stat: string, value: number): Promise<boolean> => {
         return new Promise((resolve) => {
             return DBGuildUserStats
                 .findOne({
@@ -82,7 +82,7 @@ export default class GuildUserStatHandler {
      * @param value
      * @returns {Promise<boolean>}
      */
-    addDBGuildUserStat = async (guild: Discord.Guild, user: Discord.GuildMember, stat: string, value = 1) => {
+    addDBGuildUserStat = async (guild: Discord.Guild, user: Discord.GuildMember, stat: string, value = 1): Promise<boolean> => {
         return new Promise((resolve) => {
             return DBGuildUserStats
                 .findOne({
@@ -123,7 +123,7 @@ export default class GuildUserStatHandler {
      * @param value
      * @returns {Promise<boolean>}
      */
-    subDBGuildUserStat = async (guild: Discord.Guild, user: Discord.GuildMember, stat: string, value = 1) => {
+    subDBGuildUserStat = async (guild: Discord.Guild, user: Discord.GuildMember, stat: string, value = 1): Promise<boolean> => {
         return new Promise((resolve) => {
             return DBGuildUserStats
                 .findOne({
@@ -166,7 +166,7 @@ export default class GuildUserStatHandler {
      * @param stat
      * @returns {Promise<boolean>}
      */
-    deleteDBGuildUserStat = async (guild: Discord.Guild, user: Discord.GuildMember, stat: string) => {
+    deleteDBGuildUserStat = async (guild: Discord.Guild, user: Discord.GuildMember, stat: string): Promise<boolean> => {
         return new Promise((resolve) => {
             return DBGuildUserStats
                 .findOne({
