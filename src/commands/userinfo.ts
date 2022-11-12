@@ -21,7 +21,7 @@ const config: CommandConfig = {
         {
             name: "user",
             description: "Request data for this user.",
-            type: 6,
+            type: Discord.ApplicationCommandOptionType.User,
             required: false,
         },
     ],
