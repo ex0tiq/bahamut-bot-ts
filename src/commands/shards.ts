@@ -22,7 +22,7 @@ const config: CommandConfig = {
     deferReply: true,
 };
 
-module.exports = {
+export default {
     ...config,
     callback: async ({ client, message, interaction }: { client: BahamutClient, message: Discord.Message, interaction: Discord.CommandInteraction }) => {
         const date = Date.now();

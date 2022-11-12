@@ -25,7 +25,7 @@ const config: CommandConfig = {
     deferReply: true,
 };
 
-module.exports = {
+export default {
     ...config,
     callback: async ({ client, message, channel, interaction, member }: { client: BahamutClient, message: Discord.Message, channel: Discord.TextChannel, interaction: Discord.CommandInteraction, member: Discord.GuildMember }) => {
         const guildUserStats = await client.bahamut.dbHandler.guildUserStat.getDBGuildUserStats(channel.guild, member, ["played_songs", "cookies"]),
