@@ -22,7 +22,7 @@ import LevelSystem from "./modules/LevelSystem";
 export class Bahamut {
     private _client: BahamutClient = new BahamutClient(this);
     // Here we load the config file that contains our token and our prefix values.
-    private _config: BotConfig = require("./config/config.json");
+    private _config: BotConfig = require("../config/config.json");
     // WOKCommands instance
     private _cmdHandler!: WOK;
     // DB Handler

@@ -4,7 +4,7 @@ import UplinkAPIHandler from "./UplinkAPIHandler.js";
 
 export default class BahamutShardingManager extends Discord.ShardingManager {
     private _uplinkApiHandler: UplinkAPIHandler;
-    private _apiConfig: BotAPIConfig = require("../config/api_config.json");
+    private _apiConfig: BotAPIConfig = require("../../config/api_config.json");
 
     constructor(file: string, options: Discord.ShardingManagerOptions, uplinkApiHandler: UplinkAPIHandler) {
         super(file, options);

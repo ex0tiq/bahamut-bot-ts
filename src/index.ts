@@ -7,8 +7,8 @@ import Discord from "discord.js";
 import { v4 as uuidv4 } from 'uuid';
 
 //const ShardingManager = require('./modules/ShardingManager');
-const config = require('./config/config.json');
-const apiConfig = require('./config/api_config.json');
+const config = require('../config/config.json');
+const apiConfig = require('../config/api_config.json');
 import logger from "./modules/Logger.js";
 
 //const BotApiHandler = require('./modules/BotAPIHandler');
