@@ -12,6 +12,7 @@ import Logger from "./Logger";
 import GuildSettingsHandler from "./databaseHandler/guildSettingsHandler";
 import GuildUserStatHandler from "./databaseHandler/guildUserStatHandler";
 import UserLevelDataHandler from "./databaseHandler/userLevelDataHandler";
+import CookieHandler from "./databaseHandler/cookieHandler";
 
 export default class BahamutDBHandler {
     private readonly _bahamut: Bahamut;
@@ -22,6 +23,7 @@ export default class BahamutDBHandler {
     private readonly _guildSettings: GuildSettingsHandler;
     private readonly _guildUserStat: GuildUserStatHandler;
     private readonly _userLevelData: UserLevelDataHandler;
+    private readonly _cookie: CookieHandler;
 
     constructor(bahamut: Bahamut) {
         this._bahamut = bahamut;
@@ -39,6 +41,7 @@ export default class BahamutDBHandler {
         this._guildSettings = new GuildSettingsHandler(this);
         this._guildUserStat = new GuildUserStatHandler(this);
         this._userLevelData = new UserLevelDataHandler(this);
+        this._cookie = new CookieHandler(this);
     }
 
     public get bahamut() {
@@ -55,6 +58,9 @@ export default class BahamutDBHandler {
     }
     public get userLevelData() {
         return this._userLevelData;
+    }
+    public get cookie() {
+        return this._cookie;
     }
 
     /**

@@ -14,6 +14,7 @@ import WOK from "wokcommands";
 import PremiumManager from "./modules/PremiumManager";
 import LavaManager from "./modules/LavaManager";
 import {isJson} from "./lib/validateFunctions";
+import LevelSystem from "./modules/LevelSystem";
 
 // Use bluebird as global promise library
 //global.Promise = require('bluebird');
@@ -30,6 +31,8 @@ export class Bahamut {
     private _premiumHandler: PremiumManager;
     // Music handler
     private _musicHandler: LavaManager;
+    // Level System
+    private _levelSystem: LevelSystem;
 
     // Save all handled guilds settings
     private _settings: Map<string, GuildSettings> = new Map<string, GuildSettings>;
@@ -56,6 +59,8 @@ export class Bahamut {
         this._premiumHandler = new PremiumManager(this);
         // Init music handler
         this._musicHandler = new LavaManager(this);
+        // Init level system
+        this._levelSystem = new LevelSystem(this);
 
         // Register ready event
         this._client.on("ready", async () => {
@@ -126,6 +131,9 @@ export class Bahamut {
     }
     public get musicHandler() {
         return this._musicHandler;
+    }
+    public get levelSystem() {
+        return this._levelSystem;
     }
     public get settings() {
         return this._settings;

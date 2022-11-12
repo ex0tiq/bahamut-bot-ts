@@ -15,15 +15,15 @@ export default class GuildUserStatHandler {
      * @param guild
      * @param user
      */
-    getDBGuildUserStats = async(guild: Discord.Guild, user: Discord.GuildMember): Promise<DBGuildUserStats | null> => {
+    getDBGuildUserStats = async(guild: Discord.Guild, user: Discord.GuildMember): Promise<DBGuildUserStats[] | null> => {
         return new Promise((resolve) => {
             return DBGuildUserStats
-                .findOne({
+                .findAll({
                     where: {
                         guild_id: guild.id,
                         guild_user: user.user.id,
                     }})
-                .then(async (obj: DBGuildUserStats | null) => {
+                .then(async (obj: DBGuildUserStats[] | null) => {
                     if (obj)  resolve(obj);
                     else resolve(null);
                 }).catch(e => {

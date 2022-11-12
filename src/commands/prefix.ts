@@ -54,8 +54,8 @@ export default {
 
             if (settings.prefix === args[0].toLowerCase()) return handleErrorResponseToMessage(client, message || interaction, false,config.deferReply, 'The prefix is already set to that.');
 
-            if (await client.bahamut.dbHandler.setDBGuildSetting(channel.guild, 'prefix', args[0].toLowerCase())) {
-                client.bahamut.settings.set(channel.guild.id, await client.bahamut.dbHandler.getDBGuildSettings(channel.guild));
+            if (await client.bahamut.dbHandler.guildSettings.setDBGuildSetting(channel.guild, 'prefix', args[0].toLowerCase())) {
+                client.bahamut.settings.set(channel.guild.id, await client.bahamut.dbHandler.guildSettings.getDBGuildSettings(channel.guild));
 
                 client.bahamut.cmdHandler.commandHandler.prefixHandler.set(channel.guild.id, args[0].toLowerCase())
 

@@ -37,15 +37,15 @@ const addLevelRole = async (client: BahamutClient, guild: Discord.Guild, level: 
  * @param level
  * @returns {Promise<null|boolean|Holds>}
  */
-const removeLevelRole = async (client: BahamutClient, guild: Discord.Guild, level: string) => {
+const removeLevelRole = async (client: BahamutClient, guild: Discord.Guild, level: number) => {
     let settings = await getGuildSettings(client, guild.id);
 
     const groups = settings.user_level_roles;
     let role = null;
 
-    if (typeof groups.get(parseInt(level)) !== 'undefined') {
-        role = guild.roles.resolve(groups.get(parseInt(level)));
-        groups.delete(parseInt(level));
+    if (typeof groups.get(level) !== 'undefined') {
+        role = guild.roles.resolve(groups.get(level));
+        groups.delete(level);
     }
     else {
         return false;

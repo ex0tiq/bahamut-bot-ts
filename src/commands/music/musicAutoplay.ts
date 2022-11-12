@@ -86,8 +86,8 @@ export default {
 
         if (settings.music_autoplay == autoplay) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `${autoplay ? emoji.get('white_check_mark') : emoji.get('x')} Autoplay is already ${ autoplay ? 'enabled' : 'disabled'}!`);
 
-        if (await client.bahamut.dbHandler.setDBGuildSetting(channel.guild, 'music_autoplay', args[0].toLowerCase() === 'on')) {
-            client.bahamut.settings.set(channel.guild.id, await client.bahamut.dbHandler.getDBGuildSettings(channel.guild));
+        if (await client.bahamut.dbHandler.guildSettings.setDBGuildSetting(channel.guild, 'music_autoplay', args[0].toLowerCase() === 'on')) {
+            client.bahamut.settings.set(channel.guild.id, await client.bahamut.dbHandler.guildSettings.getDBGuildSettings(channel.guild));
 
             return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${autoplay ? emoji.get('white_check_mark') : emoji.get('x')} Autoplay has been ${autoplay ? 'enabled' : 'disabled'}!`);
         }
