@@ -1,6 +1,6 @@
-import BahamutDBHandler, {DBGuildUserStats} from "../BahamutDBHandler";
+import BahamutDBHandler, { DBGuildUserStats } from "../BahamutDBHandler";
 import Discord from "discord.js";
-import {Sequelize} from "sequelize";
+import { Sequelize } from "sequelize";
 
 export default class CookieHandler {
     // DB Handler instance
