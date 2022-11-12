@@ -1,6 +1,7 @@
-import BahamutDBHandler, {DBGuildUserStats} from "../BahamutDBHandler";
+import BahamutDBHandler, { DBGuildUserStats } from "../BahamutDBHandler";
 import Discord from "discord.js";
-
+import { Op } from "sequelize";
+import {stat} from "fs";
 
 export default class GuildUserStatHandler {
     // DB Handler instance
@@ -14,23 +15,38 @@ export default class GuildUserStatHandler {
      * Get current guild users stats
      * @param guild
      * @param user
+     * @param stats
      */
-    getDBGuildUserStats = async(guild: Discord.Guild, user: Discord.GuildMember): Promise<DBGuildUserStats[] | null> => {
-        return new Promise((resolve) => {
+    getDBGuildUserStats = async (guild: Discord.Guild, user: Discord.GuildMember, stats?: string[]): Promise<Map<string, number> | null> => {
+        const res: DBGuildUserStats[] | null = await new Promise((resolve) => {
             return DBGuildUserStats
                 .findAll({
                     where: {
                         guild_id: guild.id,
                         guild_user: user.user.id,
-                    }})
+                        [Op.or]: stats?.map(e => {
+                            return {
+                                stat: e,
+                            };
+                        }) || [],
+                    } })
                 .then(async (obj: DBGuildUserStats[] | null) => {
-                    if (obj)  resolve(obj);
+                    if (obj) resolve(obj);
                     else resolve(null);
                 }).catch(e => {
-                    console.error('Error while saving guild user stat:', e);
+                    console.error("Error while saving guild user stat:", e);
                     resolve(null);
                 });
         });
+
+        if (!res) return null;
+
+        const resMap = new Map<string, number>;
+        for (const s of res) {
+            resMap.set(s.stat, s.val);
+        }
+
+        return resMap;
     };
 
     /**
@@ -48,15 +64,16 @@ export default class GuildUserStatHandler {
                     where: {
                         guild_id: guild.id,
                         guild_user: user.user.id,
-                        stat: stat
-                    }})
+                        stat: stat,
+                    } })
                 .then(async (obj: DBGuildUserStats | null) => {
                     if (obj) {
                         // update
                         await obj.update({
-                            val: value
+                            val: value,
                         });
-                    } else {
+                    }
+ else {
                         // insert
                         await DBGuildUserStats.create({
                             guild_id: guild.id,
@@ -68,7 +85,7 @@ export default class GuildUserStatHandler {
 
                     resolve(true);
                 }).catch(e => {
-                    console.error('Error while saving guild user stat:', e);
+                    console.error("Error while saving guild user stat:", e);
                     resolve(false);
                 });
         });
@@ -89,15 +106,16 @@ export default class GuildUserStatHandler {
                     where: {
                         guild_id: guild.id,
                         guild_user: user.user.id,
-                        stat: stat
-                    }})
+                        stat: stat,
+                    } })
                 .then(async (obj: DBGuildUserStats | null) => {
                     if (obj) {
                         // update
                         await obj.update({
-                            val: obj.val + value
+                            val: obj.val + value,
                         });
-                    } else {
+                    }
+ else {
                         // insert
                         await DBGuildUserStats.create({
                             guild_id: guild.id,
@@ -109,11 +127,11 @@ export default class GuildUserStatHandler {
 
                     resolve(true);
                 }).catch(e => {
-                    console.error('Error while saving guild user stat:', e);
+                    console.error("Error while saving guild user stat:", e);
                     resolve(false);
                 });
         });
-    }
+    };
 
     /**
      * Increase a bot stat by x
@@ -130,18 +148,19 @@ export default class GuildUserStatHandler {
                     where: {
                         guild_id: guild.id,
                         guild_user: user.user.id,
-                        stat: stat
-                    }})
+                        stat: stat,
+                    } })
                 .then(async (obj: DBGuildUserStats | null) => {
                     if (obj) {
-                        if ((obj.val - value) <= 0)  value = 1;
+                        if ((obj.val - value) <= 0) value = 1;
                         else value = obj.val - value;
 
                         // update
                         await obj.update({
-                            val: value
+                            val: value,
                         });
-                    } else {
+                    }
+ else {
                         // insert
                         await DBGuildUserStats.create({
                             guild_id: guild.id,
@@ -153,11 +172,11 @@ export default class GuildUserStatHandler {
 
                     resolve(true);
                 }).catch(e => {
-                    console.error('Error while saving guild user stat:', e);
+                    console.error("Error while saving guild user stat:", e);
                     resolve(false);
                 });
         });
-    }
+    };
 
     /**
      * Increase a bot stat by x
@@ -173,21 +192,21 @@ export default class GuildUserStatHandler {
                     where: {
                         guild_id: guild.id,
                         guild_user: user.user.id,
-                        stat: stat
-                    }})
+                        stat: stat,
+                    } })
                 .then(async (obj: DBGuildUserStats | null) => {
                     if (obj) {
                         // update
                         await obj.destroy({
-                            force: true
-                        })
+                            force: true,
+                        });
                     }
 
                     resolve(true);
                 }).catch(e => {
-                    console.error('Error while saving guild user stat:', e);
+                    console.error("Error while saving guild user stat:", e);
                     resolve(false);
                 });
         });
-    }
+    };
 }
