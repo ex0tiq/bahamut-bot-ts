@@ -261,5 +261,5 @@ export {
     createMissingParamsErrorResponse,
     handleErrorResponseToChannel,
     createMissingPermErrorResponse,
-    createResponseToMessage
+    createResponseToMessage,
 };
