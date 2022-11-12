@@ -55,10 +55,10 @@ export default class CookieHandler {
         const userCookies = userStats.filter(e => e.stat === "cookies").map(e => e.val);
 
         if (userCookies.length > 0) {
-            return userStats[0];
+            return userStats[0].val;
         }
 
-        return null;
+        return 0;
     };
 
     /**
