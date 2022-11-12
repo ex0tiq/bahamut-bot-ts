@@ -1,20 +1,20 @@
-import { removeLevelRole } from '../lib/command_handler/config/tools/levelRolesFunctions';
-import {Bahamut} from "../bahamut";
-import {LevelConfig} from "../../typings";
+import { removeLevelRole } from "../lib/command_handler/config/tools/levelRolesFunctions";
+import { Bahamut } from "../bahamut";
+import { LevelConfig } from "../../typings";
 import Discord from "discord.js";
-import {getGuildSettings} from "../lib/getFunctions";
+import { getGuildSettings } from "../lib/getFunctions";
 import {
     handleErrorResponseToMessage,
     handleResponseToMessage,
-    handleSuccessResponseToMessage
+    handleSuccessResponseToMessage,
 } from "../lib/messageHandlers";
-const { getXpForLevel } = require('../lib/levelFunctions');
+const { getXpForLevel } = require("../lib/levelFunctions");
 
 export default class LevelSystem {
     // Bahamut instance
     private _bahamut: Bahamut;
     // Load level config
-    private _levelConfig: LevelConfig = require('../../assets/level_config.json');
+    private _levelConfig: LevelConfig = require("../../assets/level_config.json");
     // Cache for all guild user level data
     private _guildUserLevelDataCache: {
         [guild: string]: {
@@ -41,22 +41,22 @@ export default class LevelSystem {
     handleNewUserMessage = async (message: Discord.Message, user: Discord.GuildMember) => {
         if (!message.guild) return;
 
-        let settings = await getGuildSettings(this._bahamut.client, message.guild.id);
+        const settings = await getGuildSettings(this._bahamut.client, message.guild.id);
 
         // Abort if user module is disabled
-        if (settings.disabled_categories.includes('users')) return;
+        if (settings.disabled_categories.includes("users")) return;
         // Abort if user levels are disabled
         if (!settings.user_levels) return;
         // Abort if included channels are activated and current channel is not one of them
         if (settings.user_level_included_channels.length > 0 && !settings.user_level_included_channels.includes(message.channel.id)) return;
 
-        let new_xp = 0, new_level = 1, new_role: Discord.Role | boolean = false, guildLevelData = null, cookiesAdded = false, cookieData = null;
-        const removed_roles = [], message_length_multiplier = message.content.split(' ').length, user_levels = (Object.entries(this._levelConfig.levels).sort(([l1, xp1], [l2, xp2]) => parseInt(l1) - parseInt(l2)));
+        let new_xp = 0, new_level = 1, new_role: Discord.Role | boolean | null = null, guildLevelData = null, cookiesAdded = false;
+        const removed_roles = [], message_length_multiplier = message.content.split(" ").length, user_levels = (Object.entries(this._levelConfig.levels).sort(([l1], [l2]) => parseInt(l1) - parseInt(l2)));
 
-        if (typeof this._guildUserLevelDataCache[message.guild.id] !== "undefined" || (typeof this._guildUserLevelDataCache[message.guild.id] && typeof this._guildUserLevelDataCache[message.guild.id][message.author.id])) {
+        if (typeof this._guildUserLevelDataCache[message.guild.id] === "undefined" || ((typeof this._guildUserLevelDataCache[message.guild.id] !== "undefined") && (typeof this._guildUserLevelDataCache[message.guild.id][message.author.id] === "undefined"))) {
             guildLevelData = await this._bahamut.dbHandler.userLevelData.getDBGuildUserLevelData(message.guild, user);
 
-            if (typeof this._guildUserLevelDataCache[message.guild.id]) this._guildUserLevelDataCache[message.guild.id] = {};
+            if (typeof this._guildUserLevelDataCache[message.guild.id] === "undefined") this._guildUserLevelDataCache[message.guild.id] = {};
             if (guildLevelData) this._guildUserLevelDataCache[message.guild.id][message.author.id] = guildLevelData;
             else {
                 this._guildUserLevelDataCache[message.guild.id][message.author.id] = {
@@ -93,7 +93,7 @@ export default class LevelSystem {
         }
         new_xp = Math.round(new_xp);
 
-        if (typeof user_levels[lvl][0] !== 'undefined' && new_xp >= user_levels[lvl][1]) {
+        if (typeof user_levels[lvl][0] !== "undefined" && new_xp >= user_levels[lvl][1]) {
             new_level = lvl + 1;
         }
 
@@ -109,7 +109,6 @@ export default class LevelSystem {
 
             // Save to DB
             if (await this._bahamut.dbHandler.userLevelData.setDBGuildUserLevelData(message.guild, (user ? user : message.member!), new_xp, new_level)) {
-                cookieData = await this._bahamut.dbHandler.cookie.getDBUserCookies(message.guild, (user ? user : message.member!));
                 this._guildUserLevelDataCache[message.guild.id][message.author.id].user_xp = 0;
                 this._guildUserLevelDataCache[message.guild.id][message.author.id].user_level = new_level;
 
@@ -134,8 +133,7 @@ export default class LevelSystem {
 
                 // If new role is set and role change mode is set to replace, remove all other level roles
                 if (new_role && settings.user_level_roles.has(new_level) && settings.user_level_roles_replace) {
-                    // eslint-disable-next-line no-unused-vars
-                    for (const [group, snowflake] of roles) {
+                    for (const [, snowflake] of roles) {
                         if (snowflake !== new_role && user.roles.cache.has(snowflake)) {
                             if (await user.roles.remove(snowflake)) {
                                 removed_roles.push(user.roles.cache.get(snowflake));
@@ -171,19 +169,19 @@ export default class LevelSystem {
                         true,
                         {
                             embeds: [
-                                this.getLevelUpMessage(user, new_level, level_xp, new_xp, new_role, removed_roles, true, (cookiesAdded ? cookies : null))
-                            ]
+                                this.getLevelUpMessage(user, new_level, level_xp, new_xp, new_role, removed_roles, true, (cookiesAdded ? cookies : null)),
+                            ],
                         }
                     );
 
                     await handleResponseToMessage(this._bahamut.client, message, false, true, {
-                        embeds: [this.getLevelUpMessage(user, new_level, level_xp, new_xp, new_role, removed_roles, true, (cookiesAdded ? cookies : null))]
+                        embeds: [this.getLevelUpMessage(user, new_level, level_xp, new_xp, new_role, removed_roles, true, (cookiesAdded ? cookies : null))],
                     });
                     return;
                 }
                 else {
                     await handleResponseToMessage(this._bahamut.client, message, false, true, {
-                        embeds: [this.getLevelUpMessage(user, new_level, level_xp, new_xp, new_role, removed_roles, false, (cookiesAdded ? cookies : null))]
+                        embeds: [this.getLevelUpMessage(user, new_level, level_xp, new_xp, new_role, removed_roles, false, (cookiesAdded ? cookies : null))],
                     });
                     return;
                 }
@@ -191,14 +189,15 @@ export default class LevelSystem {
         }
         else {
             // if new level is not greater than previous level, update xp
+            // eslint-disable-next-line no-lonely-if
             if (await this._bahamut.dbHandler.userLevelData.setDBGuildUserLevelData(message.guild, (user ? user : message.member!), new_xp, lvl)) {
                 this._guildUserLevelDataCache[message.guild.id][message.author.id].user_xp = new_xp;
             }
             else {
-                return handleErrorResponseToMessage(this._bahamut.client, message, false, true, 'Error while saving the user xp. Please try again later.');
+                return handleErrorResponseToMessage(this._bahamut.client, message, false, true, "Error while saving the user xp. Please try again later.");
             }
         }
-    }
+    };
 
     /**
      * Get level up message embed
@@ -211,7 +210,8 @@ export default class LevelSystem {
      * @param {Boolean} max
      * @param {Number|null} cookies
      */
-    getLevelUpMessage = (user: Discord.GuildMember, new_level: number, level_xp: number, new_xp: number, new_role: Discord.Role | boolean, removed_roles: (Discord.Role | undefined)[], max = false, cookies: number | null = null) => {
+    getLevelUpMessage = (user: Discord.GuildMember, new_level: number, level_xp: number, new_xp: number, new_role: Discord.Role | boolean | null, removed_roles: (Discord.Role | undefined)[], max = false, cookies: number | null = null) => {
+        console.log(new_role);
         let newMsg;
         if (max) {
             newMsg = new Discord.EmbedBuilder()
@@ -230,18 +230,19 @@ export default class LevelSystem {
 
         if (new_role) {
             // @ts-ignore
-            newMsg.addFields({ name: 'New Role', value: new_role, inline: true });
+            newMsg.addFields({ name: "New Role", value: new_role, inline: true });
         }
-        else if (!new_role) {
-            newMsg.addFields({ name: 'New Role', value: 'New role couldn\'t be assigned, because of missing permissions!', inline: true });
+        else if (!new_role && new_role !== null) {
+            newMsg.addFields({ name: "New Role", value: "New role couldn't be assigned, because of missing permissions!", inline: true });
         }
         if (removed_roles.length > 0) {
-            newMsg.addFields({ name: 'Removed Role(s)', value: removed_roles.join(', '), inline: true });
+            newMsg.addFields({ name: "Removed Role(s)", value: removed_roles.join(", "), inline: true });
         }
         if (cookies) {
-            newMsg.addFields({ name: 'Cookies', value: `${cookies} \:cookie: Cookies have been added to your account!` });
+            // eslint-disable-next-line
+            newMsg.addFields({ name: "Cookies", value: `${cookies} \:cookie: Cookies have been added to your account!` });
         }
 
         return newMsg;
-    }
-};
+    };
+}
