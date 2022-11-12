@@ -5,14 +5,15 @@ import {
     InferCreationAttributes,
     Model,
     QueryTypes,
-    Sequelize
+    Sequelize,
 } from "sequelize";
-import {Bahamut} from "../bahamut";
+import { Bahamut } from "../bahamut";
 import Logger from "./Logger";
 import GuildSettingsHandler from "./databaseHandler/guildSettingsHandler";
 import GuildUserStatHandler from "./databaseHandler/guildUserStatHandler";
 import UserLevelDataHandler from "./databaseHandler/userLevelDataHandler";
 import CookieHandler from "./databaseHandler/cookieHandler";
+import CommandLogHandler from "./databaseHandler/commandLogHandler";
 
 export default class BahamutDBHandler {
     private readonly _bahamut: Bahamut;
@@ -24,6 +25,7 @@ export default class BahamutDBHandler {
     private readonly _guildUserStat: GuildUserStatHandler;
     private readonly _userLevelData: UserLevelDataHandler;
     private readonly _cookie: CookieHandler;
+    private readonly _commandLog: CommandLogHandler;
 
     constructor(bahamut: Bahamut) {
         this._bahamut = bahamut;
@@ -32,7 +34,7 @@ export default class BahamutDBHandler {
         this._dbCon = new Sequelize(bahamut.config.db.database, bahamut.config.db.user, bahamut.config.db.pass, {
             host: bahamut.config.db.host,
             dialect: "mariadb",
-            logging: false
+            logging: false,
         });
 
         this.defineModels();
@@ -42,6 +44,7 @@ export default class BahamutDBHandler {
         this._guildUserStat = new GuildUserStatHandler(this);
         this._userLevelData = new UserLevelDataHandler(this);
         this._cookie = new CookieHandler(this);
+        this._commandLog = new CommandLogHandler(this);
     }
 
     public get bahamut() {
@@ -62,48 +65,44 @@ export default class BahamutDBHandler {
     public get cookie() {
         return this._cookie;
     }
+    public get commandLog() {
+        return this._commandLog;
+    }
+
 
     /**
      * Init DB connection
      */
-    dbInit = async() => {
+    dbInit = async () => {
         // Shut down if db connection can't be opened
         if (!(await this.dbOpen())) process.exit(1);
         else Logger.ready(this._bahamut.client.shardId, `Connected to database: ${await this.getDBVersion()}`);
 
         // Sync db
         await this._dbCon.sync({ force: false });
-    }
+    };
 
     /**
      * Open DB connection
      */
-    dbOpen = async() => {
+    dbOpen = async () => {
         try {
             await this._dbCon.authenticate();
             return true;
-        } catch (error) {
-            console.error('Unable to connect to the database:', error);
+        }
+ catch (error) {
+            console.error("Unable to connect to the database:", error);
             return false;
         }
-    }
+    };
 
-    getDBVersion = async() => {
+    getDBVersion = async () => {
         const results = await this._dbCon.query("SELECT @@version as version;", {
-            type: QueryTypes.SELECT
+            type: QueryTypes.SELECT,
         });
         // @ts-ignore
         return results[0].version;
-    }
-
-
-
-
-
-
-
-
-
+    };
 
 
     defineModels = () => {
@@ -116,17 +115,17 @@ export default class BahamutDBHandler {
             stat: {
                 type: DataTypes.STRING(30),
                 allowNull: false,
-                primaryKey: true
+                primaryKey: true,
             },
             val: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                defaultValue: 0
+                defaultValue: 0,
             },
             updatedAt: DataTypes.DATE,
         }, {
             sequelize: this._dbCon,
-            modelName: "guild_stats"
+            modelName: "guild_stats",
         });
         DBGuildSettings.init({
             guild_id: {
@@ -140,17 +139,17 @@ export default class BahamutDBHandler {
                 primaryKey: true,
             },
             val: {
-                type: DataTypes.TEXT('long'),
+                type: DataTypes.TEXT("long"),
                 defaultValue: null,
             },
             val_type: {
                 type: DataTypes.STRING(50),
                 allowNull: false,
-            }
+            },
         }, {
             sequelize: this._dbCon,
-            modelName: "guild_settings"
-        })
+            modelName: "guild_settings",
+        });
         DBGuildCharacters.init({
             guild_id: {
                 type: DataTypes.STRING(30),
@@ -160,15 +159,15 @@ export default class BahamutDBHandler {
             guild_user: {
                 type: DataTypes.STRING(30),
                 allowNull: false,
-                primaryKey: true
+                primaryKey: true,
             },
             lodestone_char: {
                 type: DataTypes.STRING(30),
-                allowNull: false
-            }
+                allowNull: false,
+            },
         }, {
             sequelize: this._dbCon,
-            modelName: "guild_characters"
+            modelName: "guild_characters",
         });
         DBGuildUserLevels.init({
             guild_id: {
@@ -179,20 +178,20 @@ export default class BahamutDBHandler {
             guild_user: {
                 type: DataTypes.STRING(30),
                 allowNull: false,
-                primaryKey: true
+                primaryKey: true,
             },
             user_xp: {
                 type: DataTypes.MEDIUMINT.UNSIGNED,
-                defaultValue: 0
+                defaultValue: 0,
             },
             user_level: {
                 type: DataTypes.TINYINT.UNSIGNED,
-                defaultValue: 1
+                defaultValue: 1,
             },
             updatedAt: DataTypes.DATE,
         }, {
             sequelize: this._dbCon,
-            modelName: "guild_user_levels"
+            modelName: "guild_user_levels",
         });
         DBGuildUserStats.init({
             guild_id: {
@@ -203,29 +202,29 @@ export default class BahamutDBHandler {
             guild_user: {
                 type: DataTypes.STRING(30),
                 allowNull: false,
-                primaryKey: true
+                primaryKey: true,
             },
             stat: {
                 type: DataTypes.STRING(30),
                 allowNull: false,
-                primaryKey: true
+                primaryKey: true,
             },
             val: {
                 type: DataTypes.INTEGER,
                 allowNull: false,
-                defaultValue: 0
+                defaultValue: 0,
             },
             updatedAt: DataTypes.DATE,
         }, {
             sequelize: this._dbCon,
-            modelName: "guild_user_stats"
+            modelName: "guild_user_stats",
         });
         DBGuildPlaylists.init({
             id: {
                 type: DataTypes.UUID,
                 allowNull: false,
                 defaultValue: DataTypes.UUIDV4,
-                unique: true
+                unique: true,
             },
             guild_id: {
                 type: DataTypes.STRING(30),
@@ -235,49 +234,50 @@ export default class BahamutDBHandler {
             name: {
                 type: DataTypes.STRING(100),
                 defaultValue: null,
-                primaryKey: true
+                primaryKey: true,
             },
         }, {
             sequelize: this._dbCon,
-            modelName: "guild_playlists"
+            modelName: "guild_playlists",
         });
         DBGuildSongs.init({
             id: {
                 type: DataTypes.UUID,
                 allowNull: false,
                 defaultValue: DataTypes.UUIDV4,
-                primaryKey: true
+                primaryKey: true,
             },
             playlist_id: {
                 type: DataTypes.UUID,
-                allowNull: false
+                allowNull: false,
             },
             name: {
                 type: DataTypes.STRING(100),
-                allowNull: false
+                allowNull: false,
             },
             link: {
                 type: DataTypes.STRING(200),
-                defaultValue: null
+                defaultValue: null,
             },
             runtime: {
                 type: DataTypes.SMALLINT.UNSIGNED,
                 allowNull: false,
-                defaultValue: 0
+                defaultValue: 0,
             },
         }, {
             sequelize: this._dbCon,
-            modelName: "guild_songs"
+            modelName: "guild_songs",
         });
         DBGuildCommandLog.init({
             entry_id: {
-                type: DataTypes.STRING(50),
+                type: DataTypes.UUID,
                 allowNull: false,
-                primaryKey: true
+                defaultValue: DataTypes.UUIDV4,
+                primaryKey: true,
             },
             guild_id: {
                 type: DataTypes.STRING(30),
-                allowNull: false
+                allowNull: false,
             },
             guild_user: {
                 type: DataTypes.STRING(30),
@@ -285,15 +285,15 @@ export default class BahamutDBHandler {
             },
             guild_username: {
                 type: DataTypes.STRING(50),
-                allowNull: false
+                allowNull: false,
             },
             guild_channel: {
                 type: DataTypes.STRING(30),
-                allowNull: false
+                allowNull: false,
             },
             command: {
                 type: DataTypes.STRING(30),
-                allowNull: false
+                allowNull: false,
             },
             args: {
                 type: DataTypes.STRING(2000),
@@ -302,16 +302,16 @@ export default class BahamutDBHandler {
             createdAt: DataTypes.DATE,
         }, {
             sequelize: this._dbCon,
-            modelName: "guild_command_logs"
+            modelName: "guild_command_logs",
         });
 
         // Define foreign keys
         DBGuildPlaylists.hasOne(DBGuildSongs, {
             foreignKey: "playlist_id",
             onDelete: "CASCADE",
-            onUpdate: "CASCADE"
-        })
-    }
+            onUpdate: "CASCADE",
+        });
+    };
 }
 
 // Sequelize DB Types
@@ -359,7 +359,7 @@ export class DBGuildSongs extends Model<InferAttributes<DBGuildSongs>, InferCrea
     declare runtime: number;
 }
 export class DBGuildCommandLog extends Model<InferAttributes<DBGuildCommandLog>, InferCreationAttributes<DBGuildCommandLog>> {
-    declare entry_id: string;
+    declare entry_id?: string;
     declare guild_id: string;
     declare guild_user: string;
     declare guild_username: string;
