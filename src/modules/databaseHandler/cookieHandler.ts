@@ -49,13 +49,11 @@ export default class CookieHandler {
      * @returns {Promise<null|*>}
      */
     getDBUserCookies = async (guild: Discord.Guild, user: Discord.GuildMember) => {
-        const userStats = await this._dbHandler.guildUserStat.getDBGuildUserStats(guild, user);
+        const userStats = await this._dbHandler.guildUserStat.getDBGuildUserStats(guild, user, ["cookies"]);
         if (!userStats) return null;
 
-        const userCookies = userStats.filter(e => e.stat === "cookies").map(e => e.val);
-
-        if (userCookies.length > 0) {
-            return userStats[0].val;
+        if (userStats.has("cookies")) {
+            return userStats.get("cookies");
         }
 
         return 0;
