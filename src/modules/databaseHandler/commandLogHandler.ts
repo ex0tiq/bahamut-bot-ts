@@ -87,7 +87,7 @@ export default class CommandLogHandler {
      * Get full command log count
      * @returns
      */
-    getFullCommandLogCount = async (): Promise<number> => {
+    getDBFullCommandLogCount = async (): Promise<number> => {
         return new Promise((resolve) => {
             return DBGuildCommandLog
                 .count()
