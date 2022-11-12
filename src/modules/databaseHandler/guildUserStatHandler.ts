@@ -1,6 +1,6 @@
 import BahamutDBHandler, { DBGuildUserStats } from "../BahamutDBHandler";
 import Discord from "discord.js";
-import { Op } from "sequelize";
+import {Op, WhereOptions} from "sequelize";
 
 export default class GuildUserStatHandler {
     // DB Handler instance
@@ -16,19 +16,23 @@ export default class GuildUserStatHandler {
      * @param user
      * @param stats
      */
-    getDBGuildUserStats = async (guild: Discord.Guild, user: Discord.GuildMember, stats?: string[]): Promise<Map<string, number> | null> => {
+    getDBGuildUserStats = async (guild: Discord.Guild, user: Discord.GuildMember | null, stats?: string[]): Promise<Map<string, number> | null> => {
+        const where: WhereOptions = {
+            guild_id: guild.id,
+            [Op.or]: stats?.map(e => {
+                return {
+                    stat: e,
+                };
+            }),
+        };
+
+        if (user) where["guild_user"] = user.user.id;
+
         const res: DBGuildUserStats[] | null = await new Promise((resolve) => {
             return DBGuildUserStats
                 .findAll({
-                    where: {
-                        guild_id: guild.id,
-                        guild_user: user.user.id,
-                        [Op.or]: stats?.map(e => {
-                            return {
-                                stat: e,
-                            };
-                        }) || [],
-                    } })
+                    where: where,
+                })
                 .then(async (obj: DBGuildUserStats[] | null) => {
                     if (obj) resolve(obj);
                     else resolve(null);
