@@ -63,6 +63,9 @@ const handleResponseToMessage = async (
 
     return response;
 };
+const createResponseToMessage = async (client: BahamutClient, newMessageContent: HandleMessageOptions | string) => {
+    return createSuccessResponse(client, newMessageContent, true);
+};
 
 const handleErrorResponseToMessage = async (
     client: BahamutClient,
@@ -188,7 +191,7 @@ const createSuccessResponse = (client: BahamutClient, newMessageContent: HandleM
         content: newMessageContent.content || null,
         files: newMessageContent.files || null,
         embeds: newMessageContent.embeds?.map((e) => {
-            e.setAuthor(((!e.data.title || disableTitleOverride) ? { name: "Success", iconURL: client.bahamut.config.message_icons.success } : null));
+            if (!e.data.title && !e.data.author && !disableTitleOverride) e.setAuthor({ name: "Success", iconURL: client.bahamut.config.message_icons.success });
             // @ts-ignore
             e.setColor(client.bahamut.config.primary_message_color);
             return e;
@@ -258,4 +261,5 @@ export {
     createMissingParamsErrorResponse,
     handleErrorResponseToChannel,
     createMissingPermErrorResponse,
+    createResponseToMessage
 };
