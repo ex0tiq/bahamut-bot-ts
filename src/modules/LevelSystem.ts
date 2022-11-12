@@ -114,9 +114,9 @@ export default class LevelSystem {
 
                 const roles = Object.entries(settings.user_level_roles);
                 if (roles.length > 0) {
-                    if (settings.user_level_roles.has(new_level)) {
+                    if (new_level && settings.user_level_roles.has(new_level)) {
                         let role = null;
-                        if ((role = message.guild.roles.resolve(settings.user_level_roles.get(new_level)))) {
+                        if ((role = message.guild.roles.resolve(settings.user_level_roles.get(new_level)!))) {
                             if (await user.roles.add(role)) {
                                 new_role = role;
                             }
