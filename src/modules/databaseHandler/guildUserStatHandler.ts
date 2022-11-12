@@ -1,7 +1,6 @@
 import BahamutDBHandler, { DBGuildUserStats } from "../BahamutDBHandler";
 import Discord from "discord.js";
 import { Op } from "sequelize";
-import {stat} from "fs";
 
 export default class GuildUserStatHandler {
     // DB Handler instance
