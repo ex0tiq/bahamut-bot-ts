@@ -72,14 +72,14 @@ export default {
         }
 
         const [userData, userCookies] = await Promise.all([
-            getCurrentUserData(client, target!, true),
+            getCurrentUserData(client, target!),
             client.bahamut.dbHandler.cookie.getDBUserCookies(channel.guild, target!),
         ]),
             userCreatedDate = moment(target!.user.createdTimestamp),
             userJoinedDate = moment(target!.joinedTimestamp),
             avatarUrl = target!.avatarURL({ forceStatic: true, extension: "png" }),
             profileCard = new Canvacord.Rank();
-        let rank = null, xpNeeded = 0, uStats;
+        let rank = null, xpNeeded = 0;
 
         const msg = new Discord.EmbedBuilder()
                     .setAuthor({ name: target!.displayName })
@@ -147,7 +147,7 @@ export default {
             msg.setImage("attachment://profile.png");
         }
 
-        if (uStats && typeof uStats["cookies"] !== "undefined") {
+        if (userCookies) {
             // eslint-disable-next-line
             msg.addFields({ name: "Cookies", value: `\:cookie: ${userCookies}`, inline: false });
         }

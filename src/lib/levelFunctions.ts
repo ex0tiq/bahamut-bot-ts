@@ -8,20 +8,20 @@ import Discord from "discord.js";
  * @param {Boolean} userStats
  * @returns {Promise<Object>}
  */
-const getCurrentUserData = async(client: BahamutClient, user: Discord.GuildMember, userStats = false) => {
+const getCurrentUserData = async (client: BahamutClient, user: Discord.GuildMember) => {
     let guildLevelData = null;
 
-    if (typeof client.bahamut.levelSystem.guildUserLevelDataCache[user.guild.id] === 'undefined' || ((typeof client.bahamut.levelSystem.guildUserLevelDataCache[user.guild.id] !== 'undefined') && (typeof client.bahamut.levelSystem.guildUserLevelDataCache[user.guild.id][user.id] === 'undefined'))) {
+    if (typeof client.bahamut.levelSystem.guildUserLevelDataCache[user.guild.id] === "undefined" || ((typeof client.bahamut.levelSystem.guildUserLevelDataCache[user.guild.id] !== "undefined") && (typeof client.bahamut.levelSystem.guildUserLevelDataCache[user.guild.id][user.id] === "undefined"))) {
         guildLevelData = await client.bahamut.dbHandler.userLevelData.getDBGuildUserLevelData(user.guild, user);
 
-        if (typeof client.bahamut.levelSystem.guildUserLevelDataCache[user.guild.id] === 'undefined') {
+        if (typeof client.bahamut.levelSystem.guildUserLevelDataCache[user.guild.id] === "undefined") {
             client.bahamut.levelSystem.guildUserLevelDataCache[user.guild.id] = {};
         }
         client.bahamut.levelSystem.guildUserLevelDataCache[user.guild.id][user.id] = {
             guild_id: (guildLevelData ? guildLevelData.guild_id : user.guild.id),
             guild_user: (guildLevelData ? guildLevelData.guild_user : user.id),
             user_level: (guildLevelData ? guildLevelData.user_level : 1),
-            user_xp: (guildLevelData ? guildLevelData.user_xp : 0)
+            user_xp: (guildLevelData ? guildLevelData.user_xp : 0),
         };
     }
     else {
@@ -33,7 +33,7 @@ const getCurrentUserData = async(client: BahamutClient, user: Discord.GuildMembe
         xp : (guildLevelData ? guildLevelData.user_xp : 0),
         exists : (!!guildLevelData),
     };
-}
+};
 
 /**
  * Calculate xp left to next level
@@ -42,7 +42,7 @@ const getCurrentUserData = async(client: BahamutClient, user: Discord.GuildMembe
  * @param cur_xp
  */
 async function getXpToNextLevel(client: BahamutClient, cur_level: number, cur_xp: number) {
-    if (typeof (client.bahamut.levelSystem.levelConfig.levels[`${cur_level + 1}`]) !== 'undefined') {
+    if (typeof (client.bahamut.levelSystem.levelConfig.levels[`${cur_level + 1}`]) !== "undefined") {
         return (client.bahamut.levelSystem.levelConfig.levels[`${cur_level + 1}`] - cur_xp);
     }
     else {
@@ -57,7 +57,7 @@ async function getXpToNextLevel(client: BahamutClient, cur_level: number, cur_xp
  * @returns {null|number}
  */
 async function getXpForLevel(client: BahamutClient, level: number) {
-    if (typeof (client.bahamut.levelSystem.levelConfig.levels[`${level}`]) !== 'undefined') {
+    if (typeof (client.bahamut.levelSystem.levelConfig.levels[`${level}`]) !== "undefined") {
         return (client.bahamut.levelSystem.levelConfig.levels[`${level}`]);
     }
     else {
