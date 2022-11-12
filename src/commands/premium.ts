@@ -82,7 +82,7 @@ export default {
                     break;
             }
         }
- else {
+        else {
             embed = createMissingParamsErrorResponse(client, config);
         }
 
