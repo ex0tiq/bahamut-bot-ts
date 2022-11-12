@@ -1,28 +1,28 @@
-import {CommandConfig} from "../../../typings";
-import {CommandType} from "wokcommands";
-import emoji from 'node-emoji';
+import { CommandConfig } from "../../../typings";
+import { CommandType } from "wokcommands";
+import emoji from "node-emoji";
 import BahamutClient from "../../modules/BahamutClient";
 import Discord from "discord.js";
-import {getGuildSettings} from "../../lib/getFunctions";
-import {BahamutCommandPreChecker, PreCheckType} from "../../modules/BahamutCommandPreChecker";
-import {handleErrorResponseToMessage, handleSuccessResponseToMessage} from "../../lib/messageHandlers";
+import { getGuildSettings } from "../../lib/getFunctions";
+import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
+import { handleErrorResponseToMessage, handleSuccessResponseToMessage } from "../../lib/messageHandlers";
 
 const config: CommandConfig = {
-    name: 'shuffle',
+    name: "shuffle",
     type: CommandType.LEGACY,
-    description: 'Shuffle the current queue.',
-    category: 'Music',
+    description: "Shuffle the current queue.",
+    category: "Music",
     guildOnly: true,
     testOnly: false,
-    deferReply: true
+    deferReply: true,
 };
 
 export default {
     ...config,
-    callback: async ({ client, message, channel, member, args, interaction}: { client: BahamutClient, message: Discord.Message, channel: Discord.TextChannel, member: Discord.GuildMember, args: string[], interaction: Discord.CommandInteraction }) => {
+    callback: async ({ client, message, channel, member, interaction }: { client: BahamutClient, message: Discord.Message, channel: Discord.TextChannel, member: Discord.GuildMember, interaction: Discord.CommandInteraction }) => {
         const settings = await getGuildSettings(client, channel.guild);
         // Abort if module is disabled
-        if (settings.disabled_categories.includes('music')) return;
+        if (settings.disabled_categories.includes("music")) return;
 
         // Run pre checks
         const checks = new BahamutCommandPreChecker(client, { client, message, channel, member, interaction }, config, [
@@ -30,7 +30,7 @@ export default {
             { type: PreCheckType.CHANNEl_IS_MUSIC_CHANNEL },
             { type: PreCheckType.USER_IN_VOICE_CHANNEL },
             { type: PreCheckType.USER_IN_SAME_VOICE_CHANNEL_AS_BOT },
-            { type: PreCheckType.MUSIC_NODES_AVAILABLE }
+            { type: PreCheckType.MUSIC_NODES_AVAILABLE },
         ]);
         if (await checks.runChecks()) return;
 
@@ -39,10 +39,10 @@ export default {
             textChannel: channel.id,
         });
 
-        if (player.queue.size <= 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'There are no songs in the queue to shuffle!');
+        if (player.queue.size <= 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There are no songs in the queue to shuffle!");
 
         player.queue.shuffle();
 
-        return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get('twisted_rightwards_arrows')} Queue has been shuffled!`);
+        return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("twisted_rightwards_arrows")} Queue has been shuffled!`);
     },
 };

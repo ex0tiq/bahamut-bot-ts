@@ -1,34 +1,33 @@
-
-import {CommandType, CooldownTypes} from "wokcommands";
+import { CommandType, CooldownTypes } from "wokcommands";
 import BahamutClient from "../../modules/BahamutClient";
 import Discord from "discord.js";
-import {getGuildSettings} from "../../lib/getFunctions";
-import {BahamutCommandPreChecker, PreCheckType} from "../../modules/BahamutCommandPreChecker";
-import {handleErrorResponseToMessage, handleResponseToMessage} from "../../lib/messageHandlers";
-import {CommandConfig} from "../../../typings";
+import { getGuildSettings } from "../../lib/getFunctions";
+import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
+import { handleErrorResponseToMessage, handleResponseToMessage } from "../../lib/messageHandlers";
+import { CommandConfig } from "../../../typings";
 // Not ES compatible imports
-const Genius = require('genius-lyrics');
+const Genius = require("genius-lyrics");
 
 const config: CommandConfig = {
-    name: 'lyrics',
-    aliases: ['ap', 'auto'],
+    name: "lyrics",
+    aliases: ["ap", "auto"],
     type: CommandType.LEGACY,
     testOnly: false,
-    description: 'Get the lyrics to the currently playing song or search for another song',
-    expectedArgs: '[song name]',
+    description: "Get the lyrics to the currently playing song or search for another song",
+    expectedArgs: "[song name]",
     options: [
         {
-            name: 'name',
-            description: 'Name of the song to search for.',
+            name: "name",
+            description: "Name of the song to search for.",
             type: Discord.ApplicationCommandOptionType.String,
-            required: false
+            required: false,
         },
     ],
     minArgs: 0,
-    category: 'Music',
+    category: "Music",
     cooldowns: {
         type: CooldownTypes.perUserPerGuild,
-        duration: "10 s"
+        duration: "10 s",
     },
     deferReply: true,
     guildOnly: true,
@@ -42,11 +41,11 @@ export default {
                          channel,
                          args,
                          member,
-                         interaction
+                         interaction,
                      }: { client: BahamutClient, message: Discord.Message, channel: Discord.TextChannel, member: Discord.GuildMember, args: string[], interaction: Discord.CommandInteraction }) => {
         const settings = await getGuildSettings(client, channel.guild);
         // Abort if module is disabled
-        if (settings.disabled_categories.includes('music')) return;
+        if (settings.disabled_categories.includes("music")) return;
 
         const GeniusClient = new Genius.Client(client.bahamut.config.genius_token);
 
@@ -57,10 +56,10 @@ export default {
                 channel,
                 args,
                 member,
-                interaction
+                interaction,
             }, config, [
-                {type: PreCheckType.USER_IN_VOICE_CHANNEL},
-                {type: PreCheckType.MUSIC_NODES_AVAILABLE}
+                { type: PreCheckType.USER_IN_VOICE_CHANNEL },
+                { type: PreCheckType.MUSIC_NODES_AVAILABLE },
             ]);
             if (await checks.runChecks()) return;
 
@@ -70,10 +69,10 @@ export default {
             });
 
             const musicPlayingCheck = new BahamutCommandPreChecker(client, { client, message, channel, interaction }, config, [
-                { type: PreCheckType.MUSIC_IS_PLAYING, player: player }
+                { type: PreCheckType.MUSIC_IS_PLAYING, player: player },
             ]);
             if (await musicPlayingCheck.runChecks()) return;
-            if (player.queue.current!.isStream) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'Lyrics cannot be searched for webstreams!');
+            if (player.queue.current!.isStream) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "Lyrics cannot be searched for webstreams!");
 
             const search = await searchLyrics(client, GeniusClient, player.queue.current!.title);
 
@@ -81,7 +80,7 @@ export default {
                 return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Sorry, I couldn't find any lyrics for \`${player.queue.current!.title}\`.`);
             }
             else {
-                const templyrics = search.lyrics.replace(/\n/g, '%b');
+                const templyrics = search.lyrics.replace(/\n/g, "%b");
                 if (templyrics.length >= 2000) {
                     await handleErrorResponseToMessage(
                         client,
@@ -94,12 +93,12 @@ export default {
                     const temp = templyrics.match(/.{1,1950}(\s|$)/g);
 
                     for (const t of temp) {
-                        if (message) await message.channel.send(t.trim().replace(/%b/g, '\n'));
-                        else interaction.channel?.send(t.trim().replace(/%b/g, '\n'));
+                        if (message) await message.channel.send(t.trim().replace(/%b/g, "\n"));
+                        else interaction.channel?.send(t.trim().replace(/%b/g, "\n"));
                     }
 
-                    if (message) await message.channel.send('*Powered by Genius*');
-                    else interaction.channel?.send('*Powered by Genius*');
+                    if (message) await message.channel.send("*Powered by Genius*");
+                    else interaction.channel?.send("*Powered by Genius*");
                     return;
                 }
                 else {
@@ -113,21 +112,21 @@ export default {
                                 new Discord.EmbedBuilder()
                                     .setTitle(`Lyrics for ${search.result.fullTitle}`)
                                     .setDescription(search.lyrics)
-                                    .setFooter({ text: 'Powered by Genius' })
-                            ]
+                                    .setFooter({ text: "Powered by Genius" }),
+                            ],
                         }
-                    )
+                    );
                 }
             }
         }
         else {
-            const search = await searchLyrics(client, GeniusClient, args.join(' '));
+            const search = await searchLyrics(client, GeniusClient, args.join(" "));
 
             if (!search || search.result === null) {
                 return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Sorry, I couldn't find any lyrics for \`${args.join(" ")}\`.`);
             }
 
-            const templyrics = search.lyrics.replace(/\n/g, '%b');
+            const templyrics = search.lyrics.replace(/\n/g, "%b");
             if (templyrics.length >= 2000) {
                 await handleErrorResponseToMessage(
                     client,
@@ -140,12 +139,12 @@ export default {
                 const temp = templyrics.match(/.{1,1950}(\s|$)/g);
 
                 for (const t of temp) {
-                    if (message) await message.channel.send(t.trim().replace(/%b/g, '\n'));
-                    else interaction.channel?.send(t.trim().replace(/%b/g, '\n'));
+                    if (message) await message.channel.send(t.trim().replace(/%b/g, "\n"));
+                    else interaction.channel?.send(t.trim().replace(/%b/g, "\n"));
                 }
 
-                if (message) await message.channel.send('*Powered by Genius*');
-                else interaction.channel?.send('*Powered by Genius*');
+                if (message) await message.channel.send("*Powered by Genius*");
+                else interaction.channel?.send("*Powered by Genius*");
                 return;
             }
             else {
@@ -159,10 +158,10 @@ export default {
                             new Discord.EmbedBuilder()
                                 .setTitle(`Lyrics for ${search.result.fullTitle}`)
                                 .setDescription(search.lyrics)
-                                .setFooter({ text: 'Powered by Genius' })
-                        ]
+                                .setFooter({ text: "Powered by Genius" }),
+                        ],
                     }
-                )
+                );
             }
         }
     },

@@ -1,39 +1,39 @@
-import emoji from 'node-emoji';
-import {formatDuration} from '../../lib/durationFunctions';
-import {CommandConfig} from "../../../typings";
-import {CommandType} from "wokcommands";
+import emoji from "node-emoji";
+import { formatDuration } from "../../lib/durationFunctions";
+import { CommandConfig } from "../../../typings";
+import { CommandType } from "wokcommands";
 import BahamutClient from "../../modules/BahamutClient";
 import Discord from "discord.js";
-import {getGuildSettings} from "../../lib/getFunctions";
-import {BahamutCommandPreChecker, PreCheckType} from "../../modules/BahamutCommandPreChecker";
-import {handleErrorResponseToMessage, handleSuccessResponseToMessage} from "../../lib/messageHandlers";
+import { getGuildSettings } from "../../lib/getFunctions";
+import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
+import { handleErrorResponseToMessage, handleSuccessResponseToMessage } from "../../lib/messageHandlers";
 
 const config: CommandConfig = {
-    name: 'seek',
+    name: "seek",
     type: CommandType.LEGACY,
-    description: 'Seek the current song to X seconds (can be prepended with + or -)',
-    expectedArgs: '<seconds>',
+    description: "Seek the current song to X seconds (can be prepended with + or -)",
+    expectedArgs: "<seconds>",
     options: [
         {
-            name: 'seconds',
-            description: 'Seek the current song to X seconds (can be prepended with + or -)',
+            name: "seconds",
+            description: "Seek the current song to X seconds (can be prepended with + or -)",
             type: Discord.ApplicationCommandOptionType.String,
-            required: true
-        }
+            required: true,
+        },
     ],
     minArgs: 1,
-    category: 'Music',
+    category: "Music",
     guildOnly: true,
     testOnly: false,
-    deferReply: true
+    deferReply: true,
 };
 
 export default {
     ...config,
-    callback: async ({ client, message, channel, member, args, interaction}: { client: BahamutClient, message: Discord.Message, channel: Discord.TextChannel, member: Discord.GuildMember, args: string[], interaction: Discord.CommandInteraction }) => {
+    callback: async ({ client, message, channel, member, args, interaction }: { client: BahamutClient, message: Discord.Message, channel: Discord.TextChannel, member: Discord.GuildMember, args: string[], interaction: Discord.CommandInteraction }) => {
         const settings = await getGuildSettings(client, channel.guild);
         // Abort if module is disabled
-        if (settings.disabled_categories.includes('music')) return;
+        if (settings.disabled_categories.includes("music")) return;
 
         // Run pre checks
         const checks = new BahamutCommandPreChecker(client, { client, message, channel, member, interaction }, config, [
@@ -43,7 +43,7 @@ export default {
             { type: PreCheckType.USER_IN_VOICE_CHANNEL },
             { type: PreCheckType.USER_IN_SAME_VOICE_CHANNEL_AS_BOT },
             { type: PreCheckType.ALL_PARAMS_PROVIDED, paramsCheck: (args.length <= 0) },
-            { type: PreCheckType.MUSIC_NODES_AVAILABLE }
+            { type: PreCheckType.MUSIC_NODES_AVAILABLE },
         ]);
         if (await checks.runChecks()) return;
 
@@ -53,22 +53,22 @@ export default {
         });
 
         const musicPlayingCheck = new BahamutCommandPreChecker(client, { client, message, channel, interaction }, config, [
-            { type: PreCheckType.MUSIC_IS_PLAYING, player: player }
+            { type: PreCheckType.MUSIC_IS_PLAYING, player: player },
         ]);
         if (await musicPlayingCheck.runChecks()) return;
-        if (!player.queue.current) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'There are no songs in the queue to seek in!');
-        if (!player.queue.current.isSeekable) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'The current song is not seekable!');
+        if (!player.queue.current) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There are no songs in the queue to seek in!");
+        if (!player.queue.current.isSeekable) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "The current song is not seekable!");
 
         let seconds = 0;
 
         try {
-            if (args[0][0] === '-' || args[0][0] === '+') {
+            if (args[0][0] === "-" || args[0][0] === "+") {
                 switch (args[0][0]) {
-                    case '+':
-                        seconds = player.position + ((parseInt(args[0].split('+')[1])) * 1000);
+                    case "+":
+                        seconds = player.position + ((parseInt(args[0].split("+")[1])) * 1000);
                         break;
-                    case '-':
-                        seconds = player.position - ((parseInt(args[0].split('-')[1])) * 1000);
+                    case "-":
+                        seconds = player.position - ((parseInt(args[0].split("-")[1])) * 1000);
                         break;
                     default:
                         seconds = parseInt(args[0]) * 1000;
@@ -84,20 +84,20 @@ export default {
         }
 
         if (seconds > player.queue.current.duration!) {
-            return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'Can\'t seek farther than the length of the song!');
+            return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "Can't seek farther than the length of the song!");
         }
-        if (args[0][0] === '-' && (player.position - seconds) <= 0) {
+        if (args[0][0] === "-" && (player.position - seconds) <= 0) {
             seconds = 0;
         }
 
         try {
             player.seek(seconds);
 
-            return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get('arrow_right')} Current track has been seeked to \`${formatDuration((seconds <= 0) ? 0 : (player.position))}\`!`);
+            return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("arrow_right")} Current track has been seeked to \`${formatDuration((seconds <= 0) ? 0 : (player.position))}\`!`);
         }
         catch (ex) {
             console.error("Error while seeking song:", ex);
-            return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'Error while seeking the song!');
+            return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "Error while seeking the song!");
         }
     },
 };

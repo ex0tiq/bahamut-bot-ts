@@ -1,34 +1,34 @@
-import {CommandConfig} from "../../../typings";
-import {CommandType} from "wokcommands";
-import emoji from 'node-emoji';
+import { CommandConfig } from "../../../typings";
+import { CommandType } from "wokcommands";
+import emoji from "node-emoji";
 import Discord from "discord.js";
 import BahamutClient from "../../modules/BahamutClient";
-import {getGuildSettings} from "../../lib/getFunctions";
+import { getGuildSettings } from "../../lib/getFunctions";
 import {
     createMissingParamsErrorResponse,
     handleErrorResponseToMessage,
-    handleResponseToMessage
+    handleResponseToMessage,
 } from "../../lib/messageHandlers";
-import {BahamutCommandPreChecker, PreCheckType} from "../../modules/BahamutCommandPreChecker";
+import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
 
 const config: CommandConfig = {
-    name: 'radio',
+    name: "radio",
     type: CommandType.LEGACY,
-    description: 'Play some web radio.',
-    expectedArgs: '[list or station]',
+    description: "Play some web radio.",
+    expectedArgs: "[list or station]",
     options: [
         {
-            name: 'list-or-name',
-            description: 'Set radio station (use "list" for a list of all available stations).',
+            name: "list-or-name",
+            description: "Set radio station (use \"list\" for a list of all available stations).",
             type: Discord.ApplicationCommandOptionType.String,
-            required: true
-        }
+            required: true,
+        },
     ],
     minArgs: 0,
-    category: 'Music',
+    category: "Music",
     guildOnly: true,
     testOnly: false,
-    deferReply: true
+    deferReply: true,
 };
 
 export default {
@@ -39,18 +39,18 @@ export default {
                          channel,
                          member,
                          args,
-                         interaction
+                         interaction,
                      }: { client: BahamutClient, message: Discord.Message, channel: Discord.TextChannel, member: Discord.GuildMember, args: string[], interaction: Discord.CommandInteraction }) => {
         const settings = await getGuildSettings(client, channel.guild);
         // Abort if module is disabled
-        if (settings.disabled_categories.includes('music')) return;
+        if (settings.disabled_categories.includes("music")) return;
 
         if (args.length <= 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, createMissingParamsErrorResponse(client, config));
         // /////////////////////////////////////////////////////
         const station_names = (Object.entries(client.bahamut.musicHandler.radioStations)).sort((a, b) => a[1].name.localeCompare(b[1].name)).map((entry) => entry[0]);
 
-        if (args[0].toLowerCase() === 'list') {
-            let stationText = '';
+        if (args[0].toLowerCase() === "list") {
+            let stationText = "";
 
             for (let i = 0; i < station_names.length; i++) {
                 const station = station_names[i].trim();
@@ -60,10 +60,10 @@ export default {
             return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
                 embeds: [
                     new Discord.EmbedBuilder()
-                        .setTitle('Available radio stations')
-                        .setDescription(stationText)
-                ]
-            })
+                        .setTitle("Available radio stations")
+                        .setDescription(stationText),
+                ],
+            });
         }
         // /////////////////////////////////////////////////////
         // Run command pre checks
@@ -73,22 +73,22 @@ export default {
             { type: PreCheckType.USER_IN_SAME_VOICE_CHANNEL_AS_BOT },
             {
                 type: PreCheckType.BOT_HAS_PERMISSIONS, requiredPermissions: [
-                    {bitField: Discord.PermissionFlagsBits.Connect, name: "CONNECT"},
-                    {bitField: Discord.PermissionFlagsBits.Speak, name: "SPEAK"}
-                ]
+                    { bitField: Discord.PermissionFlagsBits.Connect, name: "CONNECT" },
+                    { bitField: Discord.PermissionFlagsBits.Speak, name: "SPEAK" },
+                ],
             },
-            { type: PreCheckType.MUSIC_NODES_AVAILABLE }
+            { type: PreCheckType.MUSIC_NODES_AVAILABLE },
         ]);
         if (await checks.runChecks()) return;
 
         // TODO
-        //if (typeof client.runningGames[channel.guild.id] !== 'undefined') return handleBotMessage(client, message, 'error', 'There is a running music quiz on this guild. Please finish it before playing music.', false, null, channel);
+        // if (typeof client.runningGames[channel.guild.id] !== 'undefined') return handleBotMessage(client, message, 'error', 'There is a running music quiz on this guild. Please finish it before playing music.', false, null, channel);
 
         let station = null;
 
         for (let i = 0; i < station_names.length; i++) {
             const station_name = station_names[i].trim();
-            if (client.bahamut.musicHandler.radioStations[station_name].name.toLowerCase().includes(args.join(' ').toLowerCase())) {
+            if (client.bahamut.musicHandler.radioStations[station_name].name.toLowerCase().includes(args.join(" ").toLowerCase())) {
                 station = client.bahamut.musicHandler.radioStations[station_name];
                 break;
             }
@@ -101,11 +101,11 @@ export default {
             // Search for tracks using a query or url, using a query searches youtube automatically and the track requester object
             res = await client.bahamut.musicHandler.manager.search(station.stream_url, member);
             // Check the load type as this command is not that advanced for basics
-            if (res.loadType === 'LOAD_FAILED') return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'An internal error occurred while doing that. Please try again later.');
-            else if (res.loadType === 'NO_MATCHES') return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get('x')} This search did not return any results! Please try again!`);
+            if (res.loadType === "LOAD_FAILED") return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "An internal error occurred while doing that. Please try again later.");
+            else if (res.loadType === "NO_MATCHES") return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("x")} This search did not return any results! Please try again!`);
         }
         catch (err) {
-            return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'An internal error occurred while doing that. Please try again later.');
+            return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "An internal error occurred while doing that. Please try again later.");
         }
 
         const player = client.bahamut.musicHandler.manager.create({
@@ -117,13 +117,13 @@ export default {
         if (!player.voiceChannel && member.voice.channelId) player.setVoiceChannel(member.voice.channelId.toString());
 
         // Connect to the voice channel and add the track to the queue
-        if (player.state !== 'CONNECTED') player.connect();
+        if (player.state !== "CONNECTED") player.connect();
 
-        player.set('radio_station', station.name.toLowerCase());
+        player.set("radio_station", station.name.toLowerCase());
 
         player.queue.add(res.tracks[0], 0);
 
-        player.set('skip_trackstart', true);
+        player.set("skip_trackstart", true);
 
         if (!player.playing && !player.paused && !player.queue.size) {
             await player.play();

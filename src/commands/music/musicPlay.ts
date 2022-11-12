@@ -1,30 +1,30 @@
-import Discord from 'discord.js';
-import {CommandType} from "wokcommands";
-import {getGuildSettings} from "../../lib/getFunctions";
+import Discord from "discord.js";
+import { CommandType } from "wokcommands";
+import { getGuildSettings } from "../../lib/getFunctions";
 import BahamutClient from "../../modules/BahamutClient";
-import {handleErrorResponseToMessage, handleResponseToMessage} from "../../lib/messageHandlers";
-import {CommandConfig} from "../../../typings";
-import {BahamutCommandPreChecker, PreCheckType} from "../../modules/BahamutCommandPreChecker";
+import { handleErrorResponseToMessage, handleResponseToMessage } from "../../lib/messageHandlers";
+import { CommandConfig } from "../../../typings";
+import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
 
 const config: CommandConfig = {
-    name: 'play',
-    aliases: ['p'],
+    name: "play",
+    aliases: ["p"],
     type: CommandType.LEGACY,
-    description: 'Play some music',
-    expectedArgs: '<link or search>',
+    description: "Play some music",
+    expectedArgs: "<link or search>",
     options: [
         {
-            name: 'link-or-search',
-            description: 'Link to or search for video.',
+            name: "link-or-search",
+            description: "Link to or search for video.",
             type: Discord.ApplicationCommandOptionType.String,
-            required: true
-        }
+            required: true,
+        },
     ],
     minArgs: 1,
-    category: 'Music',
+    category: "Music",
     guildOnly: true,
     deferReply: true,
-    testOnly: false
+    testOnly: false,
 };
 
 export default {
@@ -35,12 +35,12 @@ export default {
                          channel,
                          member,
                          args,
-                         interaction
+                         interaction,
                      }: { client: BahamutClient, message: Discord.Message, channel: Discord.TextChannel, member: Discord.GuildMember, args: string[], interaction: Discord.CommandInteraction }) => {
         const settings = await getGuildSettings(client, channel.guild),
-            search = args.join(' ');
+            search = args.join(" ");
         // Abort if module is disabled
-        if (settings.disabled_categories.includes('music')) return;
+        if (settings.disabled_categories.includes("music")) return;
 
         const checks = new BahamutCommandPreChecker(client, {
             client,
@@ -48,24 +48,24 @@ export default {
             channel,
             args,
             member,
-            interaction
+            interaction,
         }, config, [
-            {type: PreCheckType.CHANNEl_IS_MUSIC_CHANNEL},
-            {type: PreCheckType.USER_IN_VOICE_CHANNEL},
-            {type: PreCheckType.USER_IN_SAME_VOICE_CHANNEL_AS_BOT},
+            { type: PreCheckType.CHANNEl_IS_MUSIC_CHANNEL },
+            { type: PreCheckType.USER_IN_VOICE_CHANNEL },
+            { type: PreCheckType.USER_IN_SAME_VOICE_CHANNEL_AS_BOT },
             {
                 type: PreCheckType.BOT_HAS_PERMISSIONS, requiredPermissions: [
-                    {bitField: Discord.PermissionFlagsBits.Connect, name: "CONNECT"},
-                    {bitField: Discord.PermissionFlagsBits.Speak, name: "SPEAK"}
-                ]
+                    { bitField: Discord.PermissionFlagsBits.Connect, name: "CONNECT" },
+                    { bitField: Discord.PermissionFlagsBits.Speak, name: "SPEAK" },
+                ],
             },
-            {type: PreCheckType.ALL_PARAMS_PROVIDED, paramsCheck: !!(search)},
-            {type: PreCheckType.MUSIC_NODES_AVAILABLE}
+            { type: PreCheckType.ALL_PARAMS_PROVIDED, paramsCheck: !!(search) },
+            { type: PreCheckType.MUSIC_NODES_AVAILABLE },
         ]);
         if (await checks.runChecks()) return;
 
         // TODO
-        //if (typeof client.runningGames[channel.guild.id] !== 'undefined') return handleBotMessage(client, message, 'error', 'There is a running music quiz on this guild. Please finish it before playing music.', false, null, channel);
+        // if (typeof client.runningGames[channel.guild.id] !== 'undefined') return handleBotMessage(client, message, 'error', 'There is a running music quiz on this guild. Please finish it before playing music.', false, null, channel);
 
         let res;
 
@@ -74,10 +74,11 @@ export default {
             res = await client.bahamut.musicHandler.manager.search(search, member);
 
             // Check the load type as this command is not that advanced for basics
-            if (res.loadType === 'LOAD_FAILED') return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'An internal error occurred while doing that. Please try again later.');
-            else if (res.loadType === 'NO_MATCHES') return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'This search did not return any results! Please try again!');
-        } catch (err) {
-            return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, 'An internal error occurred while doing that. Please try again later.');
+            if (res.loadType === "LOAD_FAILED") return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "An internal error occurred while doing that. Please try again later.");
+            else if (res.loadType === "NO_MATCHES") return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "This search did not return any results! Please try again!");
+        }
+        catch (err) {
+            return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "An internal error occurred while doing that. Please try again later.");
         }
 
         if (res.tracks[0].isStream && !settings.premium_user) {
@@ -95,12 +96,12 @@ export default {
         if (!player.voiceChannel && member.voice.channelId) player.setVoiceChannel(member.voice.channelId.toString());
 
         // Connect to the voice channel and add the track to the queue
-        if (player.state !== 'CONNECTED') player.connect();
+        if (player.state !== "CONNECTED") player.connect();
 
-        if (res.loadType === 'SEARCH_RESULT') player.queue.add(res.tracks[0]);
+        if (res.loadType === "SEARCH_RESULT") player.queue.add(res.tracks[0]);
         else player.queue.add(res.tracks);
 
-        player.set('radio_station', null);
+        player.set("radio_station", null);
 
         let lastEmbed;
 
@@ -108,27 +109,33 @@ export default {
             if (player.queue.current!.isStream) {
                 await player.stop();
 
-                player.set('skip_trackstart', true);
+                player.set("skip_trackstart", true);
 
                 lastEmbed = await client.bahamut.musicHandler.getTrackStartEmbed(player, res.tracks[0], member);
-            } else if (res.loadType === 'SEARCH_RESULT' || res.loadType === 'TRACK_LOADED' || res.tracks.length === 1) {
+            }
+            else if (res.loadType === "SEARCH_RESULT" || res.loadType === "TRACK_LOADED" || res.tracks.length === 1) {
                 lastEmbed = await client.bahamut.musicHandler.getTrackAddEmbed(player, res.tracks[0], member);
-            } else {
+            }
+            else {
                 lastEmbed = await client.bahamut.musicHandler.getListAddEmbed(player, res, member);
             }
-        } else if (res.loadType === 'SEARCH_RESULT' || res.loadType === 'TRACK_LOADED' || res.tracks.length === 1) {
-            player.set('skip_trackstart', true);
+        }
+        else if (res.loadType === "SEARCH_RESULT" || res.loadType === "TRACK_LOADED" || res.tracks.length === 1) {
+            player.set("skip_trackstart", true);
 
             lastEmbed = await client.bahamut.musicHandler.getTrackStartEmbed(player, res.tracks[0], member);
-        } else {
+        }
+        else {
             lastEmbed = await client.bahamut.musicHandler.getListStartEmbed(player, res, member);
         }
 
         if (player.playing && player.queue.current?.isStream) {
             player.stop();
-        } else if (!player.playing && !player.paused && !player.queue.size) {
+        }
+        else if (!player.playing && !player.paused && !player.queue.size) {
             await player.play();
-        } else if (!player.playing) {
+        }
+        else if (!player.playing) {
             await player.play();
         }
 
