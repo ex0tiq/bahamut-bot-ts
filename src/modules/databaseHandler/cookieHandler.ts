@@ -74,13 +74,13 @@ export default class CookieHandler {
                     where: {
                         guild_id: guild.id,
                         guild_user: user.user.id,
-                        stat: "cookies"
-                    }})
+                        stat: "cookies",
+                    } })
                 .then(async (obj: number | null) => {
-                    if (obj)  resolve(obj + 1);
+                    if (obj) resolve(obj + 1);
                     else resolve(null);
                 }).catch(e => {
-                    console.error('Error while saving guild user stat:', e);
+                    console.error("Error while saving guild user stat:", e);
                     resolve(null);
                 });
         });
@@ -100,19 +100,19 @@ export default class CookieHandler {
                     attributes: [
                         "guild_user",
                         ["val", "cookies"],
-                        [Sequelize.literal(`DENSE_RANK() OVER(ORDER BY CAST(val AS UNSIGNED)${ascending ? ' ASC' : ' DESC'})`), "rank"]
+                        [Sequelize.literal(`DENSE_RANK() OVER(ORDER BY CAST(val AS UNSIGNED)${ascending ? " ASC" : " DESC"})`), "rank"],
                     ],
                     where: {
                         guild_id: guild.id,
-                        stat: "cookies"
+                        stat: "cookies",
                     },
-                    limit: limit
+                    limit: limit,
                 })
                 .then(async (obj: DBGuildUserStats[] | null) => {
-                    if (obj)  resolve(obj);
+                    if (obj) resolve(obj);
                     else resolve(null);
                 }).catch(e => {
-                    console.error('Error while saving guild user stat:', e);
+                    console.error("Error while saving guild user stat:", e);
                     resolve(null);
                 });
         });
