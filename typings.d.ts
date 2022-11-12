@@ -1,8 +1,8 @@
-import {Guild} from "discord.js";
+import Discord from "discord.js";
 import UplinkAPIHandler from "./src/modules/UplinkAPIHandler.js";
 import BahamutShardingManager from "./src/modules/BahamutShardingManager.js";
-import {Track} from "erela.js";
-import {CommandObject, CommandUsage} from "wokcommands";
+import { Track } from "erela.js";
+import { CommandObject, CommandUsage } from "wokcommands";
 import BahamutClient from "./src/modules/BahamutClient";
 
 export interface StartupMessage {
@@ -167,12 +167,12 @@ export interface LevelConfig {
     xp_per_message_mid: number;
     xp_per_message_high: number;
     xp_per_message_very_high: number;
-    rank_name_very_low: number;
-    rank_name_low: number;
-    rank_name_mid: number;
-    rank_name_high: number;
-    rank_name_very_high: number;
-    rank_name_max: number;
+    rank_name_very_low: string;
+    rank_name_low: string;
+    rank_name_mid: string;
+    rank_name_high: string;
+    rank_name_very_high: string;
+    rank_name_max: string;
     levels: {
         [key: string]: number
     }
@@ -282,7 +282,7 @@ export interface GuildPremiumRole {
     name: string;
 }
 
-export interface BahamutGuild extends Guild {
+export interface BahamutGuild extends Discord.Guild {
     premium: boolean | null;
     modOnly: boolean | null;
 }
