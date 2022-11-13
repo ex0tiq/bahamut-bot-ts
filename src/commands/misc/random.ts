@@ -43,10 +43,6 @@ export default {
         // Abort if module is disabled
         if (settings.disabled_categories.includes("miscellaneous")) return;
 
-        if (args.length < 2) {
-            return handleErrorResponseToMessage(client, message, false, config.deferReply, createMissingParamsErrorResponse(client, config));
-        }
-
         let min = 0, max = 0;
 
         try {
