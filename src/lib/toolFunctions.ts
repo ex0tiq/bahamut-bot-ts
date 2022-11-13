@@ -84,7 +84,7 @@ const toProperCase = (str: string) => {
     return str.replace(/([^\W_]+[^\s-]*) */g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
 };
 
-const hexToRGB = (hex: string): number[] | Error => {
+const hexToRGB = (hex: string): number[] | null => {
     //  Make it a valid hex color value (3 -> 6)
     if (hex.length === 3) hex = `${hex[0]}${hex[0]}${hex[1]}${hex[1]}${hex[2]}${hex[2]}`;
 
@@ -94,7 +94,7 @@ const hexToRGB = (hex: string): number[] | Error => {
         blue = parseInt(hex.substring(4, 6), 16);
 
     //  Not valid hex color passed
-    if(isNaN(red) || isNaN(green) || isNaN(blue)) return new Error("Invalid HEX color code value supplied");
+    if(isNaN(red) || isNaN(green) || isNaN(blue)) return null;
 
 
     //  Return a RGB color representation of a HEX color
