@@ -62,7 +62,7 @@ module.exports = {
             if (!ffCharId) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, createMissingParamsErrorResponse(client, config));
 
             target = ffCharId;
-            ffCharId = await client.ffxiv.getGuildFFXIVCharacterID(client, channel, ffCharId.id);
+            ffCharId = await client.bahamut.dbHandler.ffxiv.getDBGuildFFXIVCharacterID(channel.guild, ffCharId);
         } else {
             target = member;
         }

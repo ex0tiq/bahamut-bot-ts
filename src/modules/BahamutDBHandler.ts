@@ -14,6 +14,7 @@ import GuildUserStatHandler from "./databaseHandler/guildUserStatHandler";
 import UserLevelDataHandler from "./databaseHandler/userLevelDataHandler";
 import CookieHandler from "./databaseHandler/cookieHandler";
 import CommandLogHandler from "./databaseHandler/commandLogHandler";
+import FFXIVHandler from "./databaseHandler/ffxivHandler";
 
 export default class BahamutDBHandler {
     private readonly _bahamut: Bahamut;
@@ -26,6 +27,7 @@ export default class BahamutDBHandler {
     private readonly _userLevelData: UserLevelDataHandler;
     private readonly _cookie: CookieHandler;
     private readonly _commandLog: CommandLogHandler;
+    private readonly _ffxiv: FFXIVHandler;
 
     constructor(bahamut: Bahamut) {
         this._bahamut = bahamut;
@@ -45,6 +47,7 @@ export default class BahamutDBHandler {
         this._userLevelData = new UserLevelDataHandler(this);
         this._cookie = new CookieHandler(this);
         this._commandLog = new CommandLogHandler(this);
+        this._ffxiv = new FFXIVHandler(this);
     }
 
     public get bahamut() {
@@ -68,6 +71,9 @@ export default class BahamutDBHandler {
     public get commandLog() {
         return this._commandLog;
     }
+    public get ffxiv() {
+        return this._ffxiv;
+    }
 
 
     /**
@@ -89,8 +95,7 @@ export default class BahamutDBHandler {
         try {
             await this._dbCon.authenticate();
             return true;
-        }
- catch (error) {
+        } catch (error) {
             console.error("Unable to connect to the database:", error);
             return false;
         }
