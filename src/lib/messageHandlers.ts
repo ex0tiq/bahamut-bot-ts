@@ -2,6 +2,7 @@ import BahamutClient from "../modules/BahamutClient";
 import Discord from "discord.js";
 import { HandleMessageOptions, MessageDeleteOptions } from "../../typings";
 import { CommandObject } from "wokcommands";
+import { hexToRGB } from "./toolFunctions";
 
 /**
  * Handle message response to message or interaction
@@ -27,34 +28,38 @@ const handleResponseToMessage = async (
     if (!(typeof newMessageContent === "string")) {
         if (newMessageContent.embeds && newMessageContent.embeds.length > 0) {
             for (const e of newMessageContent.embeds!) {
-                if (!e.data.color) {
+                // @ts-ignore
+                if ("type" in e && e.type === "rich") {
+                    Object.defineProperty(e, "color", {
+                        value: hexToRGB(client.bahamut.config.primary_message_color),
+                        writable: false,
+                        enumerable: true,
+                        configurable: true,
+                    });
+                    console.log(e);
+                } else if (!e.data.color) {
                     // @ts-ignore
                     e.setColor(client.bahamut.config.primary_message_color);
                 }
             }
         }
-    }
- else {
+    } else {
         newMessageContent = createSuccessResponse(client, newMessageContent, true);
     }
 
     if ((initMessage instanceof Discord.Message) && overwriteInitMessage) {
         response = (!sendToAuthor ? await initMessage.edit(newMessageContent) : await initMessage.author.send(newMessageContent));
-    }
-    else if ((initMessage instanceof Discord.Message) && !overwriteInitMessage) {
+    } else if ((initMessage instanceof Discord.Message) && !overwriteInitMessage) {
         response = (!sendToAuthor ? await initMessage.reply(newMessageContent) : await initMessage.author.send(newMessageContent));
-    }
-    else if (initMessage instanceof Discord.CommandInteraction) {
+    } else if (initMessage instanceof Discord.CommandInteraction) {
         if (deferReply) {
             response = initMessage;
 
             !sendToAuthor ? await initMessage.editReply({
                 ...newMessageContent,
             }) : await initMessage.user.send(newMessageContent);
-        }
-        else response = (!sendToAuthor ? await initMessage.reply(newMessageContent) : await initMessage.user.send(newMessageContent));
-    }
- else {
+        } else response = (!sendToAuthor ? await initMessage.reply(newMessageContent) : await initMessage.user.send(newMessageContent));
+    } else {
         // Return error message
         return initMessage;
     }
