@@ -1,8 +1,7 @@
 const isJson = (str: string) => {
     try {
         JSON.parse(str);
-    }
-    catch (e) {
+    } catch (e) {
         return false;
     }
     return true;
@@ -11,34 +10,28 @@ const isJson = (str: string) => {
 const isInt = (str: string) => {
     try {
         parseInt(str);
-    }
-    catch (e) {
+    } catch (e) {
         return false;
     }
     return true;
 };
 
 const isNumeric = (str: string) => {
-    if (typeof str != 'string') return false;
+    if (typeof str != "string") return false;
     return !isNaN(parseInt(str)) && !isNaN(parseFloat(str));
 };
 
 const isBigInt = (str: string) => {
     try {
         BigInt(str);
-    }
-    catch (e) {
+    } catch (e) {
         return false;
     }
     return true;
 };
 
 const fileIsVideo = (file: string) => {
-    if (['mp4', 'webm', 'mov'].includes(file.split('.').pop() || "")) {
-        return true;
-    }
-
-    return false;
+    return ["mp4", "webm", "mov"].includes(file.split(".").pop() || "");
 };
 
 const isUrl = (s: string) => {
