@@ -30,8 +30,9 @@ const handleResponseToMessage = async (
             for (const e of newMessageContent.embeds!) {
                 // @ts-ignore
                 if ("type" in e && e.type === "rich") {
+                    const [red, green, blue] = hexToRGB(client.bahamut.config.primary_message_color) || [0, 0, 0];
                     Object.defineProperty(e, "color", {
-                        value: hexToRGB(client.bahamut.config.primary_message_color),
+                        value: (red << 16) + (green << 8) + blue,
                         writable: false,
                         enumerable: true,
                         configurable: true,
