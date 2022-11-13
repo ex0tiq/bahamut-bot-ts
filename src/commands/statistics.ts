@@ -1,4 +1,5 @@
-import moment from "moment";
+import { DateTime } from "luxon";
+import humanize from "humanize-duration";
 import { numberWithCommas } from "../lib/toolFunctions";
 import osu from "node-os-utils";
 import Discord from "discord.js";
@@ -6,8 +7,8 @@ import { CommandConfig } from "../../typings";
 import { CommandType, CooldownTypes } from "wokcommands";
 import BahamutClient from "../modules/BahamutClient";
 import { createResponseToMessage, handleResponseToMessage } from "../lib/messageHandlers";
+import { getGuildSettings } from "../lib/getFunctions";
 
-require("moment-duration-format")(moment);
 // Non ES imports
 const cpu = require("cpu-stat");
 
@@ -57,6 +58,8 @@ export default {
     ...config,
     // eslint-disable-next-line no-unused-vars
     callback: async ({ client, message, guild, interaction }: { client: BahamutClient, message: Discord.Message, guild: Discord.Guild, interaction: Discord.CommandInteraction }) => {
+        const settings = await getGuildSettings(client, guild);
+
         const data = (await client.shard!.broadcastEval(() => {
                 return {
                     // @ts-ignore
@@ -72,7 +75,7 @@ export default {
                     playingMusicQueues: this.bahamut.musicHandler.manager.players.reduce((a, q) => a + ((q.playing || !q.paused) ? 1 : 0), 0),
                 };
                 // @ts-ignore
-            })), duration = moment.duration(client.uptime).format(" D [days], H [hrs], m [mins], s [secs]"),
+            })), duration = humanize(DateTime.now().minus(client.uptime).diff(DateTime.now()).as("milliseconds"), { language: settings.language, round: true }),
             mem = await osu.mem.used();
         const pack = require("../../package.json");
 
@@ -80,7 +83,8 @@ export default {
             // eslint-disable-next-line no-useless-escape
             content: "\:hourglass: Please wait, collecting data...",
         }).then(async msg => {
-            const stats = await fetchBotStatistics(client, guild, data, duration, mem, pack, message.createdTimestamp);
+            // TODO Check why timestamp is minus
+            const stats = await fetchBotStatistics(client, guild, data, duration, mem, pack, (message || interaction).createdTimestamp);
 
             await handleResponseToMessage(client, msg, true, config.deferReply, stats);
         });

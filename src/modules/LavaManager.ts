@@ -1,23 +1,23 @@
-import {Manager, Track, SearchResult, Player} from "erela.js";
+import { Manager, Track, SearchResult, Player } from "erela.js";
 import Spotify from "erela.js-spotify";
 import Deezer from "erela.js-deezer";
 import { Client } from "genius-lyrics";
 import emoji from "node-emoji";
 import ytdl from "ytdl-core";
-import {randomIntBetween, toProperCase} from "../lib/toolFunctions";
-import moment from "moment";
-import Discord, {GuildMember} from "discord.js";
-import {Bahamut} from "../bahamut";
-import {ExtendedTrack, RadioStation} from "../../typings";
-import {getGuildSettings} from "../lib/getFunctions";
+import { randomIntBetween, toProperCase } from "../lib/toolFunctions";
+import { DateTime } from "luxon";
+import Discord from "discord.js";
+import { Bahamut } from "../bahamut";
+import { ExtendedTrack, RadioStation } from "../../typings";
+import { getGuildSettings } from "../lib/getFunctions";
 import {
     createErrorResponse,
     createSuccessResponse,
     handleErrorResponseToChannel,
-    handleResponseToChannel
+    handleResponseToChannel,
 } from "../lib/messageHandlers";
 import logger from "./Logger";
-import {isUserAdminOfGuild, isUserModOfGuild} from "../lib/checkFunctions";
+import { isUserAdminOfGuild, isUserModOfGuild } from "../lib/checkFunctions";
 
 export default class LavaManager {
     // Bahamut parent class
@@ -25,7 +25,7 @@ export default class LavaManager {
     // Contains all defined radio stations
     private _radioStations: { [id: string]: RadioStation };
     // Contains all defined music filters
-    private _filters: {}
+    private _filters: {};
     // Contains all music timers
     private _leaveTimers: Map<string, ReturnType<typeof setTimeout>> = new Map<string, ReturnType<typeof setTimeout>>;
     // Contains all vote skips
@@ -89,8 +89,8 @@ export default class LavaManager {
                     return handleResponseToChannel(this._bahamut.client, textChannel, createSuccessResponse(this._bahamut.client, {
                         embeds: [
                             new Discord.EmbedBuilder()
-                                .setDescription(`${emoji.get("stop_button")} No one listening anymore. Stopping playback and leaving the channel.`)
-                        ]
+                                .setDescription(`${emoji.get("stop_button")} No one listening anymore. Stopping playback and leaving the channel.`),
+                        ],
                     }, true));
                 }
             }
@@ -127,8 +127,8 @@ export default class LavaManager {
                         await handleResponseToChannel(this._bahamut.client, textChannel, createSuccessResponse(this._bahamut.client, {
                             embeds: [
                                 new Discord.EmbedBuilder()
-                                    .setDescription(`${emoji.get("stop_button")} No more listeners. Stopping playback and leaving the channel.`)
-                            ]
+                                    .setDescription(`${emoji.get("stop_button")} No more listeners. Stopping playback and leaving the channel.`),
+                            ],
                         }, true));
                     }
 
@@ -222,8 +222,8 @@ export default class LavaManager {
                     return handleResponseToChannel(this._bahamut.client, textChannel, createSuccessResponse(this._bahamut.client, {
                         embeds: [
                             new Discord.EmbedBuilder()
-                                .setDescription(`${emoji.get("stop_button")} No one listening anymore. Stopping playback and leaving the channel.`)
-                        ]
+                                .setDescription(`${emoji.get("stop_button")} No one listening anymore. Stopping playback and leaving the channel.`),
+                        ],
                     }, true));
                 }
 
@@ -240,16 +240,16 @@ export default class LavaManager {
                 return handleResponseToChannel(this._bahamut.client, textChannel, createSuccessResponse(this._bahamut.client, {
                     embeds: [
                         new Discord.EmbedBuilder()
-                            .setDescription(`${emoji.get("stop_button")} No one listening anymore. Stopping playback and leaving the channel.`)
-                    ]
+                            .setDescription(`${emoji.get("stop_button")} No one listening anymore. Stopping playback and leaving the channel.`),
+                    ],
                 }, true));
             }
 
             // Apply filter if enabled
 
-            if (typeof track.requester !== "undefined") await this._bahamut.dbHandler.guildUserStat.addDBGuildUserStat(textChannel.guild, track.requester as GuildMember, "played_songs", 1);
+            if (typeof track.requester !== "undefined") await this._bahamut.dbHandler.guildUserStat.addDBGuildUserStat(textChannel.guild, track.requester as Discord.GuildMember, "played_songs", 1);
 
-            await handleResponseToChannel(this._bahamut.client, textChannel, (await this.getPlaySongEmbed(textChannel, player, track, track.requester as GuildMember)))
+            await handleResponseToChannel(this._bahamut.client, textChannel, (await this.getPlaySongEmbed(textChannel, player, track, track.requester as Discord.GuildMember)));
         });
 
         // Emitted the player queue ends
@@ -277,7 +277,7 @@ export default class LavaManager {
                     let res;
                     try {
                         // Search for tracks using a query or url, using a query searches youtube automatically and the track requester object
-                        res = await this._manager.search(`music ${moment().format("YYYY")}`);
+                        res = await this._manager.search(`music ${DateTime.now().toFormat("yyyy")}`);
                     }
                     catch (err) {
                         console.error("Error while fetching related videos:", err);
@@ -359,7 +359,7 @@ export default class LavaManager {
                     .setFields(
                         { name: "Requester", value: `${requester}`, inline: false }
                     )
-                    .setFooter({ text: `You can search and pick results using "${settings.prefix}search".` })
+                    .setFooter({ text: `You can search and pick results using "${settings.prefix}search".` }),
             ],
         });
     };
@@ -378,7 +378,7 @@ export default class LavaManager {
                     .setFields(
                         { name: "Requester", value: `${requester}`, inline: false }
                     )
-                    .setFooter({ text: `You can search and pick results using "${settings.prefix}search".` })
+                    .setFooter({ text: `You can search and pick results using "${settings.prefix}search".` }),
             ],
         });
     };
@@ -397,7 +397,7 @@ export default class LavaManager {
                     .setFields(
                         { name: "Requester", value: `${requester}`, inline: false }
                     )
-                    .setFooter({ text: `You can search and pick results using "${settings.prefix}search".` })
+                    .setFooter({ text: `You can search and pick results using "${settings.prefix}search".` }),
             ],
         });
     };
@@ -432,7 +432,8 @@ export default class LavaManager {
         try {
             const settings = await getGuildSettings(this._bahamut.client, channel.guild);
 
-            let link = "", song = {
+            let link = "";
+            const song = {
                 website_url: undefined,
                 tracklist: undefined,
                 ...track,
@@ -473,10 +474,10 @@ export default class LavaManager {
                         .setTitle(`${song.isStream ? emoji.get("radio") : emoji.get("notes")} Now playing${song.isStream ? " (Stream)" : ""}`)
                         .setDescription(`**[${song.title}](${link})**${song.tracklist ? `\n\nPlaylist:\n${song.tracklist}` : ""}`)
                         .setFields(
-                            { name: "Requester", value: `${(requester) ? requester : (typeof song.requester === "undefined" ? `${emoji.get("control_knobs")} Autoplay` : song.requester)}`, inline: false}
-                        )
-                ]
-            })
+                            { name: "Requester", value: `${(requester) ? requester : (typeof song.requester === "undefined" ? `${emoji.get("control_knobs")} Autoplay` : song.requester)}`, inline: false }
+                        ),
+                ],
+            });
 
             if (!song.isStream) {
                 for (const e of embed.embeds!) {
@@ -560,4 +561,4 @@ export default class LavaManager {
 
         return createErrorResponse(this._bahamut.client, `This command can only be used in a music channel${ch.length > 0 ? `: ${ch.join(", ")}` : ""}`);
     };
-};
+}

@@ -1,23 +1,24 @@
 import BahamutDBHandler from "./modules/BahamutDBHandler";
-import scheduler, {Job} from "node-schedule";
+import scheduler, { Job } from "node-schedule";
 
-process.env.TZ = 'UTC';
+process.env.TZ = "UTC";
 
-if (Number(process.version.slice(1).split('.')[0]) < 16) throw new Error('Node 16.0.0 or higher is required. Update Node on your system.');
+if (Number(process.version.slice(1).split(".")[0]) < 16) throw new Error("Node 16.0.0 or higher is required. Update Node on your system.");
 
 import BahamutClient from "./modules/BahamutClient.js";
-//const lang = require('./lib/languageMessageHandlers');
-import { loadBotStuff }  from "./lib/botStartupFunctions.js";
+// const lang = require('./lib/languageMessageHandlers');
+import { loadBotStuff } from "./lib/botStartupFunctions.js";
 import Logger from "./modules/Logger.js";
-import {BotConfig, GuildSettings, StartupMessage} from "../typings.js";
+import { BotConfig, GuildSettings, StartupMessage } from "../typings.js";
 import WOK from "wokcommands";
 import PremiumManager from "./modules/PremiumManager";
 import LavaManager from "./modules/LavaManager";
-import {isJson} from "./lib/validateFunctions";
+import { isJson } from "./lib/validateFunctions";
 import LevelSystem from "./modules/LevelSystem";
+import { Settings } from "luxon";
 
 // Use bluebird as global promise library
-//global.Promise = require('bluebird');
+// global.Promise = require('bluebird');
 
 export class Bahamut {
     private _client: BahamutClient = new BahamutClient(this);
@@ -52,6 +53,9 @@ export class Bahamut {
             ...this._config,
             ...JSON.parse(shardArgs),
         };
+        
+        // Set luxon default locale
+        Settings.defaultLocale = "en";
 
         // Initiate dbhandler
         this._dbHandler = new BahamutDBHandler(this);
@@ -64,7 +68,7 @@ export class Bahamut {
 
         // Register ready event
         this._client.on("ready", async () => {
-            //require('./modules/functions.js')(this._client);
+            // require('./modules/functions.js')(this._client);
         });
 
         this._client.login(this._config.token).then(async () => {
@@ -74,35 +78,33 @@ export class Bahamut {
             // Load bot events, commands, etc.
             await loadBotStuff(this);
 
-            Logger.log(this._client.shardId, `${this._client.user?.tag}, ready to serve ${this._client.guilds.cache.reduce((a, g) => a + g.memberCount, 0)} users in ${this._client.guilds.cache.size} servers.`, 'ready');
+            Logger.log(this._client.shardId, `${this._client.user?.tag}, ready to serve ${this._client.guilds.cache.reduce((a, g) => a + g.memberCount, 0)} users in ${this._client.guilds.cache.size} servers.`, "ready");
         });
 
 
-
-        process.on('message', async (message: StartupMessage) => {
+        process.on("message", async (message: StartupMessage) => {
             if (!message.type) return false;
-            if (message.type == 'startupData') {
+            if (message.type == "startupData") {
                 if (message.data.shardId || message.data.shardId === 0) this._client.shardId = message.data.shardId;
                 if (message.data.conf) {
-                    //Logger.log(this._client.shardId, 'Received boot configuration from ShardManager, loading...');
-
+                    // Logger.log(this._client.shardId, 'Received boot configuration from ShardManager, loading...');
 
 
                     // Load client libraries
-                    //this.registerLibraries();
+                    // this.registerLibraries();
                     // Load languages
-                    //await lang.initLanguageFiles();
+                    // await lang.initLanguageFiles();
 
                     // Init db
-                    //await this._dbHandler.dbInit();
+                    // await this._dbHandler.dbInit();
 
                     // Login
-                    //await this._client.login(this._config.token);
+                    // await this._client.login(this._config.token);
 
                     // Load bot events, commands, etc.
-                    //await loadBotStuff(this);
+                    // await loadBotStuff(this);
 
-                    //Logger.log(this._client.shardId, `${this._client.user?.tag}, ready to serve ${this._client.guilds.cache.reduce((a, g) => a + g.memberCount, 0)} users in ${this._client.guilds.cache.size} servers.`, 'ready');
+                    // Logger.log(this._client.shardId, `${this._client.user?.tag}, ready to serve ${this._client.guilds.cache.reduce((a, g) => a + g.memberCount, 0)} users in ${this._client.guilds.cache.size} servers.`, 'ready');
                 }
             }
         });
@@ -147,7 +149,7 @@ export class Bahamut {
 
     private registerLibraries = () => {
 
-    }
-};
+    };
+}
 
 export default new Bahamut();

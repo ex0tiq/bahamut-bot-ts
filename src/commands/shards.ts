@@ -4,8 +4,9 @@ import { CommandType, CooldownTypes } from "wokcommands";
 import BahamutClient from "../modules/BahamutClient";
 import Discord from "discord.js";
 import { handleResponseToMessage } from "../lib/messageHandlers";
-
-const moment = require("moment");
+import { DateTime } from "luxon";
+import humanize from "humanize-duration";
+import { getGuildSettings } from "../lib/getFunctions";
 
 const config: CommandConfig = {
     name: "shards",
@@ -24,8 +25,8 @@ const config: CommandConfig = {
 
 export default {
     ...config,
-    callback: async ({ client, message, interaction }: { client: BahamutClient, message: Discord.Message, interaction: Discord.CommandInteraction }) => {
-        const date = Date.now();
+    callback: async ({ client, message, interaction, guild }: { client: BahamutClient, message: Discord.Message, interaction: Discord.CommandInteraction, guild: Discord.Guild }) => {
+        const date = Date.now(), settings = await getGuildSettings(client, guild);
 
         const data = (await client.shard!.broadcastEval(() => {
             return {
@@ -64,7 +65,7 @@ Users: ${numberWithCommas(shard.membersTotal)}
 Memory: ${shard.ramUsage.toFixed(2)} MB
 Heartbeat: ${shard.time - date}ms
 Streams: ${shard.playingMusicQueues}/${shard.totalMusicQueues}
-Uptime: ${moment.duration(shard.uptime).format(" D [days], H [hrs], m [mins], s [secs]")}\`\`\``, inline: true });
+Uptime: ${humanize(DateTime.now().minus(shard.uptime).diff(DateTime.now()).as("milliseconds"), { language: settings.language, round: true })}\`\`\``, inline: true });
         }
 
         return handleResponseToMessage(client, message || interaction, false, config.deferReply, {

@@ -7,7 +7,7 @@ import { getCurrentUserData, getXpForLevel } from "../../lib/levelFunctions";
 import BahamutClient from "../../modules/BahamutClient";
 import { getGuildSettings } from "../../lib/getFunctions";
 import { resolveUser } from "../../lib/resolveFunctions";
-import moment from "moment";
+import { DateTime } from "luxon";
 import { resolve } from "path";
 import { promises as fs } from "fs";
 import { handleResponseToMessage } from "../../lib/messageHandlers";
@@ -75,8 +75,8 @@ export default {
             getCurrentUserData(client, target!),
             client.bahamut.dbHandler.cookie.getDBUserCookies(channel.guild, target!),
         ]),
-            userCreatedDate = moment(target!.user.createdTimestamp),
-            userJoinedDate = moment(target!.joinedTimestamp),
+            userCreatedDate = DateTime.fromMillis(target!.user.createdTimestamp),
+            userJoinedDate = DateTime.fromMillis(target!.joinedTimestamp!),
             avatarUrl = target!.avatarURL({ forceStatic: true, extension: "png" }),
             profileCard = new Canvacord.Rank();
         let rank = null, xpNeeded = 0;
@@ -156,8 +156,17 @@ export default {
             msg.addFields({ name: "Cookies", value: "\:cookie: 0", inline: false });
         }
 
-        msg.addFields({ name: "Joined On", value: `${userJoinedDate.format("DD MMM YYYY")} (${userJoinedDate.fromNow()})`, inline: false });
-        msg.addFields({ name: "Created On", value: `${userCreatedDate.format("DD MMM YYYY")} (${userCreatedDate.fromNow()})`, inline: false });
+        if (settings.language !== "en") {
+            userCreatedDate.setLocale(settings.language);
+            userJoinedDate.setLocale(settings.language);
+        }
+
+        const userCreatedDateString = settings.time_format_24h ? userCreatedDate.toFormat("dd LLL yyyy") : userCreatedDate.toLocaleString(DateTime.DATE_MED),
+            userJoinedDateString = settings.time_format_24h ? userJoinedDate.toFormat("dd LLL yyyy") : userJoinedDate.toLocaleString(DateTime.DATE_MED);
+
+
+        msg.addFields({ name: "Joined On", value: `${userJoinedDateString} (${userJoinedDate.toRelative()})`, inline: false });
+        msg.addFields({ name: "Created On", value: `${userCreatedDateString} (${userCreatedDate.toRelative()})`, inline: false });
 
         return handleResponseToMessage(client, message || interaction, false, config.deferReply, { ...sendOptions, embeds: [msg] });
     },

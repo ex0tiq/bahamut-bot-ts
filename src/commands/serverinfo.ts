@@ -1,14 +1,12 @@
 import BahamutClient from "../modules/BahamutClient";
 import { numberWithCommas, toProperCase } from "../lib/toolFunctions";
-import moment from "moment";
+import { DateTime } from "luxon";
 import ISO6391 from "iso-639-1";
 import Discord from "discord.js";
 import { CommandConfig } from "../../typings";
 import { CommandType, CooldownTypes } from "wokcommands";
 import { getGuildSettings } from "../lib/getFunctions";
 import { handleResponseToMessage } from "../lib/messageHandlers";
-
-require("moment-duration-format");
 
 const config: CommandConfig = {
     name: "serverinfo",
@@ -30,7 +28,7 @@ export default {
     callback: async ({ client, message, channel, interaction, member }: { client: BahamutClient, message: Discord.Message, channel: Discord.TextChannel, interaction: Discord.CommandInteraction, member: Discord.GuildMember }) => {
         const guildUserStats = await client.bahamut.dbHandler.guildUserStat.getDBGuildUserStats(channel.guild, member, ["played_songs", "cookies"]),
             guildCommandCount = await client.bahamut.dbHandler.commandLog.getDBGuildCommandLogCount(channel.guild),
-            serverCreatedDate = moment(channel.guild.createdTimestamp), botJoinedDate = moment(channel.guild.members.me?.joinedTimestamp),
+            serverCreatedDate = DateTime.fromMillis(channel.guild.createdTimestamp), botJoinedDate = DateTime.fromMillis(channel.guild.members.me?.joinedTimestamp!),
             settings = await getGuildSettings(client, channel.guild);
 
         const data = (await client.shard!.broadcastEval(() => {
@@ -38,11 +36,19 @@ export default {
             return this.shardId;
         }));
 
+        if (settings.language !== "en") {
+            serverCreatedDate.setLocale(settings.language);
+            botJoinedDate.setLocale(settings.language);
+        }
+
+        const serverCreatedDateString = settings.time_format_24h ? serverCreatedDate.toFormat("dd LLL yyyy") : serverCreatedDate.toLocaleString(DateTime.DATE_MED),
+            botJoinedDateString = settings.time_format_24h ? botJoinedDate.toFormat("dd LLL yyyy") : botJoinedDate.toLocaleString(DateTime.DATE_MED);
+
         return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
             embeds: [
                 new Discord.EmbedBuilder()
                     .setAuthor({ name: `Server: ${channel.guild.name}`, iconURL: client.bahamut.config.message_icons.info })
-                    .setDescription(`Created on: \`${serverCreatedDate.format("DD MMM YYYY")} (${serverCreatedDate.fromNow()})\`.\nBot joined on: \`${botJoinedDate.format("DD MMM YYYY")} (${botJoinedDate.fromNow()})\`.`)
+                    .setDescription(`Created on: \`${serverCreatedDateString} (${serverCreatedDate.toRelative()})\`.\nBot joined on: \`${botJoinedDateString} (${botJoinedDate.toRelative()})\`.`)
                     .setThumbnail(channel.guild.iconURL())
                     .setFields(
                         // @ts-ignore
