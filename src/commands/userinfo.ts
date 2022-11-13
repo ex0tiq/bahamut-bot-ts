@@ -5,7 +5,11 @@ import Discord from "discord.js";
 import { CommandConfig } from "../../typings";
 import { CommandType, CooldownTypes } from "wokcommands";
 import BahamutClient from "../modules/BahamutClient";
-import { handleResponseToMessage } from "../lib/messageHandlers";
+import {
+    createMissingParamsErrorResponse,
+    handleErrorResponseToMessage,
+    handleResponseToMessage,
+} from "../lib/messageHandlers";
 import { getGuildSettings } from "../lib/getFunctions";
 
 const config: CommandConfig = {
@@ -42,20 +46,16 @@ export default {
         if (args.length > 0) {
             if (message && message.mentions.members!.size > 0) {
                 target = message.mentions.members?.first();
-            }
-            else if (!message && args.length > 0) {
+            } else if (!message && args.length > 0) {
                 if (args[0] instanceof Discord.GuildMember) {
                     target = args[0];
-                }
-                else {
+                } else {
                     target = await resolveUser(client, args[0], channel.guild);
                 }
+            } else {
+                return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, createMissingParamsErrorResponse(client, config));
             }
-            else {
-                target = member;
-            }
-        }
-        else {
+        } else {
             target = member;
         }
 

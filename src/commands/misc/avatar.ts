@@ -5,6 +5,7 @@ import BahamutClient from "../../modules/BahamutClient";
 import Discord from "discord.js";
 import { getGuildSettings } from "../../lib/getFunctions";
 import { resolveUser } from "../../lib/resolveFunctions";
+import { createMissingParamsErrorResponse, handleErrorResponseToMessage } from "../../lib/messageHandlers";
 
 const config: CommandConfig = {
     name: "avatar",
@@ -28,7 +29,7 @@ const config: CommandConfig = {
 
 export default {
     ...config,
-    callback: async ({ client, channel, message, args, member }: { client: BahamutClient, channel: Discord.TextChannel, message: Discord.Message, args: any[], member: Discord.GuildMember }) => {
+    callback: async ({ client, channel, message, args, member, interaction }: { client: BahamutClient, channel: Discord.TextChannel, message: Discord.Message, args: any[], member: Discord.GuildMember, interaction: Discord.CommandInteraction }) => {
         const settings = await getGuildSettings(client, channel.guild);
         // Abort if module is disabled
         if (settings.disabled_categories.includes("miscellaneous")) return;
@@ -38,20 +39,16 @@ export default {
         if (args.length > 0) {
             if (message && message.mentions.members!.size > 0) {
                 target = message.mentions.members?.first();
-            }
-            else if (!message && args.length > 0) {
+            } else if (!message && args.length > 0) {
                 if (args[0] instanceof Discord.GuildMember) {
                     target = args[0];
-                }
-                else {
+                } else {
                     target = await resolveUser(client, args[0], channel.guild);
                 }
+            } else {
+                return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, createMissingParamsErrorResponse(client, config));
             }
-            else {
-                target = member;
-            }
-        }
-        else {
+        } else {
             target = member;
         }
 

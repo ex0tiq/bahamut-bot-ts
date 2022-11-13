@@ -10,7 +10,11 @@ import { resolveUser } from "../../lib/resolveFunctions";
 import { DateTime } from "luxon";
 import { resolve } from "path";
 import { promises as fs } from "fs";
-import { handleResponseToMessage } from "../../lib/messageHandlers";
+import {
+    createMissingParamsErrorResponse,
+    handleErrorResponseToMessage,
+    handleResponseToMessage,
+} from "../../lib/messageHandlers";
 
 const config: CommandConfig = {
     name: "profile",
@@ -54,20 +58,16 @@ export default {
         if (args.length > 0) {
             if (message && message.mentions.members!.size > 0) {
                 target = message.mentions.members?.first();
-            }
-            else if (!message && args.length > 0) {
+            } else if (!message && args.length > 0) {
                 if (args[0] instanceof Discord.GuildMember) {
                     target = args[0];
-                }
-                else {
+                } else {
                     target = await resolveUser(client, args[0], channel.guild);
                 }
+            } else {
+                return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, createMissingParamsErrorResponse(client, config));
             }
-            else {
-                target = member;
-            }
-        }
-        else {
+        } else {
             target = member;
         }
 
@@ -92,34 +92,29 @@ export default {
                     name: client.bahamut.levelSystem.levelConfig.rank_name_very_low,
                     level: 0,
                 };
-            }
-            else if (userData.level <= 60) {
+            } else if (userData.level <= 60) {
                 rank = {
                     name: client.bahamut.levelSystem.levelConfig.rank_name_low,
                     level: 1,
                 };
-            }
-            else if (userData.level <= 90) {
+            } else if (userData.level <= 90) {
                 rank = {
                     name: client.bahamut.levelSystem.levelConfig.rank_name_mid,
                     level: 2,
                 };
-            }
-            else if (userData.level <= 120) {
+            } else if (userData.level <= 120) {
                 rank = {
                     name: client.bahamut.levelSystem.levelConfig.rank_name_high,
                     level: 3,
                 };
-            }
-            else if (userData.level === 150) {
+            } else if (userData.level === 150) {
                 rank = {
                     name: client.bahamut.levelSystem.levelConfig.rank_name_max,
                     level: 5,
                 };
                 userData.xp = client.bahamut.levelSystem.levelConfig.levels[150];
                 xpNeeded = userData.xp;
-            }
-            else {
+            } else {
                 rank = {
                     name: client.bahamut.levelSystem.levelConfig.rank_name_very_high,
                     level: 4,
@@ -150,8 +145,7 @@ export default {
         if (userCookies) {
             // eslint-disable-next-line
             msg.addFields({ name: "Cookies", value: `\:cookie: ${userCookies}`, inline: false });
-        }
-        else {
+        } else {
             // eslint-disable-next-line
             msg.addFields({ name: "Cookies", value: "\:cookie: 0", inline: false });
         }
