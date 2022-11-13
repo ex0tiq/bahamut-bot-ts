@@ -1,6 +1,6 @@
 import BahamutDBHandler, { DBGuildUserStats } from "../BahamutDBHandler";
 import Discord from "discord.js";
-import {Op, WhereOptions} from "sequelize";
+import { Op, WhereOptions } from "sequelize";
 
 export default class GuildUserStatHandler {
     // DB Handler instance
@@ -75,8 +75,7 @@ export default class GuildUserStatHandler {
                         await obj.update({
                             val: value,
                         });
-                    }
- else {
+                    } else {
                         // insert
                         await DBGuildUserStats.create({
                             guild_id: guild.id,
@@ -117,8 +116,7 @@ export default class GuildUserStatHandler {
                         await obj.update({
                             val: obj.val + value,
                         });
-                    }
- else {
+                    } else {
                         // insert
                         await DBGuildUserStats.create({
                             guild_id: guild.id,
@@ -162,8 +160,7 @@ export default class GuildUserStatHandler {
                         await obj.update({
                             val: value,
                         });
-                    }
- else {
+                    } else {
                         // insert
                         await DBGuildUserStats.create({
                             guild_id: guild.id,
