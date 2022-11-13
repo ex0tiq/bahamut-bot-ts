@@ -85,6 +85,8 @@ const toProperCase = (str: string) => {
 };
 
 const hexToRGB = (hex: string): number[] | null => {
+    if (hex.startsWith("#")) hex = hex.slice(1);
+
     //  Make it a valid hex color value (3 -> 6)
     if (hex.length === 3) hex = `${hex[0]}${hex[0]}${hex[1]}${hex[1]}${hex[2]}${hex[2]}`;
 
