@@ -277,23 +277,13 @@ export interface GuildSettings {
     twitch_subscriptions: string[];
 }
 
-export interface GuildPremiumRole {
-    id: string
-    name: string;
-}
-
-export interface BahamutGuild extends Discord.Guild {
-    premium: boolean | null;
-    modOnly: boolean | null;
-}
-
-export interface UserGuild {
-    id: string;
-    name: string;
-    icon: string;
-    acronym: string;
-    modOnly: boolean;
-    premium: boolean;
+export interface FFXIVWorldData {
+    name: string,
+    status: string,
+    category: string,
+    createCharacter: boolean,
+    server: string,
+    region: string,
 }
 
 export interface HandleMessageOptions {
