@@ -14,7 +14,7 @@ const config: CommandConfig = {
     description: "Get the current time and date.",
     category: "Miscellaneous",
     guildOnly: true,
-    deferReply: true,
+    deferReply: false,
 };
 
 export default {
