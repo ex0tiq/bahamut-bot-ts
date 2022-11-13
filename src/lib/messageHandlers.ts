@@ -36,7 +36,6 @@ const handleResponseToMessage = async (
                         enumerable: true,
                         configurable: true,
                     });
-                    console.log(e);
                 } else if (!e.data.color) {
                     // @ts-ignore
                     e.setColor(client.bahamut.config.primary_message_color);
