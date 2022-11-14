@@ -1,8 +1,6 @@
 import BahamutDBHandler from "./modules/BahamutDBHandler";
 import scheduler, { Job } from "node-schedule";
 
-process.env.TZ = "UTC";
-
 if (Number(process.version.slice(1).split(".")[0]) < 16) throw new Error("Node 16.0.0 or higher is required. Update Node on your system.");
 
 import BahamutClient from "./modules/BahamutClient.js";
@@ -56,6 +54,7 @@ export class Bahamut {
         
         // Set luxon default locale
         Settings.defaultLocale = "en";
+        Settings.defaultZone = "Europe/Berlin";
 
         // Initiate dbhandler
         this._dbHandler = new BahamutDBHandler(this);
