@@ -9,8 +9,8 @@
     "tsc": "tsc -w --outDir dist --rootDir src --skipLibCheck",
     "start_shard": "cross-env NODE_NO_WARNINGS=1 node ./dist/index.js",
     "start_shard_update": "cross-env NODE_NO_WARNINGS=1 npm update && node ./dist/index.js",
-    "dev_shard": "cross-env NODE_NO_WARNINGS=1 node ./node_modules/nodemon/bin/nodemon.js ./dist/index.js",
-    "dev_shard_update": "cross-env NODE_NO_WARNINGS=1 npm install && npm update && node ./node_modules/nodemon/bin/nodemon.js ./dist/index.js"
+    "dev_shard": "cross-env NODE_NO_WARNINGS=1 node ./node_modules/nodemon/bin/nodemon.js --ignore ./cache/ --ignore ./assets/ --ignore ./config/ ./dist/index.js",
+    "dev_shard_update": "cross-env NODE_NO_WARNINGS=1 npm install && npm update && node ./node_modules/nodemon/bin/nodemon.js --ignore ./cache/ --ignore ./assets/ --ignore ./config/ ./dist/index.js"
   },
   "engines": {
     "node": ">=14.16"
