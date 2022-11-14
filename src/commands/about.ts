@@ -22,7 +22,7 @@ const config = {
 export default {
     ...config,
     callback: async ({ client, message }: { client: BahamutClient, message: Discord.Message }) => {
-        await handleResponseToMessage(client, message, false, config.deferReply, {
+        return handleResponseToMessage(client, message, false, config.deferReply, {
             "embeds": [
                 new Discord.EmbedBuilder()
                     .setAuthor({ name: "About", iconURL: client.bahamut.config.message_icons!.info })

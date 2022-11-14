@@ -21,7 +21,7 @@ const config = {
 export default {
     ...config,
     callback: async ({ client, message }: { client: BahamutClient, message: Discord.Message }) => {
-        await handleResponseToMessage(
+        return handleResponseToMessage(
             client,
             message,
             false,
