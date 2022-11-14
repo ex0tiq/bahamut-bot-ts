@@ -99,9 +99,9 @@ const createShipImage = async ({ user1, user2, shipPercent = 20 }: { user1: Disc
 
 const createPortraitImage = async ({ title, subtitle, source, font = "Arial", fontTitleSize = 42, fontSubtitleSize = 26, captionHeight = 120, decorateCaptionTextFillStyle = null,
                                        decorateCaptionFillStyle = null, offsetCaptionX = 0, offsetCaptionY = 0, offsetTitleX = 0, offsetTitleY = 0, offsetSubTitleX = 0, offsetSubtitleY = 0 } :
-                                       { title: string, subtitle: string, source: string, font: string, fontTitleSize: number, fontSubtitleSize: number, captionHeight: number,
-                                           decorateCaptionTextFillStyle: string | null, decorateCaptionFillStyle: string | null, offsetCaptionX: number, offsetCaptionY: number, offsetTitleX: number,
-                                           offsetTitleY: number, offsetSubTitleX: number, offsetSubtitleY: number }) => {
+                                       { title: string, subtitle: string, source: string, font?: string, fontTitleSize?: number, fontSubtitleSize?: number, captionHeight?: number,
+                                           decorateCaptionTextFillStyle?: string | null, decorateCaptionFillStyle?: string | null, offsetCaptionX?: number, offsetCaptionY?: number, offsetTitleX?: number,
+                                           offsetTitleY?: number, offsetSubTitleX?: number, offsetSubtitleY?: number }) => {
     // Draw base image
     let image = null, width = 0, height = 0;
     if (isUrl(source)) {
@@ -230,4 +230,4 @@ function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, width: n
     if (stroke) ctx.stroke();
 }
 
-module.exports = { createPortraitImage, createShipImage };
+export { createPortraitImage, createShipImage };
