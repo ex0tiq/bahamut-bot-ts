@@ -42,7 +42,7 @@ export default class FFXIVHandler {
      * * @param {string|null} user
      * @returns {Promise<boolean>}
      */
-    saveGuildFFXIVCharacterID = async (guild: Discord.Guild, user: Discord.GuildMember, lodestoneCharID: string) => {
+    saveDBGuildFFXIVCharacterID = async (guild: Discord.Guild, user: Discord.GuildMember, lodestoneCharID: string) => {
         return new Promise((resolve) => {
             return DBGuildCharacters
                 .findOne({
