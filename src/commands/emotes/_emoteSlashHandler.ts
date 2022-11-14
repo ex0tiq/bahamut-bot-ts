@@ -39,7 +39,7 @@ const config: CommandConfig = {
 export default {
     ...config,
     autocomplete: () => {
-        return ["List"].concat(allEmoteCommands.map(e => toProperCase(e.fileContents.name)));
+        return ["List"].concat(allEmoteCommands.filter(e => e.fileContents.type !== CommandType.SLASH).map(e => toProperCase(e.fileContents.name)));
     },
     callback: async ({ message, args, client, interaction, channel, ...rest }: { message: Discord.Message, args: any[], client: BahamutClient, interaction: Discord.CommandInteraction, channel: Discord.TextChannel }) => {
         try {
