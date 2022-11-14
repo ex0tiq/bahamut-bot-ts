@@ -61,7 +61,7 @@ const getAllFiles = (path: string, foldersOnly = false) => {
                     fileContents: file,
                 });
             } else {
-                filesFound = [...filesFound, ...getAllFiles(filePath)];
+                filesFound = [...filesFound, ...(getAllFiles(filePath))];
             }
             continue;
         }
@@ -77,7 +77,7 @@ const getAllFiles = (path: string, foldersOnly = false) => {
 };
 
 const getAllJSFiles = (path: string, foldersOnly = false) => {
-    return getAllFiles(path, foldersOnly).filter(e => e.filePath.endsWith(".js"));
+    return (getAllFiles(path, foldersOnly)).filter(e => e.filePath.endsWith(".js"));
 };
 
 const toProperCase = (str: string) => {
