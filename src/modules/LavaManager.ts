@@ -331,6 +331,9 @@ export default class LavaManager {
     public get voteSkips() {
         return this._voteSkips;
     }
+    public get leaveTimers() {
+        return this._leaveTimers;
+    }
 
     // Misc functions
     getTrackStartEmbed = async (player: Player, track: Track, requester: Discord.GuildMember) => {
