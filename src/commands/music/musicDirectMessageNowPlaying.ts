@@ -107,8 +107,7 @@ export default {
                 await handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "Error sending private message.\n\nPlease check if you allow users of this server to send private messages to you.");
             });
             return;
-        }
- else {
+        } else {
             let embed = new Discord.EmbedBuilder()
                 .setTitle(`${emoji.get("notes")} Now playing`)
                 .setThumbnail(song.thumbnail)

@@ -78,8 +78,7 @@ export default {
 
             if (!search || search.result === null) {
                 return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Sorry, I couldn't find any lyrics for \`${player.queue.current!.title}\`.`);
-            }
-            else {
+            } else {
                 const templyrics = search.lyrics.replace(/\n/g, "%b");
                 if (templyrics.length >= 2000) {
                     await handleErrorResponseToMessage(
@@ -100,8 +99,7 @@ export default {
                     if (message) await message.channel.send("*Powered by Genius*");
                     else interaction.channel?.send("*Powered by Genius*");
                     return;
-                }
-                else {
+                } else {
                     return handleResponseToMessage(
                         client,
                         message || interaction,
@@ -118,8 +116,7 @@ export default {
                     );
                 }
             }
-        }
-        else {
+        } else {
             const search = await searchLyrics(client, GeniusClient, args.join(" "));
 
             if (!search || search.result === null) {
@@ -146,8 +143,7 @@ export default {
                 if (message) await message.channel.send("*Powered by Genius*");
                 else interaction.channel?.send("*Powered by Genius*");
                 return;
-            }
-            else {
+            } else {
                 return handleResponseToMessage(
                     client,
                     message || interaction,
@@ -175,15 +171,13 @@ const searchLyrics = async (client: BahamutClient, geniusClient: unknown, search
 
         if (searchResult == null) {
             return null;
-        }
-        else {
+        } else {
             return {
                 lyrics: await (searchResult.lyrics()),
                 result: searchResult,
             };
         }
-    }
-    catch (err) {
+    } catch (err) {
         console.error("Error while searching for song lyrics:", err);
         return null;
     }
