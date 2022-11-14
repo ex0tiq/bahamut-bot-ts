@@ -16,17 +16,20 @@ export default class GuildUserStatHandler {
      * @param user
      * @param stats
      */
-    getDBGuildUserStats = async (guild: Discord.Guild, user: Discord.GuildMember | null, stats?: string[]): Promise<Map<string, number> | null> => {
+    getDBGuildUserStats = async (guild: Discord.Guild, user: Discord.GuildMember | null, stats?: string[]): Promise<Map<string, { val: number, updatedAt: Date }> | null> => {
         const where: WhereOptions = {
             guild_id: guild.id,
-            [Op.or]: stats?.map(e => {
-                return {
-                    stat: e,
-                };
-            }),
         };
 
         if (user) where["guild_user"] = user.user.id;
+        if (stats && stats.length) {
+            // @ts-ignore
+            where[Op.or] = stats.map(e => {
+                return {
+                    stat: e,
+                };
+            });
+        }
 
         const res: DBGuildUserStats[] | null = await new Promise((resolve) => {
             return DBGuildUserStats
@@ -37,16 +40,19 @@ export default class GuildUserStatHandler {
                     if (obj) resolve(obj);
                     else resolve(null);
                 }).catch(e => {
-                    console.error("Error while saving guild user stat:", e);
+                    console.error("Error while querying guild user stat:", e);
                     resolve(null);
                 });
         });
 
         if (!res) return null;
 
-        const resMap = new Map<string, number>;
+        const resMap = new Map<string, { val: number, updatedAt: Date }>;
         for (const s of res) {
-            resMap.set(s.stat, s.val);
+            resMap.set(s.stat, {
+                val: s.val,
+                updatedAt: s.updatedAt,
+            });
         }
 
         return resMap;
