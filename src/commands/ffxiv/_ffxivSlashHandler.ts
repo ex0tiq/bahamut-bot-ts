@@ -16,19 +16,11 @@ const config: CommandConfig = {
     description: "Different commands related to FF XIV.",
     options: (() => {
         return allFFXIVCommands.filter(e => e.fileContents.type !== CommandType.SLASH).map(e => {
-            let autocomplete = false;
-            if (Array.isArray(e.fileContents.options) && e.fileContents.options.length > 0) {
-                for (const o of e.fileContents.options) {
-                    if (o.autocomplete) autocomplete = true;
-                }
-            }
-
             return {
                 name: e.fileContents.name,
-                type: 1,
+                type: Discord.ApplicationCommandOptionType.Subcommand,
                 description: e.fileContents.description,
                 options: e.fileContents.options || [],
-                autocomplete: autocomplete,
             };
         });
     })(),
