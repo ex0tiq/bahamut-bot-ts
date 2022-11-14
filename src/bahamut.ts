@@ -15,6 +15,10 @@ import { isJson } from "./lib/validateFunctions";
 import LevelSystem from "./modules/LevelSystem";
 import { Settings } from "luxon";
 import FFXIV from "./modules/FFXIV";
+import LanguageMessageHandler from "./lib/languageMessageHandlers";
+
+// Non ES imports
+const { client } = require("tenorjs");
 
 // Use bluebird as global promise library
 // global.Promise = require('bluebird');
@@ -43,6 +47,9 @@ export class Bahamut {
     private _scheduler: typeof scheduler = scheduler;
     private _schedules: Map<string, Job> = new Map<string, Job>;
 
+    // Set global tenor object
+    private _tenor;
+
     constructor() {
         const shardArgs = (process.argv.length > 2 ? process.argv.slice(2).join(" ") : null);
         if (!shardArgs || !isJson(shardArgs)) {
@@ -70,14 +77,26 @@ export class Bahamut {
         // Init FFXIV stuff
         this._ffxiv = new FFXIV(this);
 
+        // Init tenor object
+        this._tenor = client({
+            "Key": this.config.tenor_token,
+            "Filter": "low",
+            "Locale": "en_US",
+            "MediaFilter": "minimal",
+            "DateFormat": "MM/DD/YYYY - H:mm:ss A",
+        });
+
         // Register ready event
         this._client.on("ready", async () => {
-            // require('./modules/functions.js')(this._client);
+            //
         });
 
         this._client.login(this._config.token).then(async () => {
             // Init db connection
             await this._dbHandler.dbInit();
+
+            // Load all languagse
+            await LanguageMessageHandler.initLanguageFiles();
 
             // Load bot events, commands, etc.
             await loadBotStuff(this);
@@ -152,6 +171,10 @@ export class Bahamut {
     }
     public get ffxiv() {
         return this._ffxiv;
+    }
+
+    public get tenor() {
+        return this._tenor;
     }
 
     private registerLibraries = () => {

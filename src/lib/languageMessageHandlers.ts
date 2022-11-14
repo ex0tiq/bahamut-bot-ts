@@ -1,4 +1,4 @@
-import path from "path";
+import path, { resolve } from "path";
 import emoji from "node-emoji";
 import { getAllFiles } from "./toolFunctions";
 import BahamutClient from "../modules/BahamutClient";
@@ -12,11 +12,11 @@ export default class LanguageMessageHandler {
      * Initialize all language files
      */
     static initLanguageFiles = async () => {
-        const langFiles = getAllFiles("./assets/lang/");
+        const langFiles = getAllFiles(resolve("assets/lang/"));
         langFiles.forEach(file => {
             try {
                 const parse = path.parse(file.filePath);
-                this.language_files.set(parse.name, new Map(Object.entries(require(`../${file}`))));
+                this.language_files.set(parse.name, new Map(Object.entries(file.fileContents)));
             } catch {
                 // Nothing
             }
@@ -31,7 +31,7 @@ export default class LanguageMessageHandler {
      * @param { object } replacers Optional. Replacers for the messages.
      * @returns string
      */
-    static async getMessage(client: BahamutClient, guild: Discord.Guild, msg_key: string, replacers?: object) {
+    static async getMessage(client: BahamutClient, guild: Discord.Guild, msg_key: string, replacers?: object): Promise<string> {
         const origLang = ((await getGuildSettings(client, guild))["language"] || "en");
         let	lang = origLang;
 
@@ -41,20 +41,21 @@ export default class LanguageMessageHandler {
             else lang = "en";
         }
         // If message key is not available in language
-        if (!(this.language_files.get(lang)?.has(msg_key))) return `Message key '${msg_key}' is currently not available in language '${origLang}'. Please try again or switch to another language.`;
+        if (!(this.language_files.get(lang)!.has(msg_key))) return `Message key '${msg_key}' is currently not available in language '${origLang}'. Please try again or switch to another language.`;
 
-        let langString = this.language_files.get(lang)?.get(msg_key);
+        let langString = this.language_files.get(lang)!.get(msg_key);
+        if (!langString) return `Message key '${msg_key}' is currently not available in language '${origLang}'. Please try again or switch to another language.`;
 
-        if (langString?.toLowerCase().includes("%emoji-")) {
-            const matches = langString.toLowerCase().match(/%emoji-.+?%/g) || [];
+        if (langString!.toLowerCase().includes("%emoji-")) {
+            const matches = langString!.toLowerCase().match(/%emoji-.+?%/g) || [];
             for (const m of matches) {
                 const em = m.replace(/%/g, "").replace(/emoji-/g, "");
-                langString = langString.replace(m, emoji.get(em));
+                langString = langString!.replace(m, emoji.get(em));
             }
         }
         if (replacers) {
             for (const [key, val] of Object.entries(replacers)) {
-                langString = langString?.replace(`%${key}%`, val);
+                langString = langString!.replace(`%${key}%`, val);
             }
         }
 
