@@ -3,7 +3,7 @@ import { Bahamut } from "../bahamut.js";
 
 export default class BahamutClient extends Discord.Client {
     // Bahamut parent class
-    private _bahamut: Bahamut;
+    private readonly _bahamut: Bahamut;
 
     // ID of this shard
     private _shardId = -1;
