@@ -86,13 +86,13 @@ export default {
                         { name: `<:thumbsup:${client.bahamut.config.status_emojis.thumbsup}> Votes`, value: "NaN", inline: true },
                         { name: "\u200B", value: "\u200B", inline: true },
                         { name: `<:console:${client.bahamut. config.status_emojis.console}> Commands`, value: (userCommandount ? numberWithCommas(userCommandount + 1) : "0"), inline: true },
-                        { name: `<:music:${client.bahamut.config.status_emojis.music}> Songs played`, value: (guildUserStats?.get("played_songs")) ? numberWithCommas(guildUserStats.get("played_songs")!) : "0", inline: true },
+                        { name: `<:music:${client.bahamut.config.status_emojis.music}> Songs played`, value: (guildUserStats?.get("played_songs")) ? numberWithCommas(guildUserStats.get("played_songs")?.val || 0) : "0", inline: true },
                         // eslint-disable-next-line no-useless-escape
-                        { name: "\:cookie: Cookies", value: (guildUserStats?.get("cookies")) ? numberWithCommas(guildUserStats.get("cookies")!) : "0", inline: true },
+                        { name: "\:cookie: Cookies", value: (guildUserStats?.get("cookies")) ? numberWithCommas(guildUserStats.get("cookies")?.val || 0) : "0", inline: true },
                         // Game stats
-                        { name: `<:game_musicquiz:${client.bahamut.config.status_emojis.game_musicquiz}> Music Quizzes`, value: (guildUserStats?.get("games_musicquiz_count")) ? numberWithCommas(guildUserStats.get("games_musicquiz_count")!) : "0", inline: true },
-                        { name: `<:game_hangman:${client.bahamut.config.status_emojis.game_hangman}> Hangman Rounds`, value: (guildUserStats?.get("games_hangman_count")) ? numberWithCommas(guildUserStats.get("games_hangman_count")!) : "0", inline: true },
-                        { name: `<:game_triviaquiz:${client.bahamut.config.status_emojis.game_triviaquiz}> Trivia Quizzes`, value: (guildUserStats?.get("games_triviaquiz_count")) ? numberWithCommas(guildUserStats.get("games_triviaquiz_count")!) : "0", inline: true },
+                        { name: `<:game_musicquiz:${client.bahamut.config.status_emojis.game_musicquiz}> Music Quizzes`, value: (guildUserStats?.get("games_musicquiz_count")) ? numberWithCommas(guildUserStats.get("games_musicquiz_count")?.val || 0) : "0", inline: true },
+                        { name: `<:game_hangman:${client.bahamut.config.status_emojis.game_hangman}> Hangman Rounds`, value: (guildUserStats?.get("games_hangman_count")) ? numberWithCommas(guildUserStats.get("games_hangman_count")?.val || 0) : "0", inline: true },
+                        { name: `<:game_triviaquiz:${client.bahamut.config.status_emojis.game_triviaquiz}> Trivia Quizzes`, value: (guildUserStats?.get("games_triviaquiz_count")) ? numberWithCommas(guildUserStats.get("games_triviaquiz_count")?.val || 0) : "0", inline: true },
                     ),
             ],
         });

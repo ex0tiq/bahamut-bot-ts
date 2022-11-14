@@ -61,7 +61,7 @@ export default {
                                 "N/A"), inline: true },
                         { name: `<:console:${client.bahamut.config.status_emojis.console}> Commands`, value: (guildCommandCount ? numberWithCommas(guildCommandCount + 1) : "1"), inline: true },
                         // eslint-disable-next-line no-useless-escape
-                        { name: "\:cookie: Cookies", value: (guildUserStats && guildUserStats.has("cookies") ? (guildUserStats.has("cookies") ? numberWithCommas(guildUserStats.get("cookies") || 0) : "0") : "0"), inline: true },
+                        { name: "\:cookie: Cookies", value: (guildUserStats && guildUserStats.has("cookies") ? (guildUserStats.has("cookies") ? numberWithCommas(guildUserStats.get("cookies")?.val || 0) : "0") : "0"), inline: true },
                         { name: `<:toolbox:${client.bahamut.config.status_emojis.toolbox}> Settings`, value: `Prefix: \`${settings.prefix}\``, inline: true },
                         // eslint-disable-next-line no-useless-escape
                         { name: "\:headphones: DJ", value: (settings.music_dj_role ? channel.guild.roles.resolve(settings.music_dj_role)?.toString() : "Not set"), inline: true },

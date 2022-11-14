@@ -44,7 +44,7 @@ const fetchBotStatistics = async (client: BahamutClient, guild: Discord.Guild, d
                     { name: `<:api:${client.bahamut.config.status_emojis.api}> WebSocket Ping`, value: `\`\`\`${Math.round(client.ws.ping)}ms\`\`\``, inline: true },
                     { name: `<:signal:${client.bahamut.config.status_emojis.signal}> API Ping`, value: `\`\`\`${Date.now() - createdTimestamp}ms\`\`\``, inline: true },
                     { name: `<:console:${client.bahamut.config.status_emojis.console}> Commands served`, value: `\`\`\`${(commandCount) ? numberWithCommas(commandCount) : "1"}\`\`\``, inline: true },
-                    { name: `<:music:${client.bahamut.config.status_emojis.music}> Songs played`, value: `\`\`\`${(botStats && botStats.get("played_songs")) ? numberWithCommas(botStats.get("played_songs") || 1) : "1"}\`\`\``, inline: true },
+                    { name: `<:music:${client.bahamut.config.status_emojis.music}> Songs played`, value: `\`\`\`${(botStats && botStats.get("played_songs")) ? numberWithCommas(botStats.get("played_songs")?.val || 1) : "1"}\`\`\``, inline: true },
                     { name: `<:play:${client.bahamut.config.status_emojis.play}> Current Streams`, value: `\`\`\`${data.reduce((a, g) => a + g.playingMusicQueues, 0)}/${data.reduce((a, g) => a + g.totalMusicQueues, 0)}\`\`\``, inline: true },
                     { name: `<:user:${client.bahamut.config.status_emojis.user}> Users`, value: `\`\`\`${numberWithCommas(data.reduce((a, g) => a + g.membersTotal, 0))}\`\`\``, inline: true },
                     { name: `<:servers:${client.bahamut.config.status_emojis.servers}> Servers`, value: `\`\`\`${numberWithCommas(data.reduce((a, g) => a + g.guildCount, 0))}\`\`\``, inline: true },

@@ -53,7 +53,7 @@ export default class CookieHandler {
         if (!userStats) return null;
 
         if (userStats.has("cookies")) {
-            return userStats.get("cookies");
+            return userStats.get("cookies")?.val || 0;
         }
 
         return 0;
