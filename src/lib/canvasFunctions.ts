@@ -11,15 +11,16 @@ const createShipImage = async ({ user1, user2, shipPercent = 20 }: { user1: Disc
     const canvas = Canvas.createCanvas(540, 200),
         ctx = canvas.getContext("2d"),
         background = await Canvas.loadImage("assets/img/cards/ship/bg_ship.jpg");
-    const user1avatarLink = user1.user.avatarURL({ forceStatic: true }), user2avatarLink = user2.user.avatarURL({ forceStatic: true });
+    const user1avatarLink = user1.avatarURL({ forceStatic: true }) || user1.user.avatarURL({ forceStatic: true }) || user1.user.defaultAvatarURL,
+        user2avatarLink = user2.avatarURL({ forceStatic: true }) || user2.user.avatarURL({ forceStatic: true }) || user1.user.defaultAvatarURL;
     let user1avatar, user2avatar;
 
     try {
         const [data1, data2] = await Promise.all([
-            axios((user1avatarLink) ? user1avatarLink : user1.user.defaultAvatarURL, {
+            axios(user1avatarLink, {
                 responseType: "arraybuffer",
             }),
-            axios((user2avatarLink) ? user2avatarLink : user2.user.defaultAvatarURL, {
+            axios(user2avatarLink, {
                 responseType: "arraybuffer",
             }),
         ]);

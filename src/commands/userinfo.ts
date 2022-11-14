@@ -80,7 +80,7 @@ export default {
                     .setDescription(`${target!.user.bot ? "This user is a bot. 🤖\n\n" : ""}Display Name: \`${target!.displayName}\`\n
 			User created on: \`${userCreateDateString} (${userCreateDate.toRelative()})\`.
 			Joined server on: \`${userJoinedDateString} (${userJoinedDate.toRelative()})\``)
-                    .setThumbnail(target!.user.avatarURL())
+                    .setThumbnail(target!.avatarURL() || target!.user.avatarURL() || target!.user.defaultAvatarURL)
                     .setFields(
                         { name: `<:heart:${client.bahamut.config.status_emojis.heart}> Premium User`, value: `${((userMaxPremiumServers !== null && userMaxPremiumServers > 0) || (userMaxPremiumServers !== null && userMaxPremiumServers === -1)) ? "Yes" : "No"}`, inline: true },
                         { name: `<:thumbsup:${client.bahamut.config.status_emojis.thumbsup}> Votes`, value: "NaN", inline: true },

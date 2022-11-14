@@ -66,8 +66,7 @@ export default class LevelSystem {
                     user_xp: 0,
                 };
             }
-        }
-        else {
+        } else {
             guildLevelData = this._guildUserLevelDataCache[message.guild.id][message.author.id];
         }
 
@@ -78,17 +77,13 @@ export default class LevelSystem {
 
         if (lvl <= 30) {
             new_xp = (xp + this._levelConfig.xp_per_message_very_low) + ((message_length_multiplier * 0.25) < 1 ? 1 : (message_length_multiplier * 0.25));
-        }
-        else if (lvl <= 60) {
+        } else if (lvl <= 60) {
             new_xp = (xp + this._levelConfig.xp_per_message_low) + ((message_length_multiplier * 0.3) < 1 ? 1 : (message_length_multiplier * 0.3));
-        }
-        else if (lvl <= 90) {
+        } else if (lvl <= 90) {
             new_xp = (xp + this._levelConfig.xp_per_message_mid) + ((message_length_multiplier * 0.35) < 1 ? 1 : (message_length_multiplier * 0.35));
-        }
-        else if (lvl <= 120) {
+        } else if (lvl <= 120) {
             new_xp = (xp + this._levelConfig.xp_per_message_high) + ((message_length_multiplier * 0.4) < 1 ? 1 : (message_length_multiplier * 0.4));
-        }
-        else {
+        } else {
             new_xp = (xp + this._levelConfig.xp_per_message_very_high) + ((message_length_multiplier * 0.5) < 1 ? 1 : (message_length_multiplier * 0.5));
         }
         new_xp = Math.round(new_xp);
@@ -102,8 +97,7 @@ export default class LevelSystem {
             const level_xp = getXpForLevel(this._bahamut.client, (lvl + 1)), overflow_xp = new_xp - level_xp;
             if (overflow_xp > 0) {
                 new_xp = overflow_xp;
-            }
-            else {
+            } else {
                 new_xp = 0;
             }
 
@@ -119,12 +113,10 @@ export default class LevelSystem {
                         if ((role = message.guild.roles.resolve(settings.user_level_roles.get(new_level)!))) {
                             if (await user.roles.add(role)) {
                                 new_role = role;
-                            }
-                            else {
+                            } else {
                                 new_role = false;
                             }
-                        }
-                        else {
+                        } else {
                             // Remove non existent level role
                             await removeLevelRole(this._bahamut.client, message.guild, new_level);
                         }
@@ -146,14 +138,11 @@ export default class LevelSystem {
                 let cookies = 0;
                 if (new_level <= 50) {
                     cookies = 50;
-                }
-                else if (new_level <= 80) {
+                } else if (new_level <= 80) {
                     cookies = 75;
-                }
-                else if (new_level <= 120) {
+                } else if (new_level <= 120) {
                     cookies = 100;
-                }
-                else {
+                } else {
                     cookies = 150;
                 }
 
@@ -178,22 +167,19 @@ export default class LevelSystem {
                         embeds: [this.getLevelUpMessage(user, new_level, level_xp, new_xp, new_role, removed_roles, true, (cookiesAdded ? cookies : null))],
                     });
                     return;
-                }
-                else {
+                } else {
                     await handleResponseToMessage(this._bahamut.client, message, false, true, {
                         embeds: [this.getLevelUpMessage(user, new_level, level_xp, new_xp, new_role, removed_roles, false, (cookiesAdded ? cookies : null))],
                     });
                     return;
                 }
             }
-        }
-        else {
+        } else {
             // if new level is not greater than previous level, update xp
             // eslint-disable-next-line no-lonely-if
             if (await this._bahamut.dbHandler.userLevelData.setDBGuildUserLevelData(message.guild, (user ? user : message.member!), new_xp, lvl)) {
                 this._guildUserLevelDataCache[message.guild.id][message.author.id].user_xp = new_xp;
-            }
-            else {
+            } else {
                 return handleErrorResponseToMessage(this._bahamut.client, message, false, true, "Error while saving the user xp. Please try again later.");
             }
         }
@@ -218,21 +204,19 @@ export default class LevelSystem {
                         .setAuthor({ name: "Max level reached!", iconURL: this._bahamut.config.level_up_images.max_icon })
                         .setDescription(`Congratulations, ${user}! You have reached the max level **${new_level}**!\n\nWhat are you going to do now?`)
                         .setImage(this._bahamut.config.level_up_images.banner)
-                        .setThumbnail(user.avatarURL());
-        }
-        else {
+                        .setThumbnail(user.avatarURL() || user.user.avatarURL() || user.user.defaultAvatarURL);
+        } else {
             newMsg = new Discord.EmbedBuilder()
                         .setAuthor({ name: "Level Up!", iconURL: this._bahamut.config.level_up_images.icon })
                         .setDescription(`Congratulations, ${user}! You have reached the next level **${new_level}**!`)
                         .setImage(this._bahamut.config.level_up_images.banner)
-                        .setThumbnail(user.user.avatarURL());
+                        .setThumbnail(user.avatarURL() || user.user.avatarURL() || user.user.defaultAvatarURL);
         }
 
         if (new_role) {
             // @ts-ignore
             newMsg.addFields({ name: "New Role", value: new_role, inline: true });
-        }
-        else if (!new_role && new_role !== null) {
+        } else if (!new_role && new_role !== null) {
             newMsg.addFields({ name: "New Role", value: "New role couldn't be assigned, because of missing permissions!", inline: true });
         }
         if (removed_roles.length > 0) {

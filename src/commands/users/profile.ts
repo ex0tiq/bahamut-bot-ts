@@ -77,13 +77,13 @@ export default {
         ]),
             userCreatedDate = DateTime.fromMillis(target!.user.createdTimestamp),
             userJoinedDate = DateTime.fromMillis(target!.joinedTimestamp!),
-            avatarUrl = target!.avatarURL({ forceStatic: true, extension: "png" }),
+            avatarUrl = target!.avatarURL() || target!.user.avatarURL() || target!.user.defaultAvatarURL,
             profileCard = new Canvacord.Rank();
         let rank = null, xpNeeded = 0;
 
         const msg = new Discord.EmbedBuilder()
                     .setAuthor({ name: target!.displayName })
-                    .setThumbnail(((avatarUrl) ? avatarUrl : target!.user.defaultAvatarURL));
+                    .setThumbnail(avatarUrl);
 
         if (settings.user_levels) {
             xpNeeded = await getXpForLevel(client, userData.level + 1);
