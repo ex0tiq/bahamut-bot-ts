@@ -142,7 +142,7 @@ export default class GuildUserStatHandler {
      * @param value
      * @returns {Promise<boolean>}
      */
-    subDBGuildUserStat = async (guild: Discord.Guild, user: Discord.GuildMember, stat: string, value = 1): Promise<boolean> => {
+    subDBGuildUserStat = async (guild: Discord.Guild, user: Discord.GuildMember, stat: string, value = 0): Promise<boolean> => {
         return new Promise((resolve) => {
             return DBGuildUserStats
                 .findOne({
@@ -153,7 +153,7 @@ export default class GuildUserStatHandler {
                     } })
                 .then(async (obj: DBGuildUserStats | null) => {
                     if (obj) {
-                        if ((obj.val - value) <= 0) value = 1;
+                        if ((obj.val - value) < 0) value = 0;
                         else value = obj.val - value;
 
                         // update
