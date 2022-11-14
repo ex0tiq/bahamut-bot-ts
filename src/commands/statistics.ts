@@ -60,19 +60,14 @@ export default {
     callback: async ({ client, message, guild, interaction }: { client: BahamutClient, message: Discord.Message, guild: Discord.Guild, interaction: Discord.CommandInteraction }) => {
         const settings = await getGuildSettings(client, guild);
 
-        const data = (await client.shard!.broadcastEval(() => {
+        const data = (await client.shard!.broadcastEval((_client: BahamutClient) => {
                 return {
-                    // @ts-ignore
-                    shardId: this.shardId,
-                    // @ts-ignore
-                    guildCount: this.guilds.cache.size,
-                    // @ts-ignore
-                    membersTotal: this.guilds.cache.reduce((a, g) => a + g.memberCount, 0),
+                    shardId: _client.shardId,
+                    guildCount: _client.guilds.cache.size,
+                    membersTotal: _client.guilds.cache.reduce((a, g) => a + g.memberCount, 0),
                     ramUsage: process.memoryUsage().heapUsed / 1024 / 1024,
-                    // @ts-ignore
-                    totalMusicQueues: this.bahamut.musicHandler.manager.players.size,
-                    // @ts-ignore
-                    playingMusicQueues: this.bahamut.musicHandler.manager.players.reduce((a, q) => a + ((q.playing || !q.paused) ? 1 : 0), 0),
+                    totalMusicQueues: _client.bahamut.musicHandler.manager.players.size,
+                    playingMusicQueues: _client.bahamut.musicHandler.manager.players.reduce((a, q) => a + ((q.playing || !q.paused) ? 1 : 0), 0),
                 };
                 // @ts-ignore
             })), duration = humanize(DateTime.now().minus(client.uptime).diff(DateTime.now()).as("milliseconds"), { language: settings.language, round: true }),

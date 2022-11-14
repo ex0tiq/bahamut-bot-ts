@@ -26,24 +26,21 @@ export default {
         // Abort if module is disabled
         if (settings.disabled_categories.includes("ffxiv")) return;
 
-        const data = (await client.shard!.broadcastEval(async () => {
-            // @ts-ignore
-            if (!this.channels.cache.has(this.bahamut.config.ffxiv_settings.lodestone_source_channel)) return null;
-            // @ts-ignore
-            // eslint-disable-next-line no-shadow
-            const channel = this.channels.cache.get(this.bahamut.config.ffxiv_settings.lodestone_source_channel);
+        const data = (await client.shard!.broadcastEval(async (_client: BahamutClient) => {
+            if (!_client.channels.cache.has(_client.bahamut.config.ffxiv_settings.lodestone_source_channel)) return null;
 
-            let messages = await channel.messages.fetch({ limit: 5 });
-            messages = [...messages.values()].sort((a, b) => b.createdTimestamp - a.createdTimestamp).filter((e) => e.embeds && e.embeds.length > 0);
+            const ch = _client.channels.cache.get(_client.bahamut.config.ffxiv_settings.lodestone_source_channel) as Discord.TextChannel,
+                messages = await ch.messages.fetch({ limit: 5 }),
+                messagesArr = [...messages.values()].sort((a, b) => b.createdTimestamp - a.createdTimestamp).filter((e) => e.embeds && e.embeds.length > 0);
 
             if (!messages) return null;
             return {
-                id: messages[0].id,
-                embed: messages[0].embeds[0],
+                id: messagesArr[0].id,
+                embed: messagesArr[0].embeds[0],
             };
         })).filter(e => e !== null);
 
-        let dataEmbed: { id: string, embed: Discord.Embed } | null = null;
+        let dataEmbed: { id: string, embed: Discord.APIEmbed } | null = null;
 
         if (Array.isArray(data)) dataEmbed = data[0];
 

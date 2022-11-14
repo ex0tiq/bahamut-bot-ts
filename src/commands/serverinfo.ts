@@ -31,9 +31,8 @@ export default {
             serverCreatedDate = DateTime.fromMillis(channel.guild.createdTimestamp), botJoinedDate = DateTime.fromMillis(channel.guild.members.me?.joinedTimestamp!),
             settings = await getGuildSettings(client, channel.guild);
 
-        const data = (await client.shard!.broadcastEval(() => {
-            // @ts-ignore
-            return this.shardId;
+        const data = (await client.shard!.broadcastEval((_client: BahamutClient) => {
+            return _client.shardId;
         }));
 
         if (settings.language !== "en") {

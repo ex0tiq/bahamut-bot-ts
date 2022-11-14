@@ -101,12 +101,11 @@ const registerCommands = (bahamut: Bahamut) => {
 };
 
 const getBotActivity = async (client: BahamutClient) => {
-    const data = (await client.shard?.broadcastEval(() => {
+    // @ts-ignore
+    const data = (await client.shard?.broadcastEval((_client: BahamutClient) => {
         return {
-            // @ts-ignore
-            guildCount: this.guilds.cache.size,
-            // @ts-ignore
-            membersTotal: this.client.guilds.cache.reduce((a, g) => a + g.memberCount, 0),
+            guildCount: _client.guilds.cache.size,
+            membersTotal: _client.guilds.cache.reduce((a, g) => a + g.memberCount, 0),
         };
     }));
 

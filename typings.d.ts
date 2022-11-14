@@ -1,9 +1,10 @@
-import Discord from "discord.js";
+import Discord, { Serialized } from "discord.js";
 import UplinkAPIHandler from "./src/modules/UplinkAPIHandler.js";
 import BahamutShardingManager from "./src/modules/BahamutShardingManager.js";
 import { Track } from "erela.js";
 import { CommandObject, CommandUsage } from "wokcommands";
 import BahamutClient from "./src/modules/BahamutClient";
+import { Awaitable } from "@discordjs/util";
 
 export interface StartupMessage {
     type: string | null;
@@ -300,5 +301,28 @@ export interface MessageDeleteOptions {
     deleteResponseMessage: {
         enabled: true;
         deleteAfter: number;
+    }
+}
+
+declare module "discord.js" {
+    export interface ShardClientUtil {
+        // eslint-disable-next-line
+        broadcastEval<T>(fn: (client: BahamutClient) => Awaitable<T>): Promise<Serialized<T>[]>;
+        // eslint-disable-next-line
+        broadcastEval<T>(fn: (client: BahamutClient) => Awaitable<T>, options: { shard: number }): Promise<Serialized<T>>;
+        // eslint-disable-next-line
+        broadcastEval<T, P>(
+            // eslint-disable-next-line
+            fn: (client: BahamutClient<true>, context: Serialized<P>) => Awaitable<T>,
+            // eslint-disable-next-line
+            options: { context: P },
+        ): Promise<Serialized<T>[]>;
+        // eslint-disable-next-line
+        broadcastEval<T, P>(
+            // eslint-disable-next-line
+            fn: (client: BahamutClient<true>, context: Serialized<P>) => Awaitable<T>,
+            // eslint-disable-next-line
+            options: { context: P; shard: number },
+        ): Promise<Serialized<T>>;
     }
 }

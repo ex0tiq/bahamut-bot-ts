@@ -28,22 +28,16 @@ export default {
     callback: async ({ client, message, interaction, guild }: { client: BahamutClient, message: Discord.Message, interaction: Discord.CommandInteraction, guild: Discord.Guild }) => {
         const date = Date.now(), settings = await getGuildSettings(client, guild);
 
-        const data = (await client.shard!.broadcastEval(() => {
+        const data = (await client.shard!.broadcastEval((_client: BahamutClient) => {
             return {
-                // @ts-ignore
-                shardId: this.shardId,
-                // @ts-ignore
-                guildCount: this.guilds.cache.size,
-                // @ts-ignore
-                membersTotal: this.guilds.cache.reduce((a, g) => a + g.memberCount, 0),
+                shardId: _client.shardId,
+                guildCount: _client.guilds.cache.size,
+                membersTotal: _client.guilds.cache.reduce((a, g) => a + g.memberCount, 0),
                 ramUsage: process.memoryUsage().heapUsed / 1024 / 1024,
-                // @ts-ignore
-                uptime: this.uptime,
+                uptime: _client.uptime,
                 time: Date.now(),
-                // @ts-ignore
-                totalMusicQueues: this.bahamut.musicHandler.manager.players.size,
-                // @ts-ignore
-                playingMusicQueues: this.bahamut.musicHandler.manager.players.reduce((a, q) => a + ((q.playing || !q.paused) ? 1 : 0), 0),
+                totalMusicQueues: _client.bahamut.musicHandler.manager.players.size,
+                playingMusicQueues: _client.bahamut.musicHandler.manager.players.reduce((a, q) => a + ((q.playing || !q.paused) ? 1 : 0), 0),
             };
         })).sort((a, b) => a.shardId - b.shardId);
 
@@ -65,7 +59,7 @@ Users: ${numberWithCommas(shard.membersTotal)}
 Memory: ${shard.ramUsage.toFixed(2)} MB
 Heartbeat: ${shard.time - date}ms
 Streams: ${shard.playingMusicQueues}/${shard.totalMusicQueues}
-Uptime: ${humanize(DateTime.now().minus(shard.uptime).diff(DateTime.now()).as("milliseconds"), { language: settings.language, round: true })}\`\`\``, inline: true });
+Uptime: ${humanize(DateTime.now().minus(shard.uptime!).diff(DateTime.now()).as("milliseconds"), { language: settings.language, round: true })}\`\`\``, inline: true });
         }
 
         return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
