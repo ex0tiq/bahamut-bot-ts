@@ -97,7 +97,7 @@ export default class CookieHandler {
                 .findAll({
                     attributes: [
                         "guild_user",
-                        ["val", "cookies"],
+                        "val",
                         [Sequelize.literal(`DENSE_RANK() OVER(ORDER BY CAST(val AS UNSIGNED)${ascending ? " ASC" : " DESC"})`), "rank"],
                     ],
                     where: {
@@ -121,8 +121,7 @@ export default class CookieHandler {
         for (const r of res) {
             obj.push({
                 user: r.guild_user,
-                // @ts-ignore
-                cookies: r.cookies,
+                cookies: r.val,
             });
         }
 
