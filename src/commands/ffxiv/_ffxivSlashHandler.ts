@@ -5,9 +5,9 @@ import Discord from "discord.js";
 import BahamutClient from "../../modules/BahamutClient";
 import { handleErrorResponseToMessage } from "../../lib/messageHandlers";
 
-const allModCommands = (() => getAllJSFiles(__dirname).filter(e => e.filePath !== __filename))();
+const allFFXIVCommands = (() => getAllJSFiles(__dirname).filter(e => e.filePath !== __filename))();
 
-// This is a Slash command handler for all music commands
+// This is a Slash command handler for all ffxiv commands
 
 const config: CommandConfig = {
     name: "ffxiv",
@@ -15,7 +15,7 @@ const config: CommandConfig = {
     type: CommandType.SLASH,
     description: "Different commands related to FF XIV.",
     options: (() => {
-        return allModCommands.filter(e => e.fileContents.type !== "SLASH").map(e => {
+        return allFFXIVCommands.filter(e => e.fileContents.type !== CommandType.SLASH).map(e => {
             let autocomplete = false;
             if (Array.isArray(e.fileContents.options) && e.fileContents.options.length > 0) {
                 for (const o of e.fileContents.options) {
@@ -44,14 +44,14 @@ export default {
     autocomplete: (command: string, optionName: string, interaction: Discord.CommandInteraction) => {
         try {
             // @ts-ignore
-            const cmdArr = allModCommands.filter(e => e.fileContents.name === interaction.options.getSubcommand(false));
+            const cmdArr = allFFXIVCommands.filter(e => e.fileContents.name === interaction.options.getSubcommand(false));
 
             if (!cmdArr || cmdArr.length < 1) return [];
 
             const cmd = cmdArr[0];
 
             // Call subcommand with all params
-            return cmd.fileContents.autocomplete();
+            return cmd.fileContents.autocomplete(command, optionName, interaction);
         } catch (ex) {
             return [];
         }
@@ -59,9 +59,8 @@ export default {
     callback: async ({ message, args, client, interaction, channel, ...rest }: { message: Discord.Message, args: any[], client: BahamutClient, interaction: Discord.CommandInteraction, channel: Discord.TextChannel }) => {
         try {
             // @ts-ignore
-            const cmdArr = allModCommands.filter(e => e.fileContents.name === interaction.options.getSubcommand(false));
-
-            if (!cmdArr || cmdArr.length < 1) return [];
+            const cmdArr = allFFXIVCommands.filter(e => e.fileContents.name === interaction.options.getSubcommand(false));
+            if (!cmdArr || cmdArr.length < 1) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "This command is not available!");
 
             const cmd = cmdArr[0];
 
