@@ -26,6 +26,7 @@ const handleResponseToMessage = async (
     let response: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse;
 
     if (!(typeof newMessageContent === "string")) {
+        if (newMessageContent.embeds && newMessageContent.embeds.length > 0) newMessageContent.embeds = newMessageContent.embeds.filter(e => e);
         if (newMessageContent.embeds && newMessageContent.embeds.length > 0) {
             for (const e of newMessageContent.embeds!) {
                 // @ts-ignore
