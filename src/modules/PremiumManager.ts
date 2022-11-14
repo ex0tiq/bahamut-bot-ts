@@ -1,11 +1,12 @@
-import {getGuildSettings} from "../lib/getFunctions";
+import { getGuildSettings } from "../lib/getFunctions";
 import Discord from "discord.js";
-import {Bahamut} from "../bahamut";
-import {resolveUser} from "../lib/resolveFunctions";
-import { flattenArray } from '../lib/toolFunctions';
-import {createErrorResponse, createSuccessResponse} from "../lib/messageHandlers";
+import { Bahamut } from "../bahamut";
+import { resolveUser } from "../lib/resolveFunctions";
+import { flattenArray } from "../lib/toolFunctions";
+import { createErrorResponse, createSuccessResponse } from "../lib/messageHandlers";
 import logger from "./Logger";
-import {HandleMessageOptions} from "../../typings";
+import { HandleMessageOptions } from "../../typings";
+import BahamutClient from "./BahamutClient";
 
 export default class PremiumManager {
     private readonly _bahamut: Bahamut;
@@ -82,11 +83,11 @@ export default class PremiumManager {
      */
     handleGuildDelete = async (guild: Discord.Guild) => {
         // Delete
-        let data = (await this._bahamut.client.shard?.broadcastEval((_client, obj) => {
-            return this._bahamut.premiumHandler.disablePremiumGuild(obj.guildId, null, true);
+        let data = (await this._bahamut.client.shard?.broadcastEval((_client: BahamutClient, obj) => {
+            return _client.bahamut.premiumHandler.disablePremiumGuild(obj.guildId, null, true);
         }, { context: { guildId: guild.id } }));
         data = (Array.isArray(data) ? data.filter((e) => (e !== null)) : data);
-        let resdata = (Array.isArray(data) && data.length === 1) ? data[0] : data;
+        const resdata = (Array.isArray(data) && data.length === 1) ? data[0] : data;
 
         if (resdata !== true) {
             logger.error(this._bahamut.client.shardId, `Error while disabling premium status for deleted guild \`${guild.name}\``);
@@ -103,15 +104,15 @@ export default class PremiumManager {
         const settings = await getGuildSettings(this._bahamut.client, guild);
         if (settings.premium_user !== member.id) return;
 
-        let premium_servers = (await this.getUserPremiumServers(member))?.map(e => e.id);
+        const premium_servers = (await this.getUserPremiumServers(member))?.map(e => e.id);
          if (!premium_servers?.includes(guild.id)) return;
 
         // Delete
-        let data = (await this._bahamut.client.shard?.broadcastEval((_client, obj) => {
-            return this._bahamut.premiumHandler.disablePremiumGuild(obj.guildId, obj.userId);
+        let data = (await this._bahamut.client.shard?.broadcastEval((_client: BahamutClient, obj) => {
+            return _client.bahamut.premiumHandler.disablePremiumGuild(obj.guildId, obj.userId);
         }, { context: { guildId: guild.id, userId: member.user.id } }));
         data = (Array.isArray(data) ? data.filter((e) => (e !== null)) : data);
-        let resdata = (Array.isArray(data) && data.length === 1) ? data[0] : data;
+        const resdata = (Array.isArray(data) && data.length === 1) ? data[0] : data;
 
         if (resdata !== true) {
             logger.error(this._bahamut.client.shardId, `Error while disabling premium status for guild \`${guild.name}\`. Premium user ${member.displayName} left the guild.`);
@@ -128,42 +129,39 @@ export default class PremiumManager {
         const slots = await this.getUserPremiumSlots(user),
             guild_settings = await getGuildSettings(this._bahamut.client, guild);
 
-        if (slots['max'] === 0) {
-            return createErrorResponse(this._bahamut.client, 'You don\'t have unlocked any premium tiers. Please check our website for more information.');
+        if (slots["max"] === 0) {
+            return createErrorResponse(this._bahamut.client, "You don't have unlocked any premium tiers. Please check our website for more information.");
         }
         if (guild_settings.premium_user === user.id) {
-            return createErrorResponse(this._bahamut.client, 'You have already unlocked premium features for this server.');
+            return createErrorResponse(this._bahamut.client, "You have already unlocked premium features for this server.");
         }
         if (guild_settings.premium_user) {
-            return createErrorResponse(this._bahamut.client, 'Premium features are already unlocked for this server.');
+            return createErrorResponse(this._bahamut.client, "Premium features are already unlocked for this server.");
         }
-        if (slots['max'] >= 0 && (slots['current'] >= slots['max'] && user.id !== this._bahamut.config.owner_id)) {
+        if (slots["max"] >= 0 && (slots["current"] >= slots["max"] && user.id !== this._bahamut.config.owner_id)) {
             // Max count of premium servers reached for this role
-            return createErrorResponse(this._bahamut.client, `You have reached the maximum amount of \`${slots['max']}\` premium servers for your tier.\nPlease disable a server first to free premium slots.`);
+            return createErrorResponse(this._bahamut.client, `You have reached the maximum amount of \`${slots["max"]}\` premium servers for your tier.\nPlease disable a server first to free premium slots.`);
         }
 
-        let data = (await this._bahamut.client.shard?.broadcastEval((_client, obj) => {
-            return this._bahamut.premiumHandler.enablePremiumGuild(obj.guildId, obj.userId);
+        let data = (await this._bahamut.client.shard?.broadcastEval((_client: BahamutClient, obj) => {
+            return _client.bahamut.premiumHandler.enablePremiumGuild(obj.guildId, obj.userId);
         }, { context: { guildId: guild.id, userId: user.user.id } }));
         data = (Array.isArray(data) ? data.filter((e) => (e !== null)) : data);
-        let resdata = (Array.isArray(data) && data.length === 1) ? data[0] : data,
-            embed;
+        const resdata = (Array.isArray(data) && data.length === 1) ? data[0] : data;
+        let embed;
 
         if (resdata === true) {
             // If current music leave timers -> abort
-            // TODO
-            //if (Object.keys(this.client.lavaManager.leaveTimers).includes(guild.id)) {
-            //    clearTimeout(this.client.lavaManager[guild.id]);
-            //    delete this.client.lavaManager[guild.id];
-            //}
+            if (this._bahamut.musicHandler.leaveTimers.has(guild.id)) {
+                clearTimeout(this._bahamut.musicHandler.leaveTimers.get(guild.id));
+                this._bahamut.musicHandler.leaveTimers.delete(guild.id);
+            }
 
-            embed = createSuccessResponse(this._bahamut.client, 'Premium features have been enabled for this server.\nThank you very much for your support!');
-        }
-        else if (resdata === false) {
-            embed = createErrorResponse(this._bahamut.client, 'This server already has premium features unlocked by somebody else!');
-        }
-        else {
-            embed = createErrorResponse(this._bahamut.client, 'An unknown error has occurred while enabling premium features for this server!\nPlease contact our team for further help.');
+            embed = createSuccessResponse(this._bahamut.client, "Premium features have been enabled for this server.\nThank you very much for your support!");
+        } else if (resdata === false) {
+            embed = createErrorResponse(this._bahamut.client, "This server already has premium features unlocked by somebody else!");
+        } else {
+            embed = createErrorResponse(this._bahamut.client, "An unknown error has occurred while enabling premium features for this server!\nPlease contact our team for further help.");
         }
 
         return embed;
@@ -178,7 +176,7 @@ export default class PremiumManager {
         if (settings.premium_user === user) return null;
         if (settings.premium_user !== null && settings.premium_user !== user) return false;
 
-        await this._bahamut.dbHandler.guildSettings.setDBGuildSetting(guild, 'premium_user', user);
+        await this._bahamut.dbHandler.guildSettings.setDBGuildSetting(guild, "premium_user", user);
         this._bahamut.settings.set(guild.id, await this._bahamut.dbHandler.guildSettings.getDBGuildSettings(guild));
 
         return true;
@@ -194,27 +192,25 @@ export default class PremiumManager {
         const premium_servers = (await this.getUserPremiumServers(user))!.map(e => e.id);
 
         if (!premium_servers || !premium_servers.includes(guild.id)) {
-            return createErrorResponse(this._bahamut.client, 'You did not unlock the premium features on this server and therefore cannot disable them.');
+            return createErrorResponse(this._bahamut.client, "You did not unlock the premium features on this server and therefore cannot disable them.");
         }
 
-        let data = (await this._bahamut.client.shard?.broadcastEval((_client, obj) => {
-            return this._bahamut.premiumHandler.disablePremiumGuild(obj.guildId, obj.userId);
+        let data = (await this._bahamut.client.shard?.broadcastEval((_client: BahamutClient, obj) => {
+            return _client.bahamut.premiumHandler.disablePremiumGuild(obj.guildId, obj.userId);
         }, { context: { guildId: guild.id, userId: user.user.id } }));
         data = (Array.isArray(data) ? data.filter((e) => (e !== null)) : data);
-        let resdata = (Array.isArray(data) && data.length === 1) ? data[0] : data,
-            embed;
+        const resdata = (Array.isArray(data) && data.length === 1) ? data[0] : data;
+        let embed;
 
         if (resdata === true) {
             // Successfully disabled premium features
-            embed = createSuccessResponse(this._bahamut.client, 'Premium features have been disabled for this server.\nWe are sad to see you go :(')
-        }
-        else if (resdata === false) {
+            embed = createSuccessResponse(this._bahamut.client, "Premium features have been disabled for this server.\nWe are sad to see you go :(");
+        } else if (resdata === false) {
             // no premium
-            embed = createErrorResponse(this._bahamut.client, 'This server has no premium features enabled!');
-        }
-        else {
+            embed = createErrorResponse(this._bahamut.client, "This server has no premium features enabled!");
+        } else {
             // error
-            embed = createErrorResponse(this._bahamut.client, 'An unknown error has occurred while enabling premium features for this server!\nPlease contact our team for further help.')
+            embed = createErrorResponse(this._bahamut.client, "An unknown error has occurred while enabling premium features for this server!\nPlease contact our team for further help.");
         }
 
         return embed;
@@ -235,11 +231,11 @@ export default class PremiumManager {
         if (settings.premium_user === null && !force) return false;
 
         try {
-            await this._bahamut.dbHandler.guildSettings.deleteDBGuildSetting(guild, 'premium_user');
+            await this._bahamut.dbHandler.guildSettings.deleteDBGuildSetting(guild, "premium_user");
             this._bahamut.settings.set(guild.id, await getGuildSettings(this._bahamut.client, guild));
             return true;
         } catch (ex) {
-            console.error('Error while disabling premium for guild:', ex);
+            console.error("Error while disabling premium for guild:", ex);
             return false;
         }
     };
@@ -251,8 +247,8 @@ export default class PremiumManager {
      */
     getUserPremiumSlots = async (user: Discord.GuildMember | string) => {
         return {
-            'current': (await this.getUserPremiumServers(user))!.length || 0,
-            'max': (await this.getUserMaxPremiumServers(user)),
+            "current": (await this.getUserPremiumServers(user))!.length || 0,
+            "max": (await this.getUserMaxPremiumServers(user)),
         };
     };
 
@@ -261,9 +257,9 @@ export default class PremiumManager {
      * @param user
      */
     getUserPremiumServers = async (user: Discord.GuildMember | string): Promise<{id: string, name: string}[] | undefined> => {
-        const data = (await this._bahamut.client.shard?.broadcastEval((_client, obj) => {
-            return this._bahamut.premiumHandler.getUserPremiumGuilds(obj.userId);
-        }, { context: { userId: (typeof user === 'string' ? user : user.user.id) } }));
+        const data = (await this._bahamut.client.shard?.broadcastEval((_client: BahamutClient, obj) => {
+            return _client.bahamut.premiumHandler.getUserPremiumGuilds(obj.userId);
+        }, { context: { userId: (typeof user === "string" ? user : user.user.id) } }));
         return (Array.isArray(data) ? flattenArray(data.filter(e => (e !== null && e.length > 0))) : data);
     };
 
@@ -277,8 +273,8 @@ export default class PremiumManager {
             const settings = await getGuildSettings(this._bahamut.client, g);
             if (settings.premium_user && settings.premium_user === user) {
                 arr.push({
-                    'id': '' + id,
-                    'name': g.name,
+                    "id": "" + id,
+                    "name": g.name,
                 });
             }
         }
@@ -292,11 +288,11 @@ export default class PremiumManager {
      * @returns {Promise<number>}
      */
     getUserMaxPremiumServers = async (user: Discord.GuildMember | string) => {
-        let data = (await this._bahamut.client.shard?.broadcastEval((_client, obj) => {
-            return this._bahamut.premiumHandler.getUserPremiumRole(obj.userId);
-        }, { context: { userId: (typeof user === 'string' ? user : user.user.id) } }));
+        let data = (await this._bahamut.client.shard?.broadcastEval((_client: BahamutClient, obj) => {
+            return _client.bahamut.premiumHandler.getUserPremiumRole(obj.userId);
+        }, { context: { userId: (typeof user === "string" ? user : user.user.id) } }));
         data = (Array.isArray(data) ? data.filter((e) => e !== null) : data);
-        let resdata = (Array.isArray(data) && data.length >= 1 ? data[0] : null);
+        const resdata = (Array.isArray(data) && data.length >= 1 ? data[0] : null);
 
         if (!resdata) return 0;
         if (resdata === -1) return -1;
@@ -322,8 +318,8 @@ export default class PremiumManager {
         for (const [key, rl] of usr.roles.cache.filter(e => (e.id !== guild.roles.everyone.id && e.rawPosition !== 0)).sort((e1, e2) => e2.rawPosition - e1.rawPosition)) {
             if (roles_arr.includes(key)) {
                 return {
-                    'id': '' + key,
-                    'name': rl.name,
+                    "id": "" + key,
+                    "name": rl.name,
                 };
             }
         }
@@ -340,8 +336,8 @@ export default class PremiumManager {
             embeds: [
                 new Discord.EmbedBuilder()
                     .setTitle(`<:heart:${this._bahamut.config.status_emojis.heart}> Premium`)
-                    .setDescription((customMessage ? customMessage : `This features requires an active premium subscription.\nIf you want to know more about this, please check out our [website](${this._bahamut.config.website_link}).`))
-            ]
+                    .setDescription((customMessage ? customMessage : `This features requires an active premium subscription.\nIf you want to know more about this, please check out our [website](${this._bahamut.config.website_link}).`)),
+            ],
         });
     };
-};
+}
