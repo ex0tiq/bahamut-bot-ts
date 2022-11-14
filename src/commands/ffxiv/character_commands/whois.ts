@@ -55,7 +55,7 @@ export default {
             language: settings.language,
         }), jobEmojiList = client.bahamut.config.job_emoji_list;
 
-        let ffCharId = null;
+        let ffCharId = null, target;
 
         if (args.length > 0) {
             if (message && message.mentions.members!.size > 0) {
@@ -72,11 +72,14 @@ export default {
 
             if (!ffCharId) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, createMissingParamsErrorResponse(client, config));
 
+            target = ffCharId;
             ffCharId = await client.bahamut.dbHandler.ffxiv.getDBGuildFFXIVCharacterID(channel.guild, ffCharId);
+        } else {
+            return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, createMissingParamsErrorResponse(client, config));
         }
 
         // Check if current user has a linked ffxiv character
-        if (!(ffCharId)) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There is no FFXIV character registered for you. Please use the `link` command to link a FFXIV character to your current user.");
+        if (!(ffCharId)) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `There is no FFXIV character registered for ${target}. Please use the \`link\` command to link a FFXIV character to your current user.`);
 
         try {
             totalMinions = await xiv.data.list("Companion", {

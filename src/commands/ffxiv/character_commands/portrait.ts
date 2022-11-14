@@ -62,10 +62,11 @@ export default {
             if (!ffCharId) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, createMissingParamsErrorResponse(client, config));
 
             target = ffCharId;
-            ffCharId = await client.bahamut.dbHandler.ffxiv.getDBGuildFFXIVCharacterID(channel.guild, ffCharId);
         } else {
             target = member;
         }
+
+        ffCharId = await client.bahamut.dbHandler.ffxiv.getDBGuildFFXIVCharacterID(channel.guild, target);
 
         // Check if user has a linked ffxiv character
         if (!(ffCharId)) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `There is no FFXIV character registered for ${target}.`);
