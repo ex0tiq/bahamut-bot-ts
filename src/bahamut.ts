@@ -14,6 +14,7 @@ import LavaManager from "./modules/LavaManager";
 import { isJson } from "./lib/validateFunctions";
 import LevelSystem from "./modules/LevelSystem";
 import { Settings } from "luxon";
+import FFXIV from "./modules/FFXIV";
 
 // Use bluebird as global promise library
 // global.Promise = require('bluebird');
@@ -32,6 +33,8 @@ export class Bahamut {
     private _musicHandler: LavaManager;
     // Level System
     private _levelSystem: LevelSystem;
+    // FFXIV Stuff
+    private _ffxiv: FFXIV;
 
     // Save all handled guilds settings
     private _settings: Map<string, GuildSettings> = new Map<string, GuildSettings>;
@@ -64,6 +67,8 @@ export class Bahamut {
         this._musicHandler = new LavaManager(this);
         // Init level system
         this._levelSystem = new LevelSystem(this);
+        // Init FFXIV stuff
+        this._ffxiv = new FFXIV(this);
 
         // Register ready event
         this._client.on("ready", async () => {
@@ -144,6 +149,9 @@ export class Bahamut {
     }
     public get schedules() {
         return this._schedules;
+    }
+    public get ffxiv() {
+        return this._ffxiv;
     }
 
     private registerLibraries = () => {
