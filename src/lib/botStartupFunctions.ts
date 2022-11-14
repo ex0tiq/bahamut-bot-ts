@@ -1,10 +1,10 @@
-import WOK, {DefaultCommands} from "wokcommands";
+import WOK, { DefaultCommands } from "wokcommands";
 import path from "path";
-import {numberWithCommas} from './toolFunctions.js';
+import { numberWithCommas } from "./toolFunctions.js";
 import BahamutClient from "../modules/BahamutClient.js";
-import {ActivityType} from "discord-api-types/v10";
-import logger from "../modules/Logger";
-import {Bahamut} from "../bahamut";
+import { ActivityType } from "discord-api-types/v10";
+import logger from "../modules/Logger.js";
+import { Bahamut } from "../bahamut.js";
 
 const loadBotStuff = async (bahamut: Bahamut) => {
     await registerCommands(bahamut);
@@ -21,8 +21,8 @@ const loadGuildSettings = async (bahamut: Bahamut) => {
     for (const [snowflake, gs] of settings) {
         bahamut.settings.set(snowflake, {
             ...bahamut.config.defaultSettings,
-            ...gs
-        })
+            ...gs,
+        });
     }
 
     logger.ready(bahamut.client.shardId, `${bahamut.settings.size} guild configs loaded successfully!`);
@@ -42,7 +42,7 @@ const setGuildPrefixes = (bahamut: Bahamut) => {
 const startBotActivityUpdates = async (bahamut: Bahamut) => {
     // Schedule a EorzeaTime Update every 12 seconds (5 times is max amount per minute, accepted by discord)
     bahamut.schedules.set("botActivityScheduler",
-        bahamut.scheduler.scheduleJob('*/12 * * * * *', async () => {
+        bahamut.scheduler.scheduleJob("*/12 * * * * *", async () => {
             const act = await getBotActivity(bahamut.client);
             bahamut.client.user?.setActivity(`reigning over ${act.totalGuilds} servers with ${act.totalUsers} users`, { type: ActivityType.Playing });
         })
@@ -53,11 +53,12 @@ const startBotActivityUpdates = async (bahamut: Bahamut) => {
 };
 
 const registerCommands = (bahamut: Bahamut) => {
+    // @ts-ignore
     bahamut.cmdHandler = new WOK({
         // @ts-ignore
         client: bahamut.client,
         // The name of the local folder for your command files
-        commandsDir: path.resolve(__dirname, '../commands'),
+        commandsDir: path.resolve(__dirname, "../commands"),
 
         // Configure your event handlers
         events: {
@@ -71,7 +72,7 @@ const registerCommands = (bahamut: Bahamut) => {
         // defaultLanguage: 'english',
 
         // What server/guild IDs are used for testing only commands & features
-        testServers: ['809728531789119510', '814434890745118720'],
+        testServers: ["809728531789119510", "814434890745118720"],
 
         // User your own ID
         // If you only have 1 ID then you can pass in a string instead
@@ -94,23 +95,25 @@ const registerCommands = (bahamut: Bahamut) => {
             DefaultCommands.CustomCommand,
             DefaultCommands.RequiredPermissions,
             DefaultCommands.RequiredRoles,
-            DefaultCommands.ToggleCommand
+            DefaultCommands.ToggleCommand,
         ],
     });
 };
 
 const getBotActivity = async (client: BahamutClient) => {
-    const data = (await client.shard?.broadcastEval((client) => {
+    const data = (await client.shard?.broadcastEval(() => {
         return {
-            guildCount: client.guilds.cache.size,
-            membersTotal: client.guilds.cache.reduce((a, g) => a + g.memberCount, 0),
+            // @ts-ignore
+            guildCount: this.guilds.cache.size,
+            // @ts-ignore
+            membersTotal: this.client.guilds.cache.reduce((a, g) => a + g.memberCount, 0),
         };
     }));
 
     return {
-        'shardCount': data?.length || 0,
-        'totalGuilds': numberWithCommas(data?.reduce((a, g) => a + g.guildCount, 0) || 0),
-        'totalUsers': numberWithCommas(data?.reduce((a, g) => a + g.membersTotal, 0) || 0),
+        "shardCount": data?.length || 0,
+        "totalGuilds": numberWithCommas(data?.reduce((a, g) => a + g.guildCount, 0) || 0),
+        "totalUsers": numberWithCommas(data?.reduce((a, g) => a + g.membersTotal, 0) || 0),
     };
 };
 

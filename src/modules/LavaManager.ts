@@ -135,9 +135,7 @@ export default class LavaManager {
                     clearTimeout(this._leaveTimers.get(voiceChannel.guild.id));
                     this._leaveTimers.delete(voiceChannel.guild.id);
                 }, 60000));
-            }
-            // If members in voice channel
-            else {
+            } else {
                 // Ignore if no leave timer present
                 if (!this._leaveTimers.has(voiceChannel.guild.id)) return;
 
@@ -228,8 +226,7 @@ export default class LavaManager {
                 }
 
                 player.setVolume(settings.music_volume);
-            }
-            else if (voiceChannel.members.filter(m => !m.user.bot).size <= 0) {
+            } else if (voiceChannel.members.filter(m => !m.user.bot).size <= 0) {
                 if (this._leaveTimers.has(voiceChannel.guild.id)) {
                     clearTimeout(this._leaveTimers.get(voiceChannel.guild.id));
                     this._leaveTimers.delete(voiceChannel.guild.id);
@@ -272,14 +269,12 @@ export default class LavaManager {
                         if (!player.playing && !player.paused && !player.queue.size) await player.play();
                         return;
                     }
-                }
-                else {
+                } else {
                     let res;
                     try {
                         // Search for tracks using a query or url, using a query searches youtube automatically and the track requester object
                         res = await this._manager.search(`music ${DateTime.now().toFormat("yyyy")}`);
-                    }
-                    catch (err) {
+                    } catch (err) {
                         console.error("Error while fetching related videos:", err);
 
                         if (this._leaveTimers.has(voiceChannel.guild.id)) {
@@ -413,8 +408,7 @@ export default class LavaManager {
         if (player.trackRepeat || player.queueRepeat) {
             if (player.trackRepeat) embed.addFields({ name: "Repeat", value: "Song", inline: true });
             else embed.addFields({ name: "Repeat", value: "Queue", inline: true });
-        }
-        else {
+        } else {
             embed.addFields({ name: "Repeat", value: "Off", inline: true });
         }
 
@@ -463,8 +457,7 @@ export default class LavaManager {
 
             if (song.isStream && song.website_url) {
                 link = song.website_url;
-            }
-            else {
+            } else {
                 link = song.uri;
             }
 
@@ -484,16 +477,14 @@ export default class LavaManager {
                     e.setThumbnail((albumCover == null) ? song.thumbnail : albumCover);
                     e.setFooter({ text: `Use "${settings.prefix}lyrics" to see the lyrics of this song!` });
                 }
-            }
-            else if (song.isStream && song.thumbnail !== null) {
+            } else if (song.isStream && song.thumbnail !== null) {
                 for (const e of embed.embeds!) {
                     e.setThumbnail(song.thumbnail);
                 }
             }
 
             return embed;
-        }
-        catch (ex) {
+        } catch (ex) {
             console.error("Error while getting title information:", ex);
 
             return createErrorResponse(this._bahamut.client, "Error while getting title information!");
@@ -511,13 +502,11 @@ export default class LavaManager {
 
         if ((await isUserAdminOfGuild(this._bahamut.client, user, guild) || user.permissions.has(Discord.PermissionFlagsBits.Administrator)) || await isUserModOfGuild(this._bahamut.client, user, guild)) {
             return true;
-        }
-        else if (typeof settings.music_dj_role !== "undefined" && settings.music_dj_role) {
+        } else if (typeof settings.music_dj_role !== "undefined" && settings.music_dj_role) {
             const role = guild.roles.resolve(settings.music_dj_role);
 
             return role !== null && user.roles.cache.has(role.id);
-        }
-        else {
+        } else {
             return false;
         }
     };

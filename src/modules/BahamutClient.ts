@@ -1,10 +1,5 @@
 import Discord from "discord.js";
-import * as scheduler from "node-schedule";
-import Events from "events";
-
-import {BotConfig} from "../../typings.js";
-import {Bahamut} from "../bahamut";
-
+import { Bahamut } from "../bahamut.js";
 
 export default class BahamutClient extends Discord.Client {
     // Bahamut parent class
@@ -34,7 +29,7 @@ export default class BahamutClient extends Discord.Client {
                 Discord.IntentsBitField.Flags.GuildMessageTyping,
                 Discord.IntentsBitField.Flags.DirectMessages,
                 Discord.IntentsBitField.Flags.DirectMessageReactions,
-                Discord.IntentsBitField.Flags.MessageContent
+                Discord.IntentsBitField.Flags.MessageContent,
             ],
             partials: [
                 Discord.Partials.Message,
@@ -57,4 +52,4 @@ export default class BahamutClient extends Discord.Client {
 
         this._shardId = newShardId;
     }
-};
+}
