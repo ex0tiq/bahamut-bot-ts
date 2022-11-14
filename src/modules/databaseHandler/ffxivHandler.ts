@@ -15,7 +15,7 @@ export default class FFXIVHandler {
      * @param user
      * @returns {Promise<null|*>}
      */
-    getDBGuildFFXIVCharacterID = async (guild: Discord.Guild, user: Discord.GuildMember) => {
+    getDBGuildFFXIVCharacterID = async (guild: Discord.Guild, user: Discord.GuildMember): Promise<string | null> => {
         return new Promise((resolve) => {
             return DBGuildCharacters
                 .findAll({
@@ -26,7 +26,7 @@ export default class FFXIVHandler {
                     },
                 })
                 .then(async (obj: DBGuildCharacters[] | null) => {
-                    if (obj) resolve(obj[0].lodestone_char);
+                    if (obj && Array.isArray(obj) && obj.length > 0) resolve(obj[0].lodestone_char);
                     else resolve(null);
                 }).catch(e => {
                     console.error("Error while retrieving guild ffxiv char:", e);
