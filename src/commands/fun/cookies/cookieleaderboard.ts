@@ -29,7 +29,7 @@ export default {
             let i = 1;
             const msg = new Discord.EmbedBuilder()
                 // eslint-disable-next-line no-useless-escape
-                .setTitle("\:cookie: Cookie Leaderboard")
+                .setAuthor({ name: "Cookie Leaderboard", iconURL: client.bahamut.config.cookie_images.leaderboard_icon })
                 .setThumbnail(channel.guild.iconURL() ? channel.guild.iconURL() : null);
 
             for (const rank of result) {
