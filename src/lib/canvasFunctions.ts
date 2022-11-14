@@ -1,10 +1,10 @@
-import pify from "pify";
 import imageSizeOf from "image-size";
 import Canvas, { CanvasRenderingContext2D } from "canvas";
 import axios from "axios";
 import { isUrl } from "./validateFunctions";
 import Discord from "discord.js";
 
+import pify from "pify";
 const imageSizeOfP = pify(imageSizeOf);
 
 const createShipImage = async ({ user1, user2, shipPercent = 20 }: { user1: Discord.GuildMember, user2: Discord.GuildMember, shipPercent: number }) => {
