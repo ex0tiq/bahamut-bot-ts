@@ -68,7 +68,6 @@
     "parseboolean": "^1.0.0",
     "pify": "^5.0.0",
     "process": "latest",
-    "recursive-readdir": "^2.2.3",
     "reddit": "^1.2.1",
     "sequelize": "^6.25.5",
     "slugify": "^1.6.5",
