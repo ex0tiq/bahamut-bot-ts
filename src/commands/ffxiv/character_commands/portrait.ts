@@ -4,8 +4,8 @@ import { CommandType, CooldownTypes } from "wokcommands";
 import BahamutClient from "../../../modules/BahamutClient";
 import { getGuildSettings } from "../../../lib/getFunctions";
 import { createMissingParamsErrorResponse, handleErrorResponseToMessage } from "../../../lib/messageHandlers";
-const { createPortraitImage } = require("../../../lib/canvasFunctions");
-const { resolveUser } = require("../../../lib/fetchFunctions");
+import { createPortraitImage } from "../../../lib/canvasFunctions";
+import { resolveUser } from "../../../lib/resolveFunctions";
 // Non ES imports
 const XIVAPI = require("@xivapi/js");
 
@@ -32,7 +32,7 @@ const config: CommandConfig = {
     deferReply: true,
 };
 
-module.exports = {
+export default {
     ...config,
     callback: async ({ client, message, channel, args, member, interaction }: { client: BahamutClient, message: Discord.Message, channel: Discord.TextChannel, args: any[], member: Discord.GuildMember, interaction: Discord.CommandInteraction }) => {
         const settings = await getGuildSettings(client, channel.guild);
@@ -84,7 +84,6 @@ module.exports = {
         if (ffChar.Character && ffChar.Character.Portrait) {
             try {
                 const captionImage = await createPortraitImage({
-                    client: client,
                     title: ffChar.Character.Name,
                     subtitle: `${ffChar.Character.Server}`,
                     source: ffChar.Character.Portrait,
