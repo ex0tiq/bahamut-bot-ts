@@ -304,6 +304,12 @@ export interface MessageDeleteOptions {
     }
 }
 
+export interface DiscordGame {
+    type: string;
+    initiator: Discord.GuildMember,
+    obj: any
+}
+
 declare module "discord.js" {
     export interface ShardClientUtil {
         // eslint-disable-next-line
