@@ -72,6 +72,7 @@ export default {
                 { type: PreCheckType.MUSIC_IS_PLAYING, player: player },
             ]);
             if (await musicPlayingCheck.runChecks()) return;
+            if ([...client.bahamut.runningGames.entries()].filter(([key, val]) => key === channel.guild.id && val.type === "musicquiz").length > 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There is a running music quiz on this guild. Please finish it before searching for lyrics.");
             if (player.queue.current!.isStream) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "Lyrics cannot be searched for webstreams!");
 
             const search = await searchLyrics(client, GeniusClient, player.queue.current!.title);

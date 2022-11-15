@@ -53,6 +53,8 @@ export default {
         ]);
         if (await musicPlayingCheck.runChecks()) return;
 
+        if ([...client.bahamut.runningGames.entries()].filter(([key, val]) => key === channel.guild.id && val.type === "musicquiz").length > 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There is a running music quiz on this guild. Please finish it.");
+
         const track = player.queue.current,
             running_time = formatDuration(player.position);
 
@@ -103,8 +105,7 @@ export default {
             if (!res) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "Error while fetching now playing data. Please try again later.");
 
             return handleResponseToMessage(client, message || interaction, false, config.deferReply, { embeds: [res] });
-        }
-        else {
+        } else {
             let embed = new Discord.EmbedBuilder()
                 .setTitle(`${emoji.get("notes")} Now playing`)
                 .setThumbnail(song.thumbnail)

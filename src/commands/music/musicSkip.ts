@@ -29,8 +29,7 @@ export default {
         // Abort if module is disabled
         if (settings.disabled_categories.includes("music")) return;
 
-        // TODO
-        // if (typeof client.runningGames[channel.guild.id] !== 'undefined') return;
+        if ([...client.bahamut.runningGames.entries()].filter(([key, val]) => key === channel.guild.id && val.type === "musicquiz").length > 0) return;
 
         // Run pre checks
         const checks = new BahamutCommandPreChecker(client, { client, message, channel, member, interaction }, config, [
@@ -57,8 +56,7 @@ export default {
             player.stop();
 
             return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("next_track")} Current track has been skipped!`);
-        }
-        else if (member.voice.channel && member.voice.channel.members.size > 2) {
+        } else if (member.voice.channel && member.voice.channel.members.size > 2) {
             // TODO: Implement vote skips
             const max = member.voice.channel.members.size - 1;
             const needed = Math.ceil(max / 2);
@@ -78,8 +76,7 @@ export default {
                 client.bahamut.musicHandler.voteSkips.delete(player.queue.current!.identifier!);
 
                 return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("next_track")} Skipped!\n\n\`${voteSkips.length}\` users voted to skip the current song.`);
-            }
-            else {
+            } else {
                 return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
                     embeds: [
                         new Discord.EmbedBuilder()
@@ -88,8 +85,7 @@ export default {
                     ],
                 });
             }
-        }
-        else {
+        } else {
             player.stop();
 
             return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("next_track")} Current track has been skipped!`);

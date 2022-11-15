@@ -47,6 +47,8 @@ export default {
         ]);
         if (await checks.runChecks()) return;
 
+        if ([...client.bahamut.runningGames.entries()].filter(([key, val]) => key === channel.guild.id && val.type === "musicquiz").length > 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There is a running music quiz on this guild. Please finish it before seeking.");
+
         const player = client.bahamut.musicHandler.manager.create({
             guild: channel.guild.id,
             textChannel: channel.id,
@@ -74,12 +76,10 @@ export default {
                         seconds = parseInt(args[0]) * 1000;
                         break;
                 }
-            }
-            else {
+            } else {
                 seconds = parseInt(args[0]) * 1000;
             }
-        }
-        catch {
+        } catch {
             return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `\`${args[0]}\` is not a valid seek arg!`);
         }
 
@@ -94,8 +94,7 @@ export default {
             player.seek(seconds);
 
             return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("arrow_right")} Current track has been seeked to \`${formatDuration((seconds <= 0) ? 0 : (player.position))}\`!`);
-        }
-        catch (ex) {
+        } catch (ex) {
             console.error("Error while seeking song:", ex);
             return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "Error while seeking the song!");
         }

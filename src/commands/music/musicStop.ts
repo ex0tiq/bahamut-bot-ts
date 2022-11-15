@@ -24,11 +24,10 @@ export default {
         // Abort if module is disabled
         if (settings.disabled_categories.includes("music")) return;
 
-        // TODO
-        // if (typeof client.runningGames[channel.guild.id] !== 'undefined') {
-        //    if (client.runningGames[channel.guild.id].obj.finished) delete this.client.runningGames[channel.guild.id];
-        //    return;
-        // }
+        if ([...client.bahamut.runningGames.entries()].filter(([key, val]) => key === channel.guild.id && val.type === "musicquiz").length > 0) {
+            if (client.bahamut.runningGames.get(channel.guild.id)!.obj.finished) client.bahamut.runningGames.delete(channel.guild.id);
+            return;
+         }
 
         // Run pre checks
         const checks = new BahamutCommandPreChecker(client, { client, message, channel, member, interaction }, config, [
