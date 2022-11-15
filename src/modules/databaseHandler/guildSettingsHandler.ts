@@ -1,8 +1,8 @@
-import BahamutDBHandler, {DBGuildSettings} from "../BahamutDBHandler";
-import {GuildSettings} from "../../../typings";
+import BahamutDBHandler, { DBGuildSettings } from "../BahamutDBHandler";
+import { GuildSettings } from "../../../typings";
 import Discord from "discord.js";
-import {isInt, isJson} from "../../lib/validateFunctions";
-import {parseBool} from "../../lib/parseFunctions";
+import { isInt, isJson } from "../../lib/validateFunctions";
+import { parseBool } from "../../lib/parseFunctions";
 
 
 export default class GuildSettingsHandler {
@@ -14,69 +14,77 @@ export default class GuildSettingsHandler {
     }
 
 
-    getDBAllGuildSettings = async() => {
+    getDBAllGuildSettings = async () => {
         const obj: Map<string, GuildSettings> = new Map<string, GuildSettings>;
-        for (const [snowflake,] of this._dbHandler.bahamut.client.guilds.cache) {
+        for (const [snowflake] of this._dbHandler.bahamut.client.guilds.cache) {
             let res = null;
             if ((res = await this.getDBGuildSettings(snowflake))) {
                 obj.set(snowflake, res);
             }
         }
         return obj;
-    }
+    };
 
     getDBGuildSettings = async (guild: Discord.Guild | string): Promise<GuildSettings> => {
         try {
             const settings = await DBGuildSettings.findAll({
                 where: {
-                    guild_id: (typeof guild === "string" ? guild : guild.id)
+                    guild_id: (typeof guild === "string" ? guild : guild.id),
                 },
-                raw: true
-            }), types = this._dbHandler.bahamut.config.config_types;
+                raw: true,
+            });
 
             const mappedSettings = settings.map((e: DBGuildSettings) => {
-                let val: any, type: string;
-                console.log(e.val_type);
+                let val: any;
+
                 switch (e.val_type) {
-                    case 'string':
+                    case "string":
                         return {
-                            [e.setting]: e.val
+                            [e.setting]: e.val,
                         };
-                    case 'json':
-                        if (isJson(e.val)) return {
-                            [e.setting]: JSON.parse(e.val)
-                        };
-                        else return {
-                            [e.setting]: e.val
-                        };
-                    case 'bool':
-                        if ((val = parseBool(e.val)) !== null) return {
-                            [e.setting]: val
-                        };
-                        else return {
-                            [e.setting]: e.val
-                        };
-                    case 'int':
-                        console.log(isInt(e.val));
-                        if (isInt(e.val) && (val = parseInt(e.val, 10))) return {
-                            [e.setting]: val
-                        };
-                        else return {
-                            [e.setting]: e.val
-                        };
+                    case "json":
+                        if (isJson(e.val)) {
+                            return {
+                                [e.setting]: JSON.parse(e.val),
+                            };
+                        } else {
+                            return {
+                                [e.setting]: e.val,
+                            };
+                        }
+                    case "bool":
+                        if ((val = parseBool(e.val)) !== null) {
+                            return {
+                                [e.setting]: val,
+                            };
+                        } else {
+                            return {
+                                [e.setting]: e.val,
+                            };
+                        }
+                    case "int":
+                        if (isInt(e.val) && (val = parseInt(e.val, 10))) {
+                            return {
+                                [e.setting]: val,
+                            };
+                        } else {
+                            return {
+                                [e.setting]: e.val,
+                            };
+                        }
                     default:
                         return {
-                            [e.setting]: e.val
+                            [e.setting]: e.val,
                         };
                 }
             });
 
             return {
                 ...this._dbHandler.bahamut.config.defaultSettings,
-                ...(Object.assign({}, ...mappedSettings) as GuildSettings)
-            }
+                ...(Object.assign({}, ...mappedSettings) as GuildSettings),
+            };
         } catch (error) {
-            console.error('An error occured while querying guild settings:', error);
+            console.error("An error occured while querying guild settings:", error);
             return this._dbHandler.bahamut.config.defaultSettings;
         }
     };
@@ -89,14 +97,15 @@ export default class GuildSettingsHandler {
                 .findOne({
                     where: {
                         guild_id: (typeof guild === "string" ? guild : guild.id),
-                        setting: setting
-                    }})
+                        setting: setting,
+                    },
+                })
                 .then(async (obj: DBGuildSettings | null) => {
                     if (obj) {
                         // update
                         await obj.update({
                             val: value,
-                            val_type: value_type || type
+                            val_type: value_type || type,
                         });
                     } else {
                         // insert
@@ -104,17 +113,17 @@ export default class GuildSettingsHandler {
                             guild_id: (typeof guild === "string" ? guild : guild.id),
                             setting: setting,
                             val: value,
-                            val_type: value_type || type
+                            val_type: value_type || type,
                         });
                     }
 
                     resolve(true);
                 }).catch(e => {
-                    console.error('Error while saving guild setting:', e);
+                    console.error("Error while saving guild setting:", e);
                     resolve(false);
                 });
         });
-    }
+    };
 
     /**
      * Delete a guild setting and restore default
@@ -126,15 +135,15 @@ export default class GuildSettingsHandler {
         try {
             await DBGuildSettings.destroy({
                 where: {
-                    guild_id: ((typeof guild === 'string') ? guild : guild.id),
-                    setting: setting
+                    guild_id: ((typeof guild === "string") ? guild : guild.id),
+                    setting: setting,
                 },
-                force: true
+                force: true,
             });
 
             return true;
         } catch (ex) {
-            console.error('Error while deleting guild setting:', ex);
+            console.error("Error while deleting guild setting:", ex);
             return false;
         }
     };
