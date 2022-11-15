@@ -290,7 +290,8 @@ export interface FFXIVWorldData {
 export interface HandleMessageOptions {
     content?: string,
     files?: any[],
-    embeds?: Discord.EmbedBuilder[]
+    embeds?: Discord.EmbedBuilder[],
+    components?: any[]
 }
 
 export interface MessageDeleteOptions {
