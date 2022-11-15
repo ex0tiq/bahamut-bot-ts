@@ -74,7 +74,6 @@ export default {
 
         if (!target) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `I am unable to find the user ${args[0]}.`);
         if (target.user.id === channel.guild.members.me!.id) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "I can't deafen myself.");
-        if (!target.voice.channel) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "This user is currently not connected to any voice channel.");
 
         try {
             await target.voice.setDeaf(true, "Deafen user command.");
