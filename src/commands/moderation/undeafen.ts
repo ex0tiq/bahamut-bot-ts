@@ -7,7 +7,7 @@ import { isUserModOfGuild } from "../../lib/checkFunctions";
 import {
     createMissingParamsErrorResponse,
     handleErrorResponseToMessage,
-    handleResponseToMessage,
+    handleSuccessResponseToMessage,
 } from "../../lib/messageHandlers";
 import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
 import { resolveUser } from "../../lib/resolveFunctions";
@@ -86,12 +86,6 @@ export default {
             return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "An error occurred while deafening the user. Please try again later.");
         }
 
-        return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
-            embeds: [
-                new Discord.EmbedBuilder()
-                    .setAuthor({ name: "User undeafened", iconURL: client.bahamut.config.message_icons.success })
-                    .setDescription(`User **${target.displayName}** has been undeafened! He can now hear again.`),
-            ],
-        });
+        return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `User **${target.displayName}** has been undeafened! He can now hear again.`);
     },
 };

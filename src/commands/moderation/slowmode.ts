@@ -4,7 +4,10 @@ import Discord from "discord.js";
 import BahamutClient from "../../modules/BahamutClient";
 import { getGuildSettings } from "../../lib/getFunctions";
 import { isUserModOfGuild } from "../../lib/checkFunctions";
-import { handleErrorResponseToMessage, handleResponseToMessage } from "../../lib/messageHandlers";
+import {
+    handleErrorResponseToMessage,
+    handleSuccessResponseToMessage,
+} from "../../lib/messageHandlers";
 import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
 
 const config: CommandConfig = {
@@ -69,12 +72,6 @@ export default {
             return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "An error occurred while enabling slow mode for this channel. Please try again later.");
         }
 
-        return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
-            embeds: [
-                new Discord.EmbedBuilder()
-                    .setAuthor({ name: "Slowmode", iconURL: client.bahamut.config.message_icons.success })
-                    .setDescription(`Slowmode has been **${seconds === 0 ? "disabled" : "enabled"}** for this channel.`),
-            ],
-        });
+        return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `Slowmode has been **${seconds === 0 ? "disabled" : "enabled"}** for this channel.`);
     },
 };

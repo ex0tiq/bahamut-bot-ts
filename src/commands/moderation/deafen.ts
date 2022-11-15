@@ -4,7 +4,11 @@ import Discord from "discord.js";
 import BahamutClient from "../../modules/BahamutClient";
 import { getGuildSettings } from "../../lib/getFunctions";
 import { isUserModOfGuild } from "../../lib/checkFunctions";
-import { createMissingParamsErrorResponse, handleErrorResponseToMessage } from "../../lib/messageHandlers";
+import {
+    createMissingParamsErrorResponse,
+    handleErrorResponseToMessage,
+    handleSuccessResponseToMessage,
+} from "../../lib/messageHandlers";
 import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
 import { resolveUser } from "../../lib/resolveFunctions";
 
@@ -82,12 +86,6 @@ export default {
             return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "An error occurred while deafening the user. Please try again later.");
         }
 
-        return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, {
-            embeds: [
-                new Discord.EmbedBuilder()
-                    .setAuthor({ name: "User deafened", iconURL: client.bahamut.config.message_icons.success })
-                    .setDescription(`The sser **${target.displayName}** is now deaf!`),
-            ],
-        });
+        return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `The User **${target.displayName}** is now deaf!`);
     },
 };

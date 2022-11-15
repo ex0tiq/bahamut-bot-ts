@@ -3,7 +3,10 @@ import { CommandType } from "wokcommands";
 import Discord from "discord.js";
 import BahamutClient from "../../modules/BahamutClient";
 import { isUserModOfGuild } from "../../lib/checkFunctions";
-import { handleErrorResponseToMessage, handleResponseToMessage } from "../../lib/messageHandlers";
+import {
+    handleErrorResponseToMessage,
+    handleSuccessResponseToMessage,
+} from "../../lib/messageHandlers";
 import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
 import { getGuildSettings } from "../../lib/getFunctions";
 
@@ -61,23 +64,11 @@ export default {
             if (["none", "off"].includes(args[0].toLowerCase())) {
                 await channel.setTopic("", "Set topic bot command");
 
-                return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
-                    embeds: [
-                        new Discord.EmbedBuilder()
-                            .setAuthor({ name: "Topic", iconURL: client.bahamut.config.message_icons.success })
-                            .setDescription("The topic of this channel has been set to **None**."),
-                    ],
-                });
+                return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, "The topic of this channel has been set to **None**.");
             } else {
                 await channel.setTopic(args.join(" "), "Set topic bot command");
 
-                return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
-                    embeds: [
-                        new Discord.EmbedBuilder()
-                            .setAuthor({ name: "Topic", iconURL: client.bahamut.config.message_icons.success })
-                            .setDescription(`The topic of this channel has been set to **${args.join(" ")}**.`),
-                    ],
-                });
+                return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `The topic of this channel has been set to **${args.join(" ")}**.`);
             }
         } catch (err) {
             console.error("Error while setting channel topic:", err);

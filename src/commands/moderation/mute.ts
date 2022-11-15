@@ -8,7 +8,7 @@ import { isUserModOfGuild } from "../../lib/checkFunctions";
 import {
     createMissingParamsErrorResponse,
     handleErrorResponseToMessage,
-    handleResponseToMessage,
+    handleSuccessResponseToMessage,
 } from "../../lib/messageHandlers";
 import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
 
@@ -85,12 +85,6 @@ export default {
             return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "An error occurred while muting the user. Please try again later.");
         }
 
-        return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
-            embeds: [
-                new Discord.EmbedBuilder()
-                    .setAuthor({ name: "User muted", iconURL: client.bahamut.config.message_icons.success })
-                    .setDescription(`User **${target.displayName}** has been muted!`),
-            ],
-        });
+        return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `User **${target.displayName}** has been muted!`);
     },
 };

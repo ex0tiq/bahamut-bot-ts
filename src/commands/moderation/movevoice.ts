@@ -8,7 +8,7 @@ import { isUserModOfGuild } from "../../lib/checkFunctions";
 import {
     createMissingParamsErrorResponse,
     handleErrorResponseToMessage,
-    handleResponseToMessage,
+    handleSuccessResponseToMessage,
 } from "../../lib/messageHandlers";
 import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
 
@@ -98,12 +98,6 @@ export default {
             return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "An error occurred while moving the user to another voice channel. Please try again later.");
         }
 
-        return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
-            embeds: [
-                new Discord.EmbedBuilder()
-                    .setAuthor({ name: "User moved", iconURL: client.bahamut.config.message_icons.success })
-                    .setDescription(`User **${target.displayName}** has been moved to voice channel **${chan}**!`),
-            ],
-        });
+        return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `User **${target.displayName}** has been moved to voice channel **${chan}**!`);
     },
 };
