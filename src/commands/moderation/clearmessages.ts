@@ -6,7 +6,6 @@ import { getGuildSettings } from "../../lib/getFunctions";
 import { isUserModOfGuild } from "../../lib/checkFunctions";
 import {
     handleErrorResponseToMessage,
-    handleResponseToMessage,
 } from "../../lib/messageHandlers";
 import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
 
@@ -30,7 +29,7 @@ const config: CommandConfig = {
     category: "Moderation",
     guildOnly: true,
     testOnly: false,
-    deferReply: true,
+    deferReply: "ephemeral",
 };
 
 export default {
@@ -64,14 +63,6 @@ export default {
 
         try {
             await channel.bulkDelete(count);
-
-            return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
-                embeds: [
-                    new Discord.EmbedBuilder()
-                        .setAuthor({ name: "Messages deleted", iconURL: client.bahamut.config.message_icons.success })
-                        .setDescription(`**${count}** messages have been cleared!`),
-                ],
-            });
         } catch (err) {
             console.error("Error clearing messages:", err);
             return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "Error while deleting messages. Please try again later.");
