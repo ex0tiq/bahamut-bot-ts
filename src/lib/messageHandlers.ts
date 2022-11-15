@@ -54,11 +54,9 @@ const handleResponseToMessage = async (
         response = (!sendToAuthor ? await initMessage.reply(newMessageContent) : await initMessage.author.send(newMessageContent));
     } else if (initMessage instanceof Discord.CommandInteraction) {
         if (deferReply) {
-            response = initMessage;
-
-            !sendToAuthor ? await initMessage.editReply({
+            !sendToAuthor ? response = await initMessage.editReply({
                 ...newMessageContent,
-            }) : await initMessage.user.send(newMessageContent);
+            }) : response = await initMessage.user.send(newMessageContent);
         } else response = (!sendToAuthor ? await initMessage.reply(newMessageContent) : await initMessage.user.send(newMessageContent));
     } else {
         // Return error message
