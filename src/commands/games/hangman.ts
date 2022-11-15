@@ -13,6 +13,18 @@ const config: CommandConfig = {
     description: "Play a round of hangman.",
     minArgs: 0,
     expectedArgs: "[stop]",
+    options: [
+        {
+            name: "option",
+            description: "Customization option",
+            type: Discord.ApplicationCommandOptionType.String,
+            required: false,
+            choices: [{
+                name: "Stop",
+                value: "stop",
+            }],
+        },
+    ],
     category: "Games",
     guildOnly: true,
     deferReply: true,
