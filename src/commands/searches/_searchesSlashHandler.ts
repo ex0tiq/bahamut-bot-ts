@@ -8,8 +8,8 @@ const allSearchCommands = (() => getAllJSFiles(__dirname).filter(e => e.filePath
 // This is a Slash command handler for all music commands
 
 const config: CommandConfig = {
-    name: "searches",
-    aliases: ["search", "s"],
+    name: "search",
+    aliases: ["s"],
     type: CommandType.SLASH,
     description: "Search different stuff.",
     options: (() => {
