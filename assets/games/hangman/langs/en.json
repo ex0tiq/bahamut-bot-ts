@@ -2,7 +2,7 @@
     "hangman": {
         "title": "Hangman",
         "guessed": "Letters guessed",
-        "how": "React to this message using the emojis that look like letters (🇦, 🇹, ...)",
+        "how": "Write the letter you want to guess in this channel, \nor react to this message using the emojis that look like letters (🇦, 🇹, ...).",
     
         "over": "Game Over",
         "wins": "You win!",
