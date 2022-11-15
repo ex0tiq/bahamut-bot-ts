@@ -6,7 +6,7 @@ import { getGuildSettings } from "../../lib/getFunctions";
 import { isUserModOfGuild } from "../../lib/checkFunctions";
 import { createMissingParamsErrorResponse, handleErrorResponseToMessage } from "../../lib/messageHandlers";
 import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
-const { resolveUser } = require("../../lib/fetchFunctions");
+import { resolveUser } from "../../lib/resolveFunctions";
 
 const config: CommandConfig = {
     name: "deafen",
