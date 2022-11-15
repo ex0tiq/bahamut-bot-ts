@@ -35,7 +35,7 @@ const config: CommandConfig = {
     ],
     category: "Moderation",
     guildOnly: true,
-    testOnly: true,
+    testOnly: false,
     deferReply: true,
 };
 
