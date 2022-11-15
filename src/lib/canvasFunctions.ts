@@ -5,14 +5,18 @@ import { isUrl } from "./validateFunctions";
 import Discord from "discord.js";
 
 import pify from "pify";
+import { resolve } from "path";
 const imageSizeOfP = pify(imageSizeOf);
 
 const createShipImage = async ({ user1, user2, shipPercent = 20 }: { user1: Discord.GuildMember, user2: Discord.GuildMember, shipPercent: number }) => {
+    Canvas.registerFont(resolve("assets/fonts/Manrope-Medium.ttf"), { family: "Manrope Medium" });
+    Canvas.registerFont(resolve("assets/fonts/Manrope-Regular.ttf"), { family: "Manrope" });
+
     const canvas = Canvas.createCanvas(540, 200),
         ctx = canvas.getContext("2d"),
         background = await Canvas.loadImage("assets/img/cards/ship/bg_ship.jpg");
-    const user1avatarLink = user1.avatarURL({ forceStatic: true }) || user1.user.avatarURL({ forceStatic: true }) || user1.user.defaultAvatarURL,
-        user2avatarLink = user2.avatarURL({ forceStatic: true }) || user2.user.avatarURL({ forceStatic: true }) || user1.user.defaultAvatarURL;
+    const user1avatarLink = user1.avatarURL({ forceStatic: true, extension: "png" }) || user1.user.avatarURL({ forceStatic: true, extension: "png" }) || user1.user.defaultAvatarURL,
+        user2avatarLink = user2.avatarURL({ forceStatic: true, extension: "png" }) || user2.user.avatarURL({ forceStatic: true, extension: "png" }) || user1.user.defaultAvatarURL;
     let user1avatar, user2avatar;
 
     try {
@@ -48,37 +52,40 @@ const createShipImage = async ({ user1, user2, shipPercent = 20 }: { user1: Disc
     ctx.globalAlpha = 1;
 
     // User 1 Text
+    const user1Name = (user1.displayName.length > 15) ? user1.displayName.slice(0, 15) + "..." : user1.displayName,
+        user1width = (user1.displayName.length > 15) ? 25 : 80;
     ctx.textBaseline = "middle";
-    ctx.textAlign = "left";
-    ctx.font = "20px Manrope";
+    ctx.textAlign = (user1.displayName.length > 15) ? "left" : "center";
+    ctx.font = "20px Manrope Medium";
     ctx.fillStyle = "white";
-    ctx.fillText(user1.displayName, 25, 20);
+    ctx.fillText(user1Name, user1width, 20);
 
     // User 2 Text
+    const user2Name = (user2.displayName.length > 15) ? user2.displayName.slice(0, 15) + "..." : user2.displayName,
+        user2width = (user2.displayName.length > 15) ? 25 : 80;
     ctx.textBaseline = "middle";
-    ctx.textAlign = "right";
-    ctx.font = "20px Manrope";
+    ctx.textAlign = (user2.displayName.length > 15) ? "right" : "center";
+    ctx.font = "20px Manrope Medium";
     ctx.fillStyle = "white";
-    ctx.fillText(user2.displayName, canvas.width - 25, canvas.height - 20);
+    ctx.fillText(user2Name, canvas.width - user2width, canvas.height - 20);
 
     // % Match Text
     ctx.textBaseline = "middle";
     ctx.textAlign = "center";
-    ctx.font = "40px Manrope";
+    ctx.font = "40px Manrope Medium";
     ctx.fillStyle = "white";
     ctx.fillText(`${shipPercent}%`, (canvas.width / 2), (canvas.height / 2) - 20);
     // % Match Subtext
     ctx.textBaseline = "middle";
     ctx.textAlign = "center";
-    ctx.font = "24px Manrope";
+    ctx.font = "24px Manrope Medium";
     ctx.fillStyle = "white";
     ctx.fillText("match", (canvas.width / 2), (canvas.height / 2) + 10);
 
     ctx.save();
 
-    let image = await Canvas.loadImage(user1avatar);
-
     // User 1 Avatar
+    let image = await Canvas.loadImage(user1avatar);
     ctx.beginPath();
     ctx.arc(((20 + 120) / 2) + 10, canvas.height / 2, 60, 0, Math.PI * 2, true);
     ctx.closePath();
@@ -98,11 +105,14 @@ const createShipImage = async ({ user1, user2, shipPercent = 20 }: { user1: Disc
     return canvas.toBuffer();
 };
 
-const createPortraitImage = async ({ title, subtitle, source, font = "Arial", fontTitleSize = 42, fontSubtitleSize = 26, captionHeight = 120, decorateCaptionTextFillStyle = null,
+const createPortraitImage = async ({ title, subtitle, source, font = "Manrope Medium", fontTitleSize = 42, fontSubtitleSize = 26, captionHeight = 120, decorateCaptionTextFillStyle = null,
                                        decorateCaptionFillStyle = null, offsetCaptionX = 0, offsetCaptionY = 0, offsetTitleX = 0, offsetTitleY = 0, offsetSubTitleX = 0, offsetSubtitleY = 0 } :
                                        { title: string, subtitle: string, source: string, font?: string, fontTitleSize?: number, fontSubtitleSize?: number, captionHeight?: number,
                                            decorateCaptionTextFillStyle?: string | null, decorateCaptionFillStyle?: string | null, offsetCaptionX?: number, offsetCaptionY?: number, offsetTitleX?: number,
                                            offsetTitleY?: number, offsetSubTitleX?: number, offsetSubtitleY?: number }) => {
+    Canvas.registerFont(resolve("assets/fonts/Manrope-Medium.ttf"), { family: "Manrope Medium" });
+    Canvas.registerFont(resolve("assets/fonts/Manrope-Regular.ttf"), { family: "Manrope" });
+
     // Draw base image
     let image = null, width = 0, height = 0;
     if (isUrl(source)) {
