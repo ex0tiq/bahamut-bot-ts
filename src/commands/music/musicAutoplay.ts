@@ -62,12 +62,10 @@ export default {
         if (args.length <= 0) {
             if (settings.music_autoplay) {
                 return handleResponseToMessage(client, message || interaction, false, config.deferReply, createSuccessResponse(client, `${emoji.get("white_check_mark")} Autoplay is currently enabled!`, true));
-            }
-            else {
+            } else {
                 return handleResponseToMessage(client, message || interaction, false, config.deferReply, createSuccessResponse(client, `${emoji.get("x")} Autoplay is currently disabled!`, true));
             }
-        }
-        else if (args.length > 0 && (args[0].toLowerCase() == "on" || args[0].toLowerCase() == "off")) {
+        } else if (args.length > 0 && (args[0].toLowerCase() == "on" || args[0].toLowerCase() == "off")) {
             switch(args[0].toLowerCase()) {
                 case "on":
                     autoplay = true;
@@ -79,8 +77,7 @@ export default {
                     autoplay = false;
                     break;
             }
-        }
-        else {
+        } else {
             return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, createMissingParamsErrorResponse(client, config));
         }
 
@@ -90,8 +87,7 @@ export default {
             client.bahamut.settings.set(channel.guild.id, await client.bahamut.dbHandler.guildSettings.getDBGuildSettings(channel.guild));
 
             return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${autoplay ? emoji.get("white_check_mark") : emoji.get("x")} Autoplay has been ${autoplay ? "enabled" : "disabled"}!`);
-        }
-        else {
+        } else {
             return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "Error while updating the Prefix. Please try again later!");
         }
     },

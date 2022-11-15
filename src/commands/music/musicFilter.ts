@@ -74,6 +74,8 @@ export default {
         ]);
         if (await checks.runChecks()) return;
 
+        if ([...client.bahamut.runningGames.entries()].filter(([key, val]) => key === channel.guild.id && val.type === "musicquiz").length > 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There is a running music quiz on this guild. Please finish it before changing filters.");
+
         const filters = client.bahamut.musicHandler.filters;
         let filterText = "";
 
@@ -96,12 +98,10 @@ export default {
 
             if (!player || !player.get("music_filter")) {
                 return handleResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("control_knobs")} There is currently no filter applied!`);
-            }
-            else {
+            } else {
                 return handleResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("control_knobs")} The filter \`${toProperCase(player.get("music_filter"))}\` is currently applied!`);
             }
-        }
-         else if (args.length > 0) {
+        } else if (args.length > 0) {
             if (args[0].toLowerCase() === "list") {
                 if (message) await message.reactions.removeAll();
 
@@ -126,8 +126,7 @@ export default {
 
                     await player.node.send(obj);
                     player.set("music_filter", null);
-                }
-                else if (args[0].toLowerCase() === "bassboost") {
+                } else if (args[0].toLowerCase() === "bassboost") {
                     const obj = {
                         op: "filters",
                         guildId: channel.guild.id,
@@ -137,8 +136,7 @@ export default {
 
                     if (args.length > 1 && parseInt(args[1])) {
                         boostPercent = parseInt(args[1]);
-                    }
-                    else {
+                    } else {
                         boostPercent = (0.22 * 100);
                     }
 
@@ -151,8 +149,7 @@ export default {
                     if (message) await message.reactions.removeAll();
 
                     return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("ballot_box_with_check")} Current queue filter set to \`Bassboost\` with \`${Math.floor(boostPercent)}%\` boost!`);
-                }
-                else {
+                } else {
                     const obj = {
                         op: "filters",
                         guildId: channel.guild.id,
@@ -165,12 +162,10 @@ export default {
                 }
 
                 return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("ballot_box_with_check")} Current queue filter has been set to \`${args[0] ? toProperCase(args[0]) : "Off"}\`!`);
-            }
-            else {
+            } else {
                 return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "Invalid filter!");
             }
-        }
-        else {
+        } else {
             return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "Unknown error while applying filter!");
         }
     },

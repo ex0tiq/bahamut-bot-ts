@@ -71,8 +71,7 @@ export default {
             client.bahamut.settings.set(channel.guild.id, await client.bahamut.dbHandler.guildSettings.getDBGuildSettings(channel.guild));
 
             return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${volume <= 0 ? emoji.get("mute") : (volume < 50 ? emoji.get("sound") : emoji.get("loud_sound"))} Volume has been set to \`${volume}\`%!`);
-        }
-        else {
+        } else {
             return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "Error while updating the music volume. Please try again later!");
         }
     },

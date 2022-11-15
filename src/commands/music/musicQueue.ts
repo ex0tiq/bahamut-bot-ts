@@ -91,6 +91,8 @@ export default {
         ]);
         if (await musicPlayingCheck.runChecks()) return;
 
+        if ([...client.bahamut.runningGames.entries()].filter(([key, val]) => key === channel.guild.id && val.type === "musicquiz").length > 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There is a running music quiz on this guild. Please finish it.");
+
         let max_page = 1;
         if (player.queue.length > 11) max_page = Math.ceil((player.queue.length - 1) / 10);
 
@@ -100,8 +102,7 @@ export default {
             if (args.length > 0) {
                 try {
                     page = parseInt(args[0]);
-                }
-                catch(e) {
+                } catch(e) {
                     page = 1;
                 }
             }
@@ -129,8 +130,7 @@ export default {
             embed = await client.bahamut.musicHandler.musicStatus(player, embed);
 
             return handleResponseToMessage(client, message || interaction, false, config.deferReply, { embeds: [embed] });
-        }
-        else if (args.length === 1) {
+        } else if (args.length === 1) {
             if (["clear", "cls", "delall", "remall", "rma"].includes(args[0].toLowerCase())) {
                 if (await djCheck.runChecks()) return;
 
@@ -145,12 +145,10 @@ export default {
                             .setDescription(`${emoji.get("white_check_mark")} Successfully cleared \`${size}\` entries from the queue!`),
                     ],
                 });
-            }
-            else {
+            } else {
                 return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, createMissingParamsErrorResponse(client, config));
             }
-        }
-        else if (args.length === 2) {
+        } else if (args.length === 2) {
             if (["remove", "delete", "rm", "rmv", "del"].includes(args[0].toLowerCase())) {
                 if (await djCheck.runChecks()) return;
 
@@ -167,20 +165,17 @@ export default {
                                 .setDescription(`${emoji.get("white_check_mark")} Successfully removed queue item at position \`${args[1]}\`!\n${emoji.get("arrow_right")} \`${player.queue.size}\` entries remaining!`),
                         ],
                     });
-                }
-                catch (e) {
+                } catch (e) {
                     console.error("Error while removing queue item:", e);
                     return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Error removing queue item at position \`${args[1]}\`!`);
                 }
-            }
-            else if (["jump", "goto"].includes(args[0].toLowerCase())) {
+            } else if (["jump", "goto"].includes(args[0].toLowerCase())) {
                 if (await djCheck.runChecks()) return;
 
                 let id;
                 try {
                     id = parseInt(args[1]);
-                }
-                catch (e) {
+                } catch (e) {
                     id = -1;
                 }
 
@@ -194,16 +189,13 @@ export default {
                     player.stop();
 
                     return handleResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("twisted_rightwards_arrows")} Jumped to song number \`${id}\` in the queue!`);
-                }
-                else {
+                } else {
                     return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "Invalid id provided, please check the queue for all available songs!");
                 }
-            }
-            else {
+            } else {
                 return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, createMissingParamsErrorResponse(client, config));
             }
-        }
-        else if (args.length === 3) {
+        } else if (args.length === 3) {
             if (["move", "mv"].includes(args[0].toLowerCase())) {
                 if (await djCheck.runChecks()) return;
                 if (!parseInt(args[1]) || !parseInt(args[2])) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Second and third parameter must be numbers between \`1\` and \`${player.queue.size}\` and can't be the same!`);
@@ -222,13 +214,11 @@ export default {
                                 .setDescription(`${emoji.get("white_check_mark")} Successfully moved queue item \`${args[1]}\` to position \`${args[2]}\`!`),
                         ],
                     });
-                }
-                catch (e) {
+                } catch (e) {
                     console.error("Error swapping queue items:", e);
                     return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Error swapping items at positions \`${args[1]}\` and \`${args[2]}\`!`);
                 }
-            }
-            else {
+            } else {
                 return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, createMissingParamsErrorResponse(client, config));
             }
         }

@@ -76,16 +76,13 @@ export default {
             mode = 0;
             player.setTrackRepeat(false);
             player.setQueueRepeat(false);
-        }
-        else if (["song", "s"].includes(args[0].toLowerCase())) {
+        } else if (["song", "s"].includes(args[0].toLowerCase())) {
             mode = 1;
             player.setTrackRepeat(true);
-        }
-        else if (["queue", "q"].includes(args[0].toLowerCase())) {
+        } else if (["queue", "q"].includes(args[0].toLowerCase())) {
             mode = 2;
             player.setQueueRepeat(true);
-        }
-        else {
+        } else {
             return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, createMissingParamsErrorResponse(client, config));
         }
 

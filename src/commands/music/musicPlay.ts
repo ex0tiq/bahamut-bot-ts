@@ -64,8 +64,7 @@ export default {
         ]);
         if (await checks.runChecks()) return;
 
-        // TODO
-        // if (typeof client.runningGames[channel.guild.id] !== 'undefined') return handleBotMessage(client, message, 'error', 'There is a running music quiz on this guild. Please finish it before playing music.', false, null, channel);
+        if ([...client.bahamut.runningGames.entries()].filter(([key, val]) => key === channel.guild.id && val.type === "musicquiz").length > 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There is a running music quiz on this guild. Please finish it before playing music.");
 
         let res;
 
@@ -76,8 +75,7 @@ export default {
             // Check the load type as this command is not that advanced for basics
             if (res.loadType === "LOAD_FAILED") return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "An internal error occurred while doing that. Please try again later.");
             else if (res.loadType === "NO_MATCHES") return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "This search did not return any results! Please try again!");
-        }
-        catch (err) {
+        } catch (err) {
             return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "An internal error occurred while doing that. Please try again later.");
         }
 
@@ -112,30 +110,24 @@ export default {
                 player.set("skip_trackstart", true);
 
                 lastEmbed = await client.bahamut.musicHandler.getTrackStartEmbed(player, res.tracks[0], member);
-            }
-            else if (res.loadType === "SEARCH_RESULT" || res.loadType === "TRACK_LOADED" || res.tracks.length === 1) {
+            } else if (res.loadType === "SEARCH_RESULT" || res.loadType === "TRACK_LOADED" || res.tracks.length === 1) {
                 lastEmbed = await client.bahamut.musicHandler.getTrackAddEmbed(player, res.tracks[0], member);
-            }
-            else {
+            } else {
                 lastEmbed = await client.bahamut.musicHandler.getListAddEmbed(player, res, member);
             }
-        }
-        else if (res.loadType === "SEARCH_RESULT" || res.loadType === "TRACK_LOADED" || res.tracks.length === 1) {
+        } else if (res.loadType === "SEARCH_RESULT" || res.loadType === "TRACK_LOADED" || res.tracks.length === 1) {
             player.set("skip_trackstart", true);
 
             lastEmbed = await client.bahamut.musicHandler.getTrackStartEmbed(player, res.tracks[0], member);
-        }
-        else {
+        } else {
             lastEmbed = await client.bahamut.musicHandler.getListStartEmbed(player, res, member);
         }
 
         if (player.playing && player.queue.current?.isStream) {
             player.stop();
-        }
-        else if (!player.playing && !player.paused && !player.queue.size) {
+        } else if (!player.playing && !player.paused && !player.queue.size) {
             await player.play();
-        }
-        else if (!player.playing) {
+        } else if (!player.playing) {
             await player.play();
         }
 
