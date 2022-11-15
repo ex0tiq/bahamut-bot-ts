@@ -31,21 +31,20 @@ const config: CommandConfig = {
 
 export default {
     ...config,
-    callback: async ({ client, channel, member, args, interaction, ...rest }: BahamutCommandUsage) => {
+    callback: async ({ client, channel, member, message, args, interaction, ...rest }: BahamutCommandUsage) => {
         try {
             // @ts-ignore
             const cmd = allMusicCommands.filter(e => e.fileContents.name === interaction!.options.getSubcommand(false));
 
-            if (!cmd || cmd.length < 1) return handleErrorResponseToMessage(client, interaction!, false, config.deferReply, "This command is not available!");
+            if (!cmd || cmd.length < 1) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "This command is not available!");
 
             const cmnd = cmd[0];
 
             // Call subcommand with all params
             return await cmnd.fileContents.callback({ client, channel, member, args, interaction, ...rest });
-        }
-         catch (ex) {
+        } catch (ex) {
             console.error("Error while handling music slash command:", ex);
-            return handleErrorResponseToMessage(client, interaction!, false, config.deferReply, "An internal error occurred while doing that. Please try again later.");
+            return handleErrorResponseToMessage(client, message || interaction!, false, config.deferReply, "An internal error occurred while doing that. Please try again later.");
         }
     },
 };
