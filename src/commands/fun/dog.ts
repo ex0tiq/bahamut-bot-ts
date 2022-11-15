@@ -33,8 +33,7 @@ export default {
                 return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
                     embeds: [
                         new Discord.EmbedBuilder()
-                            // eslint-disable-next-line no-useless-escape
-                            .setTitle("\:dog: Dog")
+                            .setAuthor({ name: "Dog", iconURL: client.bahamut.config.emoji_icons.dog })
                             .setImage(image),
                     ],
                 });

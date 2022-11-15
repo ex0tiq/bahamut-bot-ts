@@ -48,8 +48,7 @@ export default {
         try {
             min = parseInt(args[0]);
             max = parseInt(args[1]);
-        }
-        catch(e) {
+        } catch(e) {
             return handleErrorResponseToMessage(client, message, false, config.deferReply, createMissingParamsErrorResponse(client, config));
         }
 
@@ -63,8 +62,7 @@ export default {
         return handleResponseToMessage(client, message, false, config.deferReply, {
             embeds: [
                 new Discord.EmbedBuilder()
-                    // eslint-disable-next-line no-useless-escape
-                    .setTitle("\:game_die: Random Number")
+                    .setAuthor({ name: "Random Number", iconURL: client.bahamut.config.emoji_icons.game_die })
                     .setDescription(`Your chosen number is...\n\n> **${randomIntBetween(min, max)}**`),
             ],
         });

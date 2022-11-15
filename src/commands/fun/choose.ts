@@ -35,7 +35,7 @@ export default {
         return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
             embeds: [
                 new Discord.EmbedBuilder()
-                    .setAuthor({ name: "Bahamuts Ruling", iconURL: client.bahamut.config.emoji_icons.opinion })
+                    .setAuthor({ name: "Bahamuts Ruling", iconURL: client.bahamut.config.avatar_link })
                     .setDescription(`I choose **${args[randomIntBetween(0, args.length) - 1]}** for you!`),
             ],
         });

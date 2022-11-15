@@ -51,8 +51,7 @@ export default {
     callback: async ({ client, message, args, interaction }: { client: BahamutClient, message: Discord.Message, args: any[], interaction: Discord.CommandInteraction }) => {
 
         const embed = new Discord.EmbedBuilder()
-            // eslint-disable-next-line no-useless-escape
-            .setTitle("\:cat: Cat");
+            .setAuthor({ name: "Cat", iconURL: client.bahamut.config.emoji_icons.cat });
 
         if (args.length > 0) {
             const arg = args.shift();

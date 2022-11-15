@@ -31,8 +31,7 @@ export default {
             return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
                 embeds: [
                     new Discord.EmbedBuilder()
-                        // eslint-disable-next-line no-useless-escape
-                        .setTitle("\:rofl: Joke")
+                        .setAuthor({ name: "Joke", iconURL: client.bahamut.config.emoji_icons.laughing })
                         .setDescription(`> ${json.setup}\n\n**${json.punchline}**`),
                 ],
             });
