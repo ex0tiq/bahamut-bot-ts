@@ -1,7 +1,6 @@
 import { resolveUser } from "../../lib/resolveFunctions";
 import { CommandConfig } from "../../../typings";
 import { CommandType } from "wokcommands";
-import { ApplicationCommandOptionType } from "discord-api-types/v10";
 import { getGuildSettings } from "../../lib/getFunctions";
 import BahamutClient from "../../modules/BahamutClient";
 import Discord from "discord.js";
@@ -24,13 +23,13 @@ const config: CommandConfig = {
             name: "target",
             description: "The user to ban.",
             required: true,
-            type: ApplicationCommandOptionType.User,
+            type: Discord.ApplicationCommandOptionType.User,
         },
         {
             name: "reason",
             description: "Reason for the ban.",
             required: false,
-            type: ApplicationCommandOptionType.String,
+            type: Discord.ApplicationCommandOptionType.String,
         },
     ],
     category: "Moderation",
