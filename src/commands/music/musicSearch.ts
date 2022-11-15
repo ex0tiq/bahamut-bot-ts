@@ -100,7 +100,7 @@ export default {
                     new Discord.SelectMenuBuilder()
                         .setCustomId("musicSearchSelect")
                         .setPlaceholder("Nothing selected...")
-                        .addOptions([{ label: "Cancel", value: "cancel" }].concat([...Array(10).keys()].map(e => {
+                        .addOptions([{ label: "Cancel", value: "cancel" }].concat([...Array(res.tracks.length > 10 ? 10 : res.tracks.length).keys()].map(e => {
                                 return {
                                     label: res.tracks[e].title,
                                     value: "" + e,
@@ -113,7 +113,7 @@ export default {
                 embeds: [
                     new Discord.EmbedBuilder()
                         .setTitle("Search Results")
-                        .setDescription(`${queueString}\n\nType a number to select a search result, or type \`cancel\` to abort.`),
+                        .setDescription(`${queueString}`),
                 ],
                 components: [row],
             });
@@ -174,8 +174,7 @@ export default {
                     await player.stop();
                 }
                 if (!player.playing && !player.paused && !player.queue.size) await player.play();
-            }).catch((ex) => {
-                console.error(ex);
+            }).catch(() => {
                 return handleErrorResponseToMessage(client, msg, true, "ephemeral", {
                     ...createErrorResponse(client, "Timeout of 30 seconds exceeded, search aborted."),
                     components: [],
