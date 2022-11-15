@@ -27,7 +27,7 @@ const config: CommandConfig = {
     ],
     category: "Fun",
     guildOnly: true,
-    deferReply: false,
+    deferReply: true,
 };
 
 export default {
