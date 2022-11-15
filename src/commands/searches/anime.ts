@@ -91,6 +91,13 @@ export default {
                             embed.setImage(aniResult.bannerImage);
                         }
 
+                        // Make this reply deferred
+                        if (interaction) {
+                            await interaction.deferReply({
+                                ephemeral: false,
+                            });
+                        }
+
                         return handleResponseToMessage(client, message || interaction, false, true, { embeds: [embed] });
                     } catch (ex) {
                         console.error("Error querying anilist.co for anime:", ex);
