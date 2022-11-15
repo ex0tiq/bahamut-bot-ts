@@ -28,7 +28,8 @@ const config: CommandConfig = {
     category: "FFXIV",
     guildOnly: true,
     testOnly: true,
-    deferReply: true,
+    // Set this to false, so WOKCommand doesn't apply any deferring
+    deferReply: false,
 };
 
 export default {
@@ -55,6 +56,13 @@ export default {
             if (!cmdArr || cmdArr.length < 1) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "This command is not available!");
 
             const cmd = cmdArr[0];
+
+            // Implement own check for deferring
+            if (interaction && cmd.fileContents.deferReply) {
+                await interaction.deferReply({
+                    ephemeral: cmd.fileContents.deferReply === "ephemeral",
+                });
+            }
 
             // Call subcommand with all params
             return await cmd.fileContents.callback({ message, args, client, interaction, channel, ...rest });

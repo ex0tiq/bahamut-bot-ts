@@ -26,7 +26,8 @@ const config: CommandConfig = {
     category: "Music",
     guildOnly: true,
     testOnly: true,
-    deferReply: true,
+    // Set this to false, so WOKCommand doesn't apply any deferring
+    deferReply: false,
 };
 
 export default {
@@ -39,6 +40,13 @@ export default {
             if (!cmd || cmd.length < 1) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "This command is not available!");
 
             const cmnd = cmd[0];
+
+            // Implement own check for deferring
+            if (interaction && cmnd.fileContents.deferReply) {
+                await interaction.deferReply({
+                    ephemeral: cmnd.fileContents.deferReply === "ephemeral",
+                });
+            }
 
             // Call subcommand with all params
             return await cmnd.fileContents.callback({ client, channel, member, args, interaction, ...rest });

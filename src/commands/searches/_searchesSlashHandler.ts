@@ -8,8 +8,8 @@ const allSearchCommands = (() => getAllJSFiles(__dirname).filter(e => e.filePath
 // This is a Slash command handler for all music commands
 
 const config: CommandConfig = {
-    name: "search",
-    aliases: ["s"],
+    name: "searches",
+    aliases: ["search", "s"],
     type: CommandType.SLASH,
     description: "Search different stuff.",
     options: (() => {
@@ -26,10 +26,11 @@ const config: CommandConfig = {
     category: "Searches",
     guildOnly: true,
     testOnly: false,
-    deferReply: true,
+    // Set this to false, so WOKCommand doesn't apply any deferring
+    deferReply: false,
 };
 
-module.exports = {
+export default {
     ...config,
     callback: async ({ client, channel, member, args, message, interaction, ...rest }: BahamutCommandUsage) => {
         try {
@@ -39,6 +40,13 @@ module.exports = {
             if (!cmd || cmd.length < 1) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "This command is not available!");
 
             const cmnd = cmd[0];
+
+            // Implement own check for deferring
+            if (interaction && cmnd.fileContents.deferReply) {
+                await interaction.deferReply({
+                    ephemeral: cmnd.fileContents.deferReply === "ephemeral",
+                });
+            }
 
             // Call subcommand with all params
             return await cmnd.fileContents.callback({ client, channel, member, args, interaction, ...rest });
