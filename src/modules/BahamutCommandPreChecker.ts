@@ -15,13 +15,13 @@ export class BahamutCommandPreChecker {
     // Bahamut Client
     private _client: BahamutClient;
     // Instance of all command params
-    private _command: Partial<CommandUsage>;
+    private _command: any;
     // Command config for this PreChecker instance
     private _commandConf: CommandConfig;
     // Defined pre checks
     private _preChecks: PreCheck[];
 
-    constructor(client: BahamutClient, command: Partial<CommandUsage>, commandConf: CommandConfig, preChecks: PreCheck[]) {
+    constructor(client: BahamutClient, command: any, commandConf: CommandConfig, preChecks: PreCheck[]) {
         this._client = client;
         this._command = command;
         this._commandConf = commandConf;
