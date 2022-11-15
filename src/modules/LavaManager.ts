@@ -325,8 +325,14 @@ export default class LavaManager {
     public get radioStations() {
         return this._radioStations;
     }
+    public set radioStations(rad) {
+        this._radioStations = rad;
+    }
     public get filters() {
         return this._filters;
+    }
+    public set filters(fil) {
+        this._filters = fil;
     }
     public get voteSkips() {
         return this._voteSkips;

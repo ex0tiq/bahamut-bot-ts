@@ -173,6 +173,9 @@ export class Bahamut {
     public get settings() {
         return this._settings;
     }
+    public set settings(set) {
+        this._settings = set;
+    }
     public get scheduler() {
         return this._scheduler;
     }
