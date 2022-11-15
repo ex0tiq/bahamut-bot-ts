@@ -7,7 +7,7 @@ import BahamutClient from "./modules/BahamutClient.js";
 // const lang = require('./lib/languageMessageHandlers');
 import { loadBotStuff } from "./lib/botStartupFunctions.js";
 import Logger from "./modules/Logger.js";
-import { BotConfig, GuildSettings, StartupMessage } from "../typings.js";
+import { BotConfig, DiscordGame, GuildSettings, StartupMessage } from "../typings.js";
 import WOK from "wokcommands";
 import PremiumManager from "./modules/PremiumManager";
 import LavaManager from "./modules/LavaManager";
@@ -16,6 +16,8 @@ import LevelSystem from "./modules/LevelSystem";
 import { Settings } from "luxon";
 import FFXIV from "./modules/FFXIV";
 import LanguageMessageHandler from "./lib/languageMessageHandlers";
+import * as Events from "events";
+import GameListeners from "./modules/EventListeners/GameListeners";
 
 // Non ES imports
 const { client } = require("tenorjs");
@@ -46,6 +48,11 @@ export class Bahamut {
     // Set node-schedule object
     private _scheduler: typeof scheduler = scheduler;
     private _schedules: Map<string, Job> = new Map<string, Job>;
+    // Set event handler
+    private _eventHandler = new Events.EventEmitter();
+
+    // Set map for running games
+    private _runningGames: Map<string, DiscordGame> = new Map<string, DiscordGame>;
 
     // Set global tenor object
     private _tenor;
@@ -76,6 +83,9 @@ export class Bahamut {
         this._levelSystem = new LevelSystem(this);
         // Init FFXIV stuff
         this._ffxiv = new FFXIV(this);
+
+        // Register GameListeners
+        GameListeners(this);
 
         // Init tenor object
         this._tenor = client({
@@ -171,6 +181,12 @@ export class Bahamut {
     }
     public get ffxiv() {
         return this._ffxiv;
+    }
+    public get eventHandler() {
+        return this._eventHandler;
+    }
+    public get runningGames() {
+        return this._runningGames;
     }
 
     public get tenor() {
