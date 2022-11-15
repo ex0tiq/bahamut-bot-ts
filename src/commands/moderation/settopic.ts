@@ -1,5 +1,5 @@
 import { CommandConfig } from "../../../typings";
-import { CommandType, CooldownTypes } from "wokcommands";
+import { CommandType } from "wokcommands";
 import Discord from "discord.js";
 import BahamutClient from "../../modules/BahamutClient";
 import { isUserModOfGuild } from "../../lib/checkFunctions";
@@ -24,10 +24,6 @@ const config: CommandConfig = {
         },
     ],
     category: "Moderation",
-    cooldowns: {
-        type: CooldownTypes.perGuild,
-        duration: "10 m",
-    },
     guildOnly: true,
     testOnly: false,
     deferReply: true,
