@@ -21,7 +21,8 @@ const handleResponseToMessage = async (
     deferReply: "ephemeral" | boolean = "ephemeral",
     newMessageContent: HandleMessageOptions | string,
     deleteOptions?: MessageDeleteOptions,
-    sendToAuthor?: boolean
+    sendToAuthor?: boolean,
+    sendToChannel?: boolean,
 ) => {
     let response: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse;
 
@@ -54,9 +55,19 @@ const handleResponseToMessage = async (
         response = (!sendToAuthor ? await initMessage.reply(newMessageContent) : await initMessage.author.send(newMessageContent));
     } else if (initMessage instanceof Discord.CommandInteraction) {
         if (deferReply) {
-            !sendToAuthor ? response = await initMessage.editReply({
-                ...newMessageContent,
-            }) : response = await initMessage.user.send(newMessageContent);
+            if (!sendToAuthor) {
+                if (sendToChannel) {
+                    response = await initMessage.channel!.send({
+                        ...newMessageContent,
+                    });
+                } else {
+                    response = await initMessage.editReply({
+                        ...newMessageContent,
+                    });
+                }
+            } else {
+                response = await initMessage.user.send(newMessageContent);
+            }
         } else response = (!sendToAuthor ? await initMessage.reply(newMessageContent) : await initMessage.user.send(newMessageContent));
     } else {
         // Return error message
@@ -67,7 +78,7 @@ const handleResponseToMessage = async (
 
     return response;
 };
-const createResponseToMessage = async (client: BahamutClient, newMessageContent: HandleMessageOptions | string) => {
+const createResponseToMessage = (client: BahamutClient, newMessageContent: HandleMessageOptions | string) => {
     return createSuccessResponse(client, newMessageContent, true);
 };
 
