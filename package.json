@@ -106,6 +106,7 @@
     "@types/pify": "^5.0.1",
     "@types/recursive-readdir": "^2.2.1",
     "@types/spotify-api": "0.0.19",
+    "@types/spotify-web-api-node": "^5.0.7",
     "@types/uuid": "^8.3.4",
     "@types/ws": "^8.5.3",
     "@typescript-eslint/parser": "^5.42.1",
