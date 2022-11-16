@@ -1,31 +1,24 @@
-import { BahamutShardingBootManager, BootConfig, BootManager, BotAPIConfig, BotStaticConfig } from "../typings.js";
-
 process.env.TZ = "UTC";
 
 // Include discord.js ShardingManger
 import Discord from "discord.js";
 import { v4 as uuidv4 } from "uuid";
 
-// const ShardingManager = require('./modules/ShardingManager');
 const config = require("../config/config.json");
 const apiConfig = require("../config/api_config.json");
 import logger from "./modules/Logger.js";
 
-// const BotApiHandler = require('./modules/BotAPIHandler');
 import UplinkAPIHandler from "./modules/UplinkAPIHandler.js";
 // const FFXIVSchedulers = require('./modules/ShardManFFXIVSchedulers');
-// const DB = require('./modules/ShardManDatabase');
-// const { isInt } = require('./lib/validateFunctions');
-import { isInt } from "./lib/validateFunctions.js";
 import BahamutShardingManager from "./modules/BahamutShardingManager.js";
 import BotAPIHandler from "./modules/BotAPIHandler";
-
-// Use bluebird as global promise library
-// import * as Promise from "bluebird";
+import DB from "./modules/ShardManDBHandler";
+import { BahamutShardingBootManager, BootConfig, BootManager } from "../typings.js";
 
 console.log(`Running Bahamut v${process.env.npm_package_version} on NodeJS ${process.version} and discord.js v${Discord.version}.`);
 
 // Start async startup
+// eslint-disable-next-line no-inline-comments
 startup().then(() => { /* Nothing */ });
 
 async function startup() {
@@ -82,9 +75,8 @@ async function startup() {
     // Combine ShardingManager with bootManager
     const botManager: BahamutShardingBootManager = Object.assign(manager, bootManager);
     // Start db connection
-    // manager.dbHandler = new DB(manager),
+    manager.dbHandler = new DB(manager);
     // Set new api manager
-    // manager.uplinkApiHandler = uplinkApiHandler;
     botManager.uplinkApiHandler.setManager(botManager);
 
     if (!(await botManager.uplinkApiHandler.isApiReachable())) {

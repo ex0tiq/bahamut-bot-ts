@@ -3,6 +3,7 @@ import { BotAPIConfig, BotConfig } from "../../typings.js";
 import UplinkAPIHandler from "./UplinkAPIHandler.js";
 import BotAPIHandler from "./BotAPIHandler";
 import ShardManagerFunctions from "./ShardManagerFunctions";
+import ShardManDBHandler from "./ShardManDBHandler";
 
 export default class BahamutShardingManager extends Discord.ShardingManager {
     private _uplinkApiHandler: UplinkAPIHandler;
@@ -13,6 +14,7 @@ export default class BahamutShardingManager extends Discord.ShardingManager {
     private _shardRady: boolean = false;
 
     private _apiHandler!: BotAPIHandler;
+    private _dbHandler!: ShardManDBHandler;
     private _fn: ShardManagerFunctions;
 
     constructor(file: string, options: Discord.ShardingManagerOptions, uplinkApiHandler: UplinkAPIHandler) {
@@ -27,6 +29,12 @@ export default class BahamutShardingManager extends Discord.ShardingManager {
     }
     public set apiConfig(newConfig: BotAPIConfig) {
         this._apiConfig = newConfig;
+    }
+    public get dbHandler() {
+        return this._dbHandler;
+    }
+    public set dbHandler(handler) {
+        this._dbHandler = handler;
     }
     public get config() {
         return this._config;
