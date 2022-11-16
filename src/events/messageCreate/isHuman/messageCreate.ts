@@ -1,22 +1,21 @@
-// const { handleBotMessage } = require('../../../lib/messageConstructors');
-// const AutoMod = require('../../../lib/automoderation/autoModeration');
-// const RestrictedChannels = require('../../../lib/automoderation/restrictedChannels');
 import BahamutClient from "../../../modules/BahamutClient";
 import { flattenArray } from "../../../lib/toolFunctions";
 import Discord from "discord.js";
 import WOK from "wokcommands";
 import { getGuildSettings } from "../../../lib/getFunctions";
 import { handleResponseToMessage } from "../../../lib/messageHandlers";
+import RestrictedChannels from "../../../lib/automoderation/restrictedChannels";
+import AutoModeration from "../../../lib/automoderation/automoderation";
 
+// eslint-disable-next-line no-unused-vars
 export default async (message: Discord.Message, client: BahamutClient, instance: WOK) => {
     // Implement auto moderation
-    // const mod = new AutoMod(client, message.guild, message);
-    // if (await mod.runAutoModChecks()) return;
+    const mod = new AutoModeration(client, message.guild!, message);
+    if (await mod.runAutoModChecks()) return;
     //
     // Restricted channels checks
-    // const restrict = new RestrictedChannels(client, instance, message.guild, message);
-    // if (await restrict.runRestrictChecks()) return;
-    //
+    const restrict = new RestrictedChannels(client, message.guild!, message);
+    if (await restrict.runRestrictChecks()) return;
 
     if (message.author.bot) return;
 
