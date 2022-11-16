@@ -223,7 +223,7 @@ export default {
                 return handleResponseToMessage(client, message || interaction, false, "ephemeral", createMissingParamsErrorResponse(client, config));
             }
         } catch(err) {
-            console.error("Error querying anilist.co for anime:", err);
+            console.error("Error querying anilist.co for manga:", err);
             return handleErrorResponseToMessage(client, message, false, "ephemeral", {
                 ...createErrorResponse(client, "An error occured while fetching this anime. Please try again later."),
                 components: [],

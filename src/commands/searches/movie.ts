@@ -226,7 +226,7 @@ export default {
                 return handleResponseToMessage(client, message || interaction, false, "ephemeral", createMissingParamsErrorResponse(client, config));
             }
         } catch(err) {
-            console.error("Error querying TMDb for anime:", err);
+            console.error("Error querying TMDb for movie:", err);
             return handleErrorResponseToMessage(client, message, false, "ephemeral", {
                 ...createErrorResponse(client, "An error occured while fetching this movie. Please try again later."),
                 components: [],
