@@ -204,12 +204,15 @@ export default {
                                 embed.setImage(aniResult.bannerImage);
                             }
 
-                            await handleResponseToChannel(client, channel, { embeds: [embed] });
-
-                            await collected.update({
-                                ...createSuccessResponse(client, "Selected anime has been posted."),
-                                components: [],
-                            });
+                            if (message) {
+                                await handleResponseToMessage(client, collected.message, true, true, { embeds: [embed], components: [] });
+                            } else {
+                                await handleResponseToChannel(client, channel, { embeds: [embed] });
+                                await collected.update({
+                                    ...createSuccessResponse(client, "Selected anime has been posted."),
+                                    components: [],
+                                });
+                            }
                         } catch (ex) {
                             console.error("Error querying anilist.co for anime:", ex);
                             return handleErrorResponseToMessage(client, msg, true, "ephemeral", {

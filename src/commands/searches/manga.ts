@@ -196,10 +196,15 @@ export default {
 
                             await handleResponseToChannel(client, channel, { embeds: [embed] });
 
-                            await collected.update({
-                                ...createSuccessResponse(client, "Selected manga has been posted."),
-                                components: [],
-                            });
+                            if (message) {
+                                await handleResponseToMessage(client, collected.message, true, true, { embeds: [embed], components: [] });
+                            } else {
+                                await handleResponseToChannel(client, channel, { embeds: [embed] });
+                                await collected.update({
+                                    ...createSuccessResponse(client, "Selected manga has been posted."),
+                                    components: [],
+                                });
+                            }
                         } catch (ex) {
                             console.error("Error querying anilist.co for manga:", ex);
                             return handleErrorResponseToMessage(client, msg, true, "ephemeral", {
