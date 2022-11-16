@@ -131,6 +131,7 @@ export default class BahamutDBHandler {
         }, {
             sequelize: this._dbCon,
             modelName: "guild_stats",
+            freezeTableName: true,
         });
         DBGuildSettings.init({
             guild_id: {
@@ -154,6 +155,7 @@ export default class BahamutDBHandler {
         }, {
             sequelize: this._dbCon,
             modelName: "guild_settings",
+            freezeTableName: true,
         });
         DBGuildCharacters.init({
             guild_id: {
@@ -173,6 +175,7 @@ export default class BahamutDBHandler {
         }, {
             sequelize: this._dbCon,
             modelName: "guild_characters",
+            freezeTableName: true,
         });
         DBGuildUserLevels.init({
             guild_id: {
@@ -197,6 +200,7 @@ export default class BahamutDBHandler {
         }, {
             sequelize: this._dbCon,
             modelName: "guild_user_levels",
+            freezeTableName: true,
         });
         DBGuildUserStats.init({
             guild_id: {
@@ -223,6 +227,7 @@ export default class BahamutDBHandler {
         }, {
             sequelize: this._dbCon,
             modelName: "guild_user_stats",
+            freezeTableName: true,
         });
         DBGuildPlaylists.init({
             id: {
@@ -244,6 +249,7 @@ export default class BahamutDBHandler {
         }, {
             sequelize: this._dbCon,
             modelName: "guild_playlists",
+            freezeTableName: true,
         });
         DBGuildSongs.init({
             id: {
@@ -272,6 +278,7 @@ export default class BahamutDBHandler {
         }, {
             sequelize: this._dbCon,
             modelName: "guild_songs",
+            freezeTableName: true,
         });
         DBGuildCommandLog.init({
             entry_id: {
@@ -308,6 +315,7 @@ export default class BahamutDBHandler {
         }, {
             sequelize: this._dbCon,
             modelName: "guild_command_logs",
+            freezeTableName: true,
         });
 
         // Define foreign keys
