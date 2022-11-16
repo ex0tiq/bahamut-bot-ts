@@ -33,13 +33,13 @@ export default {
         if (args.length > 0) {
             client.bahamut.tenor.Search.Query(args.join(" "), "30").then((Results: any) => {
                 const rand = randomIntBetween(0, 29);
-                const post = Results.results[rand];
+                const post = Results[rand];
 
                 return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
                    embeds: [
                        new Discord.EmbedBuilder()
                            .setTitle("Gif")
-                           .setImage(post.media[0].gif.url)
+                           .setImage(post.media_formats.gif.url || null)
                            .setFooter({ text: "Via Tenor" }),
                    ],
                 });
@@ -50,13 +50,13 @@ export default {
         } else {
             client.bahamut.tenor.Trending.GIFs("30").then((Results: any) => {
                 const rand = randomIntBetween(0, 29);
-                const post = Results.results[rand];
+                const post = Results[rand];
 
                 return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
                     embeds: [
                         new Discord.EmbedBuilder()
                             .setTitle("Gif")
-                            .setImage(post.media[0].gif.url)
+                            .setImage(post.media_formats.gif.url || null)
                             .setFooter({ text: "Via Tenor" }),
                     ],
                 });
