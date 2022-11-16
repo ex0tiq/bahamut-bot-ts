@@ -122,26 +122,6 @@ export class Bahamut {
             if (!message.type) return false;
             if (message.type == "startupData") {
                 if (message.data.shardId || message.data.shardId === 0) this._client.shardId = message.data.shardId;
-                if (message.data.conf) {
-                    // Logger.log(this._client.shardId, 'Received boot configuration from ShardManager, loading...');
-
-
-                    // Load client libraries
-                    // this.registerLibraries();
-                    // Load languages
-                    // await lang.initLanguageFiles();
-
-                    // Init db
-                    // await this._dbHandler.dbInit();
-
-                    // Login
-                    // await this._client.login(this._config.token);
-
-                    // Load bot events, commands, etc.
-                    // await loadBotStuff(this);
-
-                    // Logger.log(this._client.shardId, `${this._client.user?.tag}, ready to serve ${this._client.guilds.cache.reduce((a, g) => a + g.memberCount, 0)} users in ${this._client.guilds.cache.size} servers.`, 'ready');
-                }
             }
         });
     }
@@ -198,10 +178,6 @@ export class Bahamut {
     public get tenor() {
         return this._tenor;
     }
-
-    private registerLibraries = () => {
-
-    };
 }
 
 export default new Bahamut();
