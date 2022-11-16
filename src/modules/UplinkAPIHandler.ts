@@ -1,7 +1,6 @@
 import logger from "./Logger.js";
 import axios from "axios";
-import {BahamutShardingBootManager, BootConfig, BootManager} from "../../typings.js";
-import BahamutShardingManager from "./BahamutShardingManager.js";
+import { BahamutShardingBootManager, BootConfig, BootManager } from "../../typings.js";
 
 export default class UplinkAPIHandler {
     private apiConnectionStatus: boolean = false;
@@ -30,15 +29,14 @@ export default class UplinkAPIHandler {
     async initHeartbeat(skipChecks = false, startup = false) {
         if (skipChecks) {
             if (!this._shardManager.config.uplink_api_url) {
-                logger.error('SM', 'No API configured, aborting heartbeat init.');
+                logger.error("SM", "No API configured, aborting heartbeat init.");
                 return null;
             }
             if (!startup) {
                 if(await this.isApiReachable()) {
-                    logger.ready('SM', 'API is reachable! Initializing heartbeat...');
-                }
-                else {
-                    logger.error('SM', 'Connection to API failed! Aborting heartbeat init.');
+                    logger.ready("SM", "API is reachable! Initializing heartbeat...");
+                } else {
+                    logger.error("SM", "Connection to API failed! Aborting heartbeat init.");
                     await this.startReconnect();
                     return null;
                 }
@@ -62,7 +60,7 @@ export default class UplinkAPIHandler {
                 port: this._shardManager.apiConfig?.api_port,
                 serverId: this._shardManager.config.uplink_api_serverId,
                 communication_token: this._communicationToken,
-                //managedShards: ((startup || !this._shardManager.shardReady) ? null : await this._shardManager.getManagedShards()),
+                // managedShards: ((startup || !this._shardManager.shardReady) ? null : await this._shardManager.getManagedShards()),
                 startupTime: this._shardManager.startTime,
                 currentTime: Date.now(),
                 serverLocation: this._shardManager.config.uplink_api_server_location,
@@ -71,56 +69,51 @@ export default class UplinkAPIHandler {
                 timeout: this.connectionTimeout,
             });
 
-            if (result && result.data && result.data.status && result.data.status === 'success') {
+            if (result && result.data && result.data.status && result.data.status === "success") {
                 if (this.heartbeatFailedCount > 0) {
-                    logger.ready('SM', `Connection to API re-established! (Connected to: ${result.request.socket._httpMessage.host})`);
+                    logger.ready("SM", `Connection to API re-established! (Connected to: ${result.request.socket._httpMessage.host})`);
                     this.heartbeatFailedCount = 0;
-                }
-                else if (!this.apiConnectionStatus && startup) {
-                    logger.ready('SM', `Connection to API established! (Connected to: ${result.request.socket._httpMessage.host})`);
+                } else if (!this.apiConnectionStatus && startup) {
+                    logger.ready("SM", `Connection to API established! (Connected to: ${result.request.socket._httpMessage.host})`);
                 }
 
                 this.apiConnectionStatus = true;
                 this.lastConnectionTimestamp = Date.now();
 
-                if (result.data.message.toLowerCase() === 'bootconf') return result.data.result;
+                if (result.data.message.toLowerCase() === "bootconf") return result.data.result;
 
                 return true;
-            }
-            else if (this.heartbeatFailedCount > 2) {
-                logger.error('SM', 'API unreachable, trying to reconnect...');
+            } else if (this.heartbeatFailedCount > 2) {
+                logger.error("SM", "API unreachable, trying to reconnect...");
 
                 await this.stopHeartbeat(!startup);
                 this.apiConnectionStatus = false;
                 return false;
-            }
-            else {
-                logger.error('SM', `API Heartbeat failed, trying to reconnect... Try ${this.heartbeatFailedCount + 1}`);
+            } else {
+                logger.error("SM", `API Heartbeat failed, trying to reconnect... Try ${this.heartbeatFailedCount + 1}`);
                 this.heartbeatFailedCount++;
                 return false;
             }
-        }
-        catch (ex) {
+        } catch (ex) {
             console.error(ex);
-            //logger.error('SM', ex.message);
+            // logger.error('SM', ex.message);
             // @ts-ignore
             if (ex.response && (ex.response.status < 200 || ex.response.status >= 300)) {
                 // @ts-ignore
-                if (ex.response.data.status === 'error') {
-                    logger.error('SM', 'Registration at API failed! Trying again...');
+                if (ex.response.data.status === "error") {
+                    logger.error("SM", "Registration at API failed! Trying again...");
                     // await this.stopHeartbeat(true);
                     return false;
                 }
             }
 
             if (this.heartbeatFailedCount > 2) {
-                logger.error('SM', 'API unreachable, trying to reconnect...');
+                logger.error("SM", "API unreachable, trying to reconnect...");
 
                 await this.stopHeartbeat(!startup);
                 this.apiConnectionStatus = false;
-            }
-            else {
-                logger.error('SM', `API Heartbeat failed, trying to reconnect... Try ${this.heartbeatFailedCount + 1}`);
+            } else {
+                logger.error("SM", `API Heartbeat failed, trying to reconnect... Try ${this.heartbeatFailedCount + 1}`);
                 this.heartbeatFailedCount++;
             }
             return false;
@@ -142,9 +135,8 @@ export default class UplinkAPIHandler {
                 await this.initHeartbeat(true);
                 clearInterval(this.reconnectTimerId);
                 this.reconnectTimerId = undefined;
-            }
-            else {
-                logger.error('SM', `Connection to API failed! Trying again in ${this.reconnectTimeout / 1000} seconds...`);
+            } else {
+                logger.error("SM", `Connection to API failed! Trying again in ${this.reconnectTimeout / 1000} seconds...`);
             }
         }, this.reconnectTimeout);
     }
@@ -154,14 +146,13 @@ export default class UplinkAPIHandler {
             const result = await axios.get(this._shardManager.config.uplink_api_url, {
                 timeout: this.connectionTimeout,
             });
-            if (result && result.data && result.data.status && result.data.status === 'success') return true;
+            if (result && result.data && result.data.status && result.data.status === "success") return true;
 
             return false;
-        }
-        catch (ex) {
+        } catch (ex) {
             // @ts-ignore
             if (ex.response) return true;
             return false;
         }
     }
-};
+}
