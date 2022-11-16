@@ -71,6 +71,8 @@ export default {
             target = member;
         }
 
+        if (!target) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `I am unable to find the user ${args[0]}.`);
+
         const [userData, userCookies] = await Promise.all([
             getCurrentUserData(client, target!),
             client.bahamut.dbHandler.cookie.getDBUserCookies(channel.guild, target!),

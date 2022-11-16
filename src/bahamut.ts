@@ -108,6 +108,9 @@ export class Bahamut {
             // Load all languagse
             await LanguageMessageHandler.initLanguageFiles();
 
+            // Clear all application commands
+            // await this._client.application!.commands.set([]);
+
             // Load bot events, commands, etc.
             await loadBotStuff(this);
 

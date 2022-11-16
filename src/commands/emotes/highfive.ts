@@ -53,6 +53,8 @@ export default {
             target = member;
         }
 
+        if (!target) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `I am unable to find the user ${args[0]}.`);
+
         try {
             const res = await client.bahamut.tenor.Search.Query("high five", "30");
 

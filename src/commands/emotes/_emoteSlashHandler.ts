@@ -61,7 +61,7 @@ export default {
             }
 
             try {
-                const emote = interaction.options.get("emote")?.value, target = interaction.options.get("user")?.value || [];
+                const emote = interaction.options.get("emote")?.value;
                 if (!emote) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "This command is not available!");
 
                 // @ts-ignore
@@ -78,7 +78,7 @@ export default {
                 }
 
                 // Call subcommand with all params
-                return await cmd.fileContents.callback({ message, args: [target].concat(args), client, interaction, channel, ...rest });
+                return await cmd.fileContents.callback({ message, args: args.slice(1), client, interaction, channel, ...rest });
             } catch (ex) {
                 console.error("Error running Emote slash command handler:", ex);
                 return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "An internal error occurred while doing that. Please try again later.");

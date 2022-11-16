@@ -53,13 +53,15 @@ export default {
             target = member;
         }
 
+        if (!target) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `I am unable to find the user ${args[0]}.`);
+
         try {
             const res = await client.bahamut.tenor.Search.Query("annoyed", "30");
 
             const rand = randomIntBetween(0, 29);
             const post = res[rand];
 
-            if (target) {
+            if (target && target.id !== member.id) {
                 return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
                     embeds: [
                         new Discord.EmbedBuilder()
