@@ -3,6 +3,7 @@ import { GuildSettings } from "../../../typings";
 import Discord from "discord.js";
 import { isInt, isJson } from "../../lib/validateFunctions";
 import { parseBool } from "../../lib/parseFunctions";
+import { getGuildSettings } from "../../lib/getFunctions";
 
 
 export default class GuildSettingsHandler {
@@ -86,6 +87,49 @@ export default class GuildSettingsHandler {
         } catch (error) {
             console.error("An error occured while querying guild settings:", error);
             return this._dbHandler.bahamut.config.defaultSettings;
+        }
+    };
+
+    setDBGuildSettings = async (guild: Discord.Guild | string, settingsArr: {}) => {
+        try {
+            const clientSettings = await getGuildSettings(this._dbHandler.bahamut.client, guild);
+
+            for (const [key, val] of Object.entries(settingsArr)) {
+                if (key === "disabled_categories" && !Array.isArray(val)) {
+                    if (clientSettings.disabled_categories.includes(<string>val)) continue;
+                    clientSettings.disabled_categories.push(<string>val);
+                    await this.setDBGuildSetting(guild, "disabled_categories", JSON.stringify(clientSettings.disabled_categories));
+                } else if (key === "enabled_categories" && !Array.isArray(val)) {
+                    let i = -1;
+                    if ((i = clientSettings.disabled_categories.indexOf(<string>val)) !== -1) {
+                        clientSettings.disabled_categories.splice(i, 1);
+                        await this.setDBGuildSetting(guild, "disabled_categories", JSON.stringify(clientSettings.disabled_categories));
+                    }
+                } else if (key === "disabled_commands" && Array.isArray(val)) {
+                    for (const cmd of val) {
+                        if (!this._dbHandler.bahamut.cmdHandler.commandHandler.commands.has(cmd)) continue;
+                        clientSettings.disabled_commands.push(cmd);
+                    }
+                    await this.setDBGuildSetting(guild, "disabled_commands", JSON.stringify(clientSettings.disabled_commands));
+                } else if (key === "enabled_commands" && Array.isArray(val)) {
+                    for (const cmd of val) {
+                        if (!this._dbHandler.bahamut.cmdHandler.commandHandler.commands.has(cmd)) continue;
+                        let i = -1;
+                        if ((i = clientSettings.disabled_commands.indexOf(cmd)) !== -1) {
+                            clientSettings.disabled_commands.splice(i, 1);
+                        }
+                    }
+                    await this.setDBGuildSetting(guild, "disabled_commands", JSON.stringify(clientSettings.disabled_commands));
+                } else {
+                    await this.setDBGuildSetting(guild, key, val);
+                }
+            }
+            this._dbHandler.bahamut.settings.set((typeof guild === "string" ? guild : guild.id), await this.getDBGuildSettings(guild));
+
+            return true;
+        } catch (ex) {
+            console.log(ex);
+            return false;
         }
     };
 
