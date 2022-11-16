@@ -85,7 +85,7 @@ export default class BahamutDBHandler {
         else Logger.ready(this._bahamut.client.shardId, `Connected to database: ${await this.getDBVersion()}`);
 
         // Sync db
-        await this._dbCon.sync({ force: false });
+        await this._dbCon.sync({ force: false, alter: true });
     };
 
     /**
