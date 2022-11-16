@@ -332,4 +332,24 @@ declare module "discord.js" {
             options: { context: P; shard: number },
         ): Promise<Serialized<T>>;
     }
+
+    export interface ShardingManager {
+        // eslint-disable-next-line
+        broadcastEval<T>(fn: (client: BahamutClient) => Awaitable<T>): Promise<Serialized<T>[]>;
+        // eslint-disable-next-line
+        broadcastEval<T>(fn: (client: BahamutClient) => Awaitable<T>, options: { shard: number }): Promise<Serialized<T>>;
+        // eslint-disable-next-line
+        broadcastEval<T, P>(
+            // eslint-disable-next-line
+            fn: (client: BahamutClient<true>, context: Serialized<P>) => Awaitable<T>,
+            // eslint-disable-next-line
+            options: { context: P },
+        ): Promise<Serialized<T>[]>;
+        broadcastEval<T, P>(
+            // eslint-disable-next-line
+            fn: (client: BahamutClient<true>, context: Serialized<P>) => Awaitable<T>,
+            // eslint-disable-next-line
+            options: { context: P; shard: number },
+        ): Promise<Serialized<T>>;
+    }
 }
