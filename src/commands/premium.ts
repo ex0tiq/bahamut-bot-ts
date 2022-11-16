@@ -60,8 +60,7 @@ export default {
 
         if (args.length <= 0) {
             embed = await getServerPremiumStatus(client, channel.guild);
-        }
-        else if (args.length === 1) {
+        } else if (args.length === 1) {
             switch (args[0].toLowerCase()) {
                 case "details":
                     embed = await getUserPremiumDetails(client, member);
@@ -81,8 +80,7 @@ export default {
                     embed = createMissingParamsErrorResponse(client, config);
                     break;
             }
-        }
-        else {
+        } else {
             embed = createMissingParamsErrorResponse(client, config);
         }
 
@@ -122,8 +120,7 @@ const getServerPremiumStatus = async (client: BahamutClient, guild: Discord.Guil
                         .setDescription(`Premium features for this server are currently \`enabled\` by ${user}!`),
                 ],
             });
-        }
-        else {
+        } else {
             // Disable premium features if user not found
             return createSuccessResponse(client, {
                 embeds: [
@@ -133,8 +130,7 @@ const getServerPremiumStatus = async (client: BahamutClient, guild: Discord.Guil
                 ],
             });
         }
-    }
-    else {
+    } else {
         return createSuccessResponse(client, {
             embeds: [
                 new Discord.EmbedBuilder()

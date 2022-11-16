@@ -47,8 +47,7 @@ export default {
                         .setDescription(`The current bot prefix on this server is \`${settings.prefix}\`.`),
                 ],
             });
-        }
-        else {
+        } else {
             if (!(await isUserAdminOfGuild(client, member, channel.guild))) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "You don't have permission to do that.");
             if (args[0].length > 4) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "Prefix can only be up to four characters.");
 
@@ -60,8 +59,7 @@ export default {
                 client.bahamut.cmdHandler.commandHandler.prefixHandler.set(channel.guild.id, args[0].toLowerCase());
 
                 return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `Successfully changed the value of \`Prefix\` to \`${args[0].toLowerCase()}\`!`);
-            }
-            else {
+            } else {
                 return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "Error while updating the Prefix. Please try again later!");
             }
         }
