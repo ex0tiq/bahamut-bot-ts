@@ -23,7 +23,7 @@ export default {
             const res = await client.bahamut.tenor.Search.Query("yawn", "30");
 
             const rand = randomIntBetween(0, 29);
-            const post = res.results[rand];
+            const post = res[rand];
 
             return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
                 embeds: [
@@ -31,7 +31,7 @@ export default {
                         .setDescription(await lang.getMessage(client, channel.guild, "commands_emotes_yawn_text", {
                             user1: member.toString(),
                         }) || "")
-                        .setImage(post.media[0].gif.url)
+                        .setImage(post.media_formats.gif.url || null)
                         .setFooter({ text: "Via Tenor" }),
                 ],
             });

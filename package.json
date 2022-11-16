@@ -75,7 +75,7 @@
     "spotify-web-api-node": "^5.0.2",
     "statcord.js": "^3.4.3",
     "superagent": "^8.0.3",
-    "tenorjs": "git+https://github.com/TheExoduser/TenorJS.git",
+    "tenorjs": "^1.0.10",
     "tmdb": "^2.6.0",
     "translate": "^1.4.1",
     "trivia-api": "^1.0.1",
