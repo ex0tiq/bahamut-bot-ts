@@ -3,8 +3,8 @@ import { GuildSettings } from "../../../typings";
 import Discord from "discord.js";
 import { isInt, isJson } from "../../lib/validateFunctions";
 import { parseBool } from "../../lib/parseFunctions";
-import { getGuildSettings } from "../../lib/getFunctions";
-
+import { getGuildDetails, getGuildSettings } from "../../lib/getFunctions";
+import { setGuildOptions } from "../../lib/setFunctions";
 
 export default class GuildSettingsHandler {
     // DB Handler instance
@@ -14,7 +14,9 @@ export default class GuildSettingsHandler {
         this._dbHandler = dbHandler;
     }
 
-
+    getGuildDetails = async (guild: string | Discord.Guild, user: string | Discord.User, withAchievements = false, language = "en") => {
+        return getGuildDetails(this._dbHandler.bahamut.client, guild, user, withAchievements, language);
+    };
     getDBAllGuildSettings = async () => {
         const obj: Map<string, GuildSettings> = new Map<string, GuildSettings>;
         for (const [snowflake] of this._dbHandler.bahamut.client.guilds.cache) {
@@ -88,6 +90,10 @@ export default class GuildSettingsHandler {
             console.error("An error occured while querying guild settings:", error);
             return this._dbHandler.bahamut.config.defaultSettings;
         }
+    };
+
+    setGuildOptions = async (guild: string, options: any) => {
+        return setGuildOptions(this._dbHandler.bahamut.client, guild, options);
     };
 
     setDBGuildSettings = async (guild: Discord.Guild | string, settingsArr: {}) => {
