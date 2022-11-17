@@ -10,16 +10,22 @@ export default class GuildUserStatHandler {
         this._dbHandler = dbHandler;
     }
 
-    getDBGuildUserStatsSUM = async (stats: string[]): Promise<Map<string, number>> => {
+    getDBGuildUserStatsSUM = async (stats: string[], guild?: string | Discord.GuildMember): Promise<Map<string, number>> => {
         const resMap = new Map<string, number>;
 
         for (const val of stats) {
             const res: number | null = await new Promise((resolve) => {
+                const where: WhereOptions = {
+                    stat: val,
+                };
+
+                if (guild) {
+                    where["guild_id"] = (typeof guild === "string" ? guild : guild.id);
+                }
+
                 return DBGuildUserStats
                     .sum("val", {
-                        where: {
-                            stat: val,
-                        },
+                        where: where,
                     })
                     .then(async (obj: number | null) => {
                         if (obj) resolve(obj);
