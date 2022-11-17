@@ -260,6 +260,14 @@ export interface GuildSettings {
     character_verify_auto_del_msg: boolean;
     ffxiv_lodestone_news_channel: string | null;
     ffxiv_fashion_report_channel: string | null;
+    last_lodestone_posts: {
+        topics: string,
+        notices: string;
+        maintenance: string;
+        updates: string;
+        status: string;
+        developers: string;
+    };
     music_volume: number;
     music_autoplay: boolean;
     music_dj_role: string | null;
