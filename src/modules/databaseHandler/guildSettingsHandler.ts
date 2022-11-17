@@ -3,7 +3,7 @@ import { GuildSettings } from "../../../typings";
 import Discord from "discord.js";
 import { isInt, isJson } from "../../lib/validateFunctions";
 import { parseBool } from "../../lib/parseFunctions";
-import { getGuildDetails, getGuildSettings } from "../../lib/getFunctions";
+import { getGuildDetails, getGuildSettings, getUserGuilds } from "../../lib/getFunctions";
 import { setGuildOptions } from "../../lib/setFunctions";
 
 export default class GuildSettingsHandler {
@@ -196,5 +196,9 @@ export default class GuildSettingsHandler {
             console.error("Error while deleting guild setting:", ex);
             return false;
         }
+    };
+
+    getUserGuilds = async (user: Discord.User | string) => {
+        return getUserGuilds(this._dbHandler.bahamut.client, user);
     };
 }
