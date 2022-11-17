@@ -1,15 +1,14 @@
 process.env.TZ = "UTC";
 
-// Include discord.js ShardingManger
-import Discord from "discord.js";
-import { v4 as uuidv4 } from "uuid";
-
 const config = require("../config/config.json");
 const apiConfig = require("../config/api_config.json");
 import logger from "./modules/Logger.js";
 
+// Include discord.js ShardingManger
+import Discord from "discord.js";
+import { v4 as uuidv4 } from "uuid";
 import UplinkAPIHandler from "./modules/UplinkAPIHandler.js";
-// const FFXIVSchedulers = require('./modules/ShardManFFXIVSchedulers');
+import ShardManFFXIVSchedulers from "./modules/ShardmanFFXIVScheduler";
 import BahamutShardingManager from "./modules/BahamutShardingManager.js";
 import BotAPIHandler from "./modules/BotAPIHandler";
 import DB from "./modules/ShardManDBHandler";
@@ -113,6 +112,6 @@ async function startup() {
     await botManager.spawn();
 
     // Register schedulers
-    // new FFXIVSchedulers(botManager);
+    new ShardManFFXIVSchedulers(botManager);
 }
 

@@ -18,6 +18,7 @@ import FFXIV from "./modules/FFXIV";
 import LanguageMessageHandler from "./lib/languageMessageHandlers";
 import * as Events from "events";
 import GameListeners from "./modules/EventListeners/GameListeners";
+import ClientFFXIVSchedulers from "./modules/ClientFFXIVSchedulers";
 
 // Non ES imports
 const { client } = require("tenorjs");
@@ -113,6 +114,9 @@ export class Bahamut {
 
             // Load bot events, commands, etc.
             await loadBotStuff(this);
+
+            // Start client scheduler
+            new ClientFFXIVSchedulers(this);
 
             Logger.log(this._client.shardId, `${this._client.user?.tag}, ready to serve ${this._client.guilds.cache.reduce((a, g) => a + g.memberCount, 0)} users in ${this._client.guilds.cache.size} servers.`, "ready");
         });
