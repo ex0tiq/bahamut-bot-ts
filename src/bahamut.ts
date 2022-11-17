@@ -23,9 +23,6 @@ import ClientFFXIVSchedulers from "./modules/ClientFFXIVSchedulers";
 // Non ES imports
 const { client } = require("tenorjs");
 
-// Use bluebird as global promise library
-// global.Promise = require('bluebird');
-
 export class Bahamut {
     private _client: BahamutClient = new BahamutClient(this);
     // Here we load the config file that contains our token and our prefix values.
