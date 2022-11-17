@@ -1,11 +1,11 @@
 import {
     DataTypes,
     QueryTypes,
-    Sequelize,
+    Sequelize, WhereOptions,
 } from "sequelize";
 import logger from "./Logger";
 import { BahamutShardingBootManager, GuildSettings } from "../../typings";
-import { DBGuildSettings } from "./BahamutDBHandler";
+import { DBGuildSettings, DBGuildUserStats } from "./BahamutDBHandler";
 import Discord from "discord.js";
 const { isInt, isJson } = require("../lib/validateFunctions");
 const { parseBool } = require("../lib/parseFunctions");
@@ -183,5 +183,37 @@ export default class ShardManDBHandler {
                     resolve(false);
                 });
         });
+    };
+
+    getDBGuildUserStatsSUM = async (stats: string[], guild?: string | Discord.GuildMember): Promise<Map<string, number>> => {
+        const resMap = new Map<string, number>;
+
+        for (const val of stats) {
+            const res: number | null = await new Promise((resolve) => {
+                const where: WhereOptions = {
+                    stat: val,
+                };
+
+                if (guild) {
+                    where["guild_id"] = (typeof guild === "string" ? guild : guild.id);
+                }
+
+                return DBGuildUserStats
+                    .sum("val", {
+                        where: where,
+                    })
+                    .then(async (obj: number | null) => {
+                        if (obj) resolve(obj);
+                        else resolve(null);
+                    }).catch(e => {
+                        console.error("Error while querying guild user stat:", e);
+                        resolve(null);
+                    });
+            });
+
+            if (res) resMap.set(val, res);
+        }
+
+        return resMap;
     };
 }
