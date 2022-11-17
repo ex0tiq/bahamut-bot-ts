@@ -103,7 +103,7 @@ export default class BotAPIHandler {
                 if (!obj.guild || (obj.guild && _client.guilds.cache.has(obj.guild))) {
                     const code = `
 					const c = ${obj.code}; 
-					c();`;
+					c(_client, obj);`;
 
                     // DANGEROUS!!
                     return eval(`${code}`);
