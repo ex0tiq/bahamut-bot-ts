@@ -60,7 +60,7 @@ export default class UplinkAPIHandler {
                 port: this._shardManager.apiConfig?.api_port,
                 serverId: this._shardManager.config.uplink_api_serverId,
                 communication_token: this._communicationToken,
-                // managedShards: ((startup || !this._shardManager.shardReady) ? null : await this._shardManager.getManagedShards()),
+                managedShards: ((startup || !this._shardManager.shardReady) ? null : await (<BahamutShardingBootManager>this._shardManager).fn.getManagedShards()),
                 startupTime: this._shardManager.startTime,
                 currentTime: Date.now(),
                 serverLocation: this._shardManager.config.uplink_api_server_location,
