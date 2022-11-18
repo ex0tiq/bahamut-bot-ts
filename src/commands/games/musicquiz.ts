@@ -104,7 +104,7 @@ export default {
         ]);
         if (await checks.runChecks()) return;
 
-        if (client.bahamut.musicHandler.manager.players.has(channel.guild.id)) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There is music playing at the moment. Please stop it before starting a music quiz!', false, null, channel");
+        if (client.bahamut.musicHandler.manager.players.has(channel.guild.id)) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There is music playing at the moment. Please stop it before starting a music quiz!");
         if ([...client.bahamut.runningGames.entries()].filter(([key, val]) => key === channel.guild.id && val.type === "musicquiz").length > 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There is a running music quiz on this guild. Please finish it before playing music.");
         // eslint-disable-next-line no-useless-escape
         if (!genres.includes(args[0].toLowerCase()) && args[0].toLowerCase() !== "all") return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "Invalid genre provided. Please see \`musicquiz list\` for a list of all available genres!");
