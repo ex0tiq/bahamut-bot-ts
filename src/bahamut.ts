@@ -108,6 +108,10 @@ export class Bahamut {
 
             // Clear all application commands on start
             await this._client.application!.commands.set([]);
+            // Remove all guild specific commands on start
+            for (const g of this._client.guilds.cache.values()) {
+                await g.commands.set([]);
+            }
 
             // Load bot events, commands, etc.
             await loadBotStuff(this);
