@@ -234,7 +234,7 @@ export default class BahamutDBHandler {
                 type: DataTypes.UUID,
                 allowNull: false,
                 defaultValue: DataTypes.UUIDV4,
-                unique: true,
+                unique: "id",
             },
             guild_id: {
                 type: DataTypes.STRING(30),
