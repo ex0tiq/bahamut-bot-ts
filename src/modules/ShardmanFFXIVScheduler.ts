@@ -3,6 +3,7 @@ import logger from "./Logger";
 import axios from "axios";
 import { BahamutShardingBootManager } from "../../typings";
 import { DateTime } from "luxon";
+import { resolve } from "path";
 
 export default class ShardManFFXIVSchedulers {
     private _shardMan;
@@ -64,10 +65,11 @@ export default class ShardManFFXIVSchedulers {
                 // @ts-ignore
                 if (settings && settings.lastFashionReportDate && (DateTime.fromFormat(date[0], "M/d/yyyy") <= DateTime.fromFormat(settings.lastFashionReportDate, "M/d/yyyy"))) return;
 
+                const rootPath = resolve(__dirname, "..");
                 await this._shardMan.broadcastEval(async (_client, obj) => {
                     // eslint-disable-next-line no-unused-vars
                     for (const [, guild] of _client.guilds.cache) {
-                        const { getGuildSettings } = require("../lib/getFunctions");
+                        const { getGuildSettings } = require(obj.rootPath + "/lib/getFunctions");
 
                         const guild_settings = await getGuildSettings(_client, guild),
                             // eslint-disable-next-line no-shadow
@@ -85,7 +87,7 @@ export default class ShardManFFXIVSchedulers {
                                 )] });
                         }
                     }
-                }, { context: { post: res[0], config: this._shardMan.config } });
+                }, { context: { rootPath: rootPath, post: res[0], config: this._shardMan.config } });
 
                 // Update last fashion report
                 await this._shardMan.dbHandler.setDBGuildSetting("global", "lastFashionReport", res[0].id);
