@@ -311,6 +311,11 @@ export default class BahamutDBHandler {
                 type: DataTypes.STRING(2000),
                 defaultValue: null,
             },
+            isSlash: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false,
+                defaultValue: false,
+            },
             createdAt: DataTypes.DATE,
         }, {
             sequelize: this._dbCon,
@@ -379,5 +384,6 @@ export class DBGuildCommandLog extends Model<InferAttributes<DBGuildCommandLog>,
     declare guild_channel: string;
     declare command: string;
     declare args: string;
+    declare isSlash: boolean;
     declare createdAt: CreationOptional<Date>;
 }

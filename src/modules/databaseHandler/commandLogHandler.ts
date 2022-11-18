@@ -1,6 +1,5 @@
-import BahamutDBHandler, {DBGuildCommandLog, DBGuildUserStats} from "../BahamutDBHandler";
+import BahamutDBHandler, { DBGuildCommandLog } from "../BahamutDBHandler";
 import Discord from "discord.js";
-import {Op} from "sequelize";
 
 export default class CommandLogHandler {
 // DB Handler instance
@@ -17,9 +16,10 @@ export default class CommandLogHandler {
      * @param channel
      * @param command
      * @param args
+     * @param isSlash
      * @returns {Promise<boolean>}
      */
-    addDBGuildCommandLog = async (guild: Discord.Guild, user: Discord.GuildMember, channel: Discord.TextChannel, command: string, args: string[] = []): Promise<boolean> => {
+    addDBGuildCommandLog = async (guild: Discord.Guild, user: Discord.GuildMember, channel: Discord.TextChannel, command: string, args: string[] = [], isSlash: boolean = false): Promise<boolean> => {
         return new Promise((resolve) => {
             DBGuildCommandLog.create({
                 guild_id: guild.id,
@@ -28,6 +28,7 @@ export default class CommandLogHandler {
                 guild_channel: channel.id,
                 command: command,
                 args: args.join(" "),
+                isSlash: isSlash,
             }).then(() => {
                 resolve(true);
             }).catch(e => {
