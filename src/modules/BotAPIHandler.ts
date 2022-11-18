@@ -2,6 +2,7 @@ import express from "express";
 import logger from "./Logger";
 import BahamutClient from "./BahamutClient";
 import { BahamutShardingBootManager } from "../../typings";
+import { resolve } from "path";
 
 export default class BotAPIHandler {
     private shardManager: BahamutShardingBootManager;
@@ -98,17 +99,26 @@ export default class BotAPIHandler {
                 return;
             }
 
-            const result = await this.shardManager.broadcastEval((_client: BahamutClient, obj) => {
-                if (obj.shard && _client.shardId !== obj.shard) return null;
-                if (obj.guild && !_client.guilds.cache.has(obj.guild)) return null;
+            const rootPath = resolve(__dirname, ".."),
+                result = await this.shardManager.broadcastEval((_client: BahamutClient, obj) => {
+                    if (obj.shard && _client.shardId !== obj.shard) return null;
+                    if (obj.guild && !_client.guilds.cache.has(obj.guild)) return null;
 
-                const code = `
+                    const code = `
                 const c = ${obj.code}; 
                 c(_client, obj);`;
 
-                // DANGEROUS!!
-                return eval(code);
-            }, { shard: req.body.shard, context: { shard: req.body.shard, guild: req.body.guild, code: req.body.code, ...req.body.additionalContext } });
+                    // DANGEROUS!!
+                    return eval(code);
+                }, { shard: req.body.shard,
+                    context: {
+                        rootPath: rootPath,
+                        shard: req.body.shard,
+                        guild: req.body.guild,
+                        code: req.body.code,
+                        ...req.body.additionalContext,
+                    },
+                });
 
             const r = {
                 status: "success",
