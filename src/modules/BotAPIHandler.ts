@@ -100,16 +100,14 @@ export default class BotAPIHandler {
 
             const result = await this.shardManager.broadcastEval((_client: BahamutClient, obj) => {
                 if (obj.shard && _client.shardId !== obj.shard) return null;
-                if (!obj.guild || (obj.guild && _client.guilds.cache.has(obj.guild))) {
-                    const code = `
-					const c = ${obj.code}; 
-					c(_client, obj);`;
+                if (obj.guild && !_client.guilds.cache.has(obj.guild)) return null;
 
-                    // DANGEROUS!!
-                    return eval(`${code}`);
-                } else {
-                    return null;
-                }
+                const code = `
+                const c = ${obj.code}; 
+                c(_client, obj);`;
+
+                // DANGEROUS!!
+                return eval(code);
             }, { shard: req.body.shard, context: { shard: req.body.shard, guild: req.body.guild, code: req.body.code, ...req.body.additionalContext } });
 
             const r = {
