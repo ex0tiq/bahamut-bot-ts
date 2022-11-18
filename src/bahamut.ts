@@ -106,12 +106,15 @@ export class Bahamut {
             // Load all languagse
             await LanguageMessageHandler.initLanguageFiles();
 
+            //
+            // RUN THIS ONLY ONCE ON STARTUP AFTER A LARGE CHANGE
+            //
             // Clear all application commands on start
-            await this._client.application!.commands.set([]);
+            // await this._client.application!.commands.set([]);
             // Remove all guild specific commands on start
-            for (const g of this.config.test_servers) {
-                if (this._client.guilds.cache.has(g)) await this._client.guilds.cache.get(g)!.commands.set([]);
-            }
+            // for (const g of this.config.test_servers) {
+            //    if (this._client.guilds.cache.has(g)) await this._client.guilds.cache.get(g)!.commands.set([]);
+            // }
 
             // Load bot events, commands, etc.
             await loadBotStuff(this);
