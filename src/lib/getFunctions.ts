@@ -26,7 +26,7 @@ const getGuildSettings = async (client: BahamutClient, guild: Discord.Guild | st
 
     if (resolveRoles) {
         let obj;
-        if (Array.from(obj = guildConf.character_verify_achievement_roles.entries()).length > 0) {
+        if (Array.from(obj = guildConf.character_verify_achievement_roles).length > 0) {
             const tmp: Map<string, Discord.Role> = new Map<string, Discord.Role>;
             for (const [achievement, role] of obj) {
                 const r = await resolveRole(client, role, guild);
@@ -34,7 +34,7 @@ const getGuildSettings = async (client: BahamutClient, guild: Discord.Guild | st
             }
             guildConf.character_verify_achievement_roles = tmp;
         }
-        if (Array.from(obj = guildConf.user_level_roles.entries()).length > 0) {
+        if (Array.from(obj = guildConf.user_level_roles).length > 0) {
             const tmp: Map<number, Discord.Role> = new Map<number, Discord.Role>;
             for (const [level, role] of obj) {
                 const r = await resolveRole(client, role, guild);
