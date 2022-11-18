@@ -1,4 +1,4 @@
-import { EmbedBuilder } from "discord.js";
+import { EmbedBuilder, Message } from "discord.js";
 import logger from "./Logger";
 import { Bahamut } from "../bahamut";
 import { resolve } from "path";
@@ -24,7 +24,7 @@ export default class ClientFFXIVSchedulers {
                 // Abort of no messages found
                 if (!messages || messages.length < 1) return;
 
-                const data = [...messages.values()].sort((a, b) => b.createdTimestamp - a.createdTimestamp).filter((e) => e.embeds && e.embeds.length > 0);
+                const data: Message[] = [...messages.values()].sort((a, b) => b.createdTimestamp - a.createdTimestamp).filter((e) => e.embeds && e.embeds.length > 0);
                 // If no message retrieved abort
                 if (!data || data.length < 1) return;
 
@@ -38,13 +38,13 @@ export default class ClientFFXIVSchedulers {
 
                     const embeds = [];
                     for (const ee of e.embeds) {
-                        const embed = new EmbedBuilder(ee);
+                        const embed = new EmbedBuilder(ee.data);
                         if (embed) {
                             // @ts-ignore
                             embed.setColor(this._bahamut.config.primary_message_color);
                             embed.setThumbnail(null);
 
-                            embeds.push(embed);
+                            embeds.push(embed.toJSON());
                         }
                     }
 
@@ -58,9 +58,8 @@ export default class ClientFFXIVSchedulers {
                     // If no messages to send, abort
                     if (obj.sendMessages.length < 1) return;
 
-                    const path = require("path");
                     // eslint-disable-next-line no-shadow
-                    const { getGuildSettings } = require(path.resolve(obj.botDir, "../lib/getFunctions"));
+                    const { getGuildSettings } = require(obj.rootPath + "/lib/getFunctions");
 
                     // eslint-disable-next-line no-unused-vars
                     for (const [, guild] of this._bahamut.client.guilds.cache) {
@@ -78,10 +77,10 @@ export default class ClientFFXIVSchedulers {
                                 await lodestone_channel.send(m);
                             }
                         } catch (ex) {
-                            logger.error(this._bahamut.client.shardId, `Unable to post to lodestone channel "${lodestone_channel.name}" on guild "${guild.name}"`);
+                            console.error("Unable to post to lodestone channel:", ex);
                         }
                     }
-                }, { context: { sendMessages: sendMessages, botDir: resolve(__dirname) } });
+                }, { context: { sendMessages: sendMessages, rootPath: resolve(__dirname, "..") } });
 
                 // Update last fashion report
                 await this._bahamut.client.bahamut.dbHandler.guildSettings.setDBGuildSetting("global", "lastLodestoneNews", data[0].id);
