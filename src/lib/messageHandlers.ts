@@ -30,6 +30,7 @@ const handleResponseToMessage = async (
         if (newMessageContent.embeds && newMessageContent.embeds.length > 0) newMessageContent.embeds = newMessageContent.embeds.filter(e => e);
         if (newMessageContent.embeds && newMessageContent.embeds.length > 0) {
             for (const e of newMessageContent.embeds!) {
+                // Set embed color
                 // @ts-ignore
                 if ("type" in e && e.type === "rich") {
                     const [red, green, blue] = hexToRGB(client.bahamut.config.primary_message_color) || [0, 0, 0];
@@ -42,6 +43,21 @@ const handleResponseToMessage = async (
                 } else if (!e.data.color) {
                     // @ts-ignore
                     e.setColor(client.bahamut.config.primary_message_color);
+                }
+
+                // Set embed footer
+                if (initMessage instanceof Discord.Message) {
+                    // @ts-ignore
+                    if ("type" in e && e.type === "rich") {
+                        Object.defineProperty(e, "footer", {
+                            value: { text: "Bahamut now supports the modern /slash commands! Feel free to check them out!" },
+                            writable: false,
+                            enumerable: true,
+                            configurable: true,
+                        });
+                    } else if (!e.data.footer) {
+                        e.setFooter({ text: "Bahamut now supports the modern /slash commands! Feel free to check them out!" });
+                    }
                 }
             }
         }
