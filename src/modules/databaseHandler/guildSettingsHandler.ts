@@ -17,6 +17,11 @@ export default class GuildSettingsHandler {
     getGuildDetails = async (guild: string | Discord.Guild, user: string | Discord.User, withAchievements = false, language = "en") => {
         return getGuildDetails(this._dbHandler.bahamut.client, guild, user, withAchievements, language);
     };
+    getUserGuilds = async (user: Discord.User | string) => {
+        return getUserGuilds(this._dbHandler.bahamut.client, user);
+    };
+
+
     getDBAllGuildSettings = async () => {
         const obj: Map<string, GuildSettings> = new Map<string, GuildSettings>;
         for (const [snowflake] of this._dbHandler.bahamut.client.guilds.cache) {
@@ -126,6 +131,8 @@ export default class GuildSettingsHandler {
                         }
                     }
                     await this.setDBGuildSetting(guild, "disabled_commands", JSON.stringify(clientSettings.disabled_commands));
+                } else if (typeof val !== "string") {
+                    await this.setDBGuildSetting(guild, key, JSON.stringify(val));
                 } else {
                     await this.setDBGuildSetting(guild, key, val);
                 }
@@ -196,9 +203,5 @@ export default class GuildSettingsHandler {
             console.error("Error while deleting guild setting:", ex);
             return false;
         }
-    };
-
-    getUserGuilds = async (user: Discord.User | string) => {
-        return getUserGuilds(this._dbHandler.bahamut.client, user);
     };
 }
