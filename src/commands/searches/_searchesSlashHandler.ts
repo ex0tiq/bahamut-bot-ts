@@ -2,6 +2,7 @@ import { getAllJSFiles } from "../../lib/toolFunctions";
 import { BahamutCommandUsage, CommandConfig } from "../../../typings";
 import { CommandType } from "wokcommands";
 import { handleErrorResponseToMessage } from "../../lib/messageHandlers";
+import Discord from "discord.js";
 
 const allSearchCommands = (() => getAllJSFiles(__dirname).filter(e => e.filePath !== __filename))();
 
@@ -16,7 +17,7 @@ const config: CommandConfig = {
         return allSearchCommands.filter(e => e.fileContents.type !== CommandType.SLASH).map(e => {
             return {
                 name: e.fileContents.name,
-                type: 1,
+                type: Discord.ApplicationCommandOptionType.Subcommand,
                 description: e.fileContents.description,
                 options: e.fileContents.options || [],
             };

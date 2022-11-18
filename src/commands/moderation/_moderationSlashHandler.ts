@@ -18,7 +18,7 @@ const config: CommandConfig = {
         return allModCommands.filter(e => e.fileContents.type !== CommandType.SLASH).map(e => {
             return {
                 name: e.fileContents.name,
-                type: 1,
+                type: Discord.ApplicationCommandOptionType.Subcommand,
                 description: e.fileContents.description,
                 options: e.fileContents.options || [],
             };
