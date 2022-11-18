@@ -36,7 +36,7 @@ const config: CommandConfig = {
         duration: "10 s",
     },
     guildOnly: true,
-    testOnly: true,
+    testOnly: false,
     deferReply: true,
 };
 

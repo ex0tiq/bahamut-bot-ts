@@ -26,7 +26,7 @@ const config: CommandConfig = {
     minArgs: 0,
     category: "Games",
     guildOnly: true,
-    testOnly: true,
+    testOnly: false,
     // Set this to false, so WOKCommand doesn't apply any deferring
     deferReply: false,
 };

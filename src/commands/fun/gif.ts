@@ -23,7 +23,7 @@ const config: CommandConfig = {
     ],
     category: "Fun",
     guildOnly: true,
-    testOnly: true,
+    testOnly: false,
     deferReply: true,
 };
 
