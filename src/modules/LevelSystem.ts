@@ -197,7 +197,6 @@ export default class LevelSystem {
      * @param {Number|null} cookies
      */
     getLevelUpMessage = (user: Discord.GuildMember, new_level: number, level_xp: number, new_xp: number, new_role: Discord.Role | boolean | null, removed_roles: (Discord.Role | undefined)[], max = false, cookies: number | null = null) => {
-        console.log(new_role);
         let newMsg;
         if (max) {
             newMsg = new Discord.EmbedBuilder()
