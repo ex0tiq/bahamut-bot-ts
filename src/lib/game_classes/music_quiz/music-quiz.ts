@@ -231,7 +231,7 @@ export class MusicQuiz {
         } else if (this.arguments.only.toLowerCase() === "title") {
             this.artistGuessed = true;
         }
-        console.log(this.currentSong);
+
         const song = this.songs![this.currentSong],
             songTitle = song.title,
             songAuthor = song.author;
