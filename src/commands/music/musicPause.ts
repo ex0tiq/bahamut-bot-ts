@@ -45,7 +45,7 @@ export default {
             { type: PreCheckType.MUSIC_IS_PLAYING, player: player },
         ]);
         if (await musicPlayingCheck.runChecks()) return;
-        if ([...client.bahamut.runningGames.entries()].filter(([key, val]) => key === channel.guild.id && val.type === "musicquiz").length > 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There is a running music quiz on this guild. Please finish it before pausing music.");
+        if ([...client.bahamut.runningGames.entries()].filter(([key, val]) => key === channel.guild.id && val.type === "musicquiz").length > 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There is a running music quiz on this server. Please finish it before pausing music.");
         if (player.paused) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "Playback is already paused!");
 
         player.pause(true);

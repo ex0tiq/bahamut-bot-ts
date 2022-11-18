@@ -102,7 +102,7 @@ export default class LavaManager {
         // If not premium, end stream playback after 60 seconds if channel is empty
         // eslint-disable-next-line no-unused-vars
         this._bahamut.client.on("voiceStateUpdate", async (oldState, newState) => {
-            // Skip if no player is currently playing on this guild
+            // Skip if no player is currently playing on this server
             if (!this._manager.players.has(oldState.guild.id)) return;
 
             const player = this._manager.players.get(oldState.guild.id),
