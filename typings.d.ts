@@ -84,6 +84,7 @@ export interface BootConfig {
         [key: string]: string;
     };
     tenor_token: string;
+    test_servers: string[];
     tmdb_token: string;
     token: string;
     total_shards: string;

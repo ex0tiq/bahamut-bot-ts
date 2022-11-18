@@ -72,7 +72,7 @@ const registerCommands = (bahamut: Bahamut) => {
         // defaultLanguage: 'english',
 
         // What server/guild IDs are used for testing only commands & features
-        testServers: ["809728531789119510", "814434890745118720"],
+        testServers: bahamut.config.test_servers,
 
         // User your own ID
         // If you only have 1 ID then you can pass in a string instead
