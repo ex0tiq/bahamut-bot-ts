@@ -1,3 +1,4 @@
+/* eslint-disable */
 import Discord, { Serialized } from "discord.js";
 import UplinkAPIHandler from "./src/modules/UplinkAPIHandler.js";
 import BahamutShardingManager from "./src/modules/BahamutShardingManager.js";
@@ -261,14 +262,6 @@ export interface GuildSettings {
     character_verify_auto_del_msg: boolean;
     ffxiv_lodestone_news_channel: string | null;
     ffxiv_fashion_report_channel: string | null;
-    last_lodestone_posts: {
-        topics: string,
-        notices: string;
-        maintenance: string;
-        updates: string;
-        status: string;
-        developers: string;
-    };
     music_volume: number;
     music_autoplay: boolean;
     music_dj_role: string | null;
@@ -322,42 +315,27 @@ export interface DiscordGame {
 
 declare module "discord.js" {
     export interface ShardClientUtil {
-        // eslint-disable-next-line
         broadcastEval<T>(fn: (client: BahamutClient) => Awaitable<T>): Promise<Serialized<T>[]>;
-        // eslint-disable-next-line
         broadcastEval<T>(fn: (client: BahamutClient) => Awaitable<T>, options: { shard: number }): Promise<Serialized<T>>;
-        // eslint-disable-next-line
         broadcastEval<T, P>(
-            // eslint-disable-next-line
             fn: (client: BahamutClient<true>, context: Serialized<P>) => Awaitable<T>,
-            // eslint-disable-next-line
             options: { context: P },
         ): Promise<Serialized<T>[]>;
-        // eslint-disable-next-line
         broadcastEval<T, P>(
-            // eslint-disable-next-line
             fn: (client: BahamutClient<true>, context: Serialized<P>) => Awaitable<T>,
-            // eslint-disable-next-line
             options: { context: P; shard: number },
         ): Promise<Serialized<T>>;
     }
 
     export interface ShardingManager {
-        // eslint-disable-next-line
         broadcastEval<T>(fn: (client: BahamutClient) => Awaitable<T>): Promise<Serialized<T>[]>;
-        // eslint-disable-next-line
         broadcastEval<T>(fn: (client: BahamutClient) => Awaitable<T>, options: { shard: number }): Promise<Serialized<T>>;
-        // eslint-disable-next-line
         broadcastEval<T, P>(
-            // eslint-disable-next-line
             fn: (client: BahamutClient<true>, context: Serialized<P>) => Awaitable<T>,
-            // eslint-disable-next-line
             options: { context: P },
         ): Promise<Serialized<T>[]>;
         broadcastEval<T, P>(
-            // eslint-disable-next-line
             fn: (client: BahamutClient<true>, context: Serialized<P>) => Awaitable<T>,
-            // eslint-disable-next-line
             options: { context: P; shard: number },
         ): Promise<Serialized<T>>;
     }
