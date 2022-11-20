@@ -8,7 +8,6 @@ import logger from "./modules/Logger.js";
 import Discord from "discord.js";
 import { v4 as uuidv4 } from "uuid";
 import UplinkAPIHandler from "./modules/UplinkAPIHandler.js";
-import ShardManFFXIVSchedulers from "./modules/ShardmanFFXIVScheduler";
 import BahamutShardingManager from "./modules/BahamutShardingManager.js";
 import BotAPIHandler from "./modules/BotAPIHandler";
 import DB from "./modules/ShardManDBHandler";
@@ -110,8 +109,5 @@ async function startup() {
 
     // Spawn shards
     await botManager.spawn();
-
-    // Register schedulers
-    new ShardManFFXIVSchedulers(botManager);
 }
 
