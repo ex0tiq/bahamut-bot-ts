@@ -11,7 +11,3 @@ Bahamut Bot is a multi purpose discord bot, designed to provide various function
   - This check should be done on the C&C server, so it runs only once and not on every ShardManager
 - Enhance joke command
 - Implement trivia quiz game
-- Move global schedulers to C&C server
-  - Lodestone scheduler should be run once, not multiple times on every shard
-  - Same goes for the fashion report scheduled on each ShardingManager
-- Add config templates
