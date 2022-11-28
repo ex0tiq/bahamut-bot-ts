@@ -552,11 +552,12 @@ export default class LavaManager {
 
         const ch = [];
         for (const c of settings.music_channels) {
-            if (message.guild!.channels.resolve(c)) {
-                ch.push(c);
+            let chan;
+            if ((chan = message.guild!.channels.resolve(c))) {
+                ch.push(chan);
             }
         }
 
-        return createErrorResponse(this._bahamut.client, `This command can only be used in a music channel${ch.length > 0 ? `: ${ch.join(", ")}` : ""}`);
+        return createErrorResponse(this._bahamut.client, `This command can only be used in a music channel${ch.length > 0 ? `: ${ch.join(", ")}` : ""}!`);
     };
 }
