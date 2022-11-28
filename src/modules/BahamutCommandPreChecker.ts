@@ -10,12 +10,20 @@ import {
 } from "../lib/messageHandlers";
 import {getGuildSettings} from "../lib/getFunctions";
 import {Player} from "erela.js";
+import Discord from "discord.js";
 
 export class BahamutCommandPreChecker {
     // Bahamut Client
     private _client: BahamutClient;
     // Instance of all command params
-    private _command: any;
+    private _command: {
+        client: BahamutClient,
+        message: Discord.Message,
+        channel: Discord.TextChannel,
+        args: string[],
+        member: Discord.GuildMember,
+        interaction: Discord.CommandInteraction,
+    };
     // Command config for this PreChecker instance
     private _commandConf: CommandConfig;
     // Defined pre checks
@@ -80,7 +88,7 @@ export class BahamutCommandPreChecker {
                         this._client,
                         this._command.message || this._command.interaction, false,
                         this._commandConf.deferReply,
-                        check.customErrorMessage ? check.customErrorMessage : await this._client.bahamut.musicHandler.getChannelNotMusicChannelMessage(this._command.message)
+                        check.customErrorMessage ? check.customErrorMessage : await this._client.bahamut.musicHandler.getChannelNotMusicChannelMessage(this._command.message || this._command.interaction)
                     );
                 }
             } else if (check.type === PreCheckType.USER_IN_VOICE_CHANNEL) {
