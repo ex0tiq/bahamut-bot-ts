@@ -2,7 +2,7 @@ import BahamutClient from "../../modules/BahamutClient";
 import Discord from "discord.js";
 import logger from "../../modules/Logger";
 
-export default async (client: BahamutClient, guild: Discord.Guild) => {
+export default async (guild: Discord.Guild, client: BahamutClient) => {
     if (!guild.available) return;
 
     logger.cmd(client.shardId, `[GUILD LEAVE] ${guild.name} (${guild.id}) removed the bot.`);

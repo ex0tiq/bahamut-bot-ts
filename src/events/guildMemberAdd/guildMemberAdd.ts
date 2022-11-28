@@ -3,7 +3,7 @@ import BahamutClient from "../../modules/BahamutClient";
 import Discord from "discord.js";
 import { getGuildSettings } from "../../lib/getFunctions";
 
-export default async (client: BahamutClient, member: Discord.GuildMember) => {
+export default async (member: Discord.GuildMember, client: BahamutClient) => {
     if (member && member.user.bot) return;
 
     // Load the guild's settings

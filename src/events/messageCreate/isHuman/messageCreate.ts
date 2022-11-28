@@ -1,14 +1,13 @@
 import BahamutClient from "../../../modules/BahamutClient";
 import { flattenArray } from "../../../lib/toolFunctions";
 import Discord from "discord.js";
-import WOK from "wokcommands";
 import { getGuildSettings } from "../../../lib/getFunctions";
 import { handleResponseToMessage } from "../../../lib/messageHandlers";
 import RestrictedChannels from "../../../lib/automoderation/restrictedChannels";
 import AutoModeration from "../../../lib/automoderation/automoderation";
 
 // eslint-disable-next-line no-unused-vars
-export default async (message: Discord.Message, client: BahamutClient, instance: WOK) => {
+export default async (message: Discord.Message, client: BahamutClient) => {
     // Implement auto moderation
     const mod = new AutoModeration(client, message.guild!, message);
     if (await mod.runAutoModChecks()) return;
