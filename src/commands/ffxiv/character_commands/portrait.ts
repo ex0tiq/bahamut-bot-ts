@@ -3,7 +3,11 @@ import { CommandConfig } from "../../../../typings";
 import { CommandType, CooldownTypes } from "wokcommands";
 import BahamutClient from "../../../modules/BahamutClient";
 import { getGuildSettings } from "../../../lib/getFunctions";
-import { createMissingParamsErrorResponse, handleErrorResponseToMessage } from "../../../lib/messageHandlers";
+import {
+    createMissingParamsErrorResponse,
+    handleErrorResponseToMessage,
+    handleResponseToMessage,
+} from "../../../lib/messageHandlers";
 import { createPortraitImage } from "../../../lib/canvasFunctions";
 import { resolveUser } from "../../../lib/resolveFunctions";
 // Non ES imports
@@ -95,7 +99,9 @@ export default {
 
                 if (!captionImage) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "An error occurred while doing that. Please try again later.");
 
-                return { files: [(new Discord.AttachmentBuilder(captionImage, { name: "portrait.png" }))] };
+                return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
+                    files: [(new Discord.AttachmentBuilder(captionImage, { name: "portrait.png" }))],
+                });
             } catch (err) {
                 console.error("Error fetching user avatar:", err);
                 return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "An error occurred while doing that. Please try again later.");
