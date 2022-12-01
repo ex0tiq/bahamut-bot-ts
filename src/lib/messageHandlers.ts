@@ -65,34 +65,38 @@ const handleResponseToMessage = async (
         newMessageContent = createSuccessResponse(client, newMessageContent, true);
     }
 
-    if ((initMessage instanceof Discord.Message) && overwriteInitMessage) {
-        response = (!sendToAuthor ? await initMessage.edit(newMessageContent) : await initMessage.author.send(newMessageContent));
-    } else if ((initMessage instanceof Discord.Message) && !overwriteInitMessage) {
-        response = (!sendToAuthor ? await initMessage.reply(newMessageContent) : await initMessage.author.send(newMessageContent));
-    } else if (initMessage instanceof Discord.CommandInteraction) {
-        if (deferReply) {
-            if (!sendToAuthor) {
-                if (sendToChannel) {
-                    response = await initMessage.channel!.send({
-                        ...newMessageContent,
-                    });
+    try {
+        if ((initMessage instanceof Discord.Message) && overwriteInitMessage) {
+            response = (!sendToAuthor ? await initMessage.edit(newMessageContent) : await initMessage.author.send(newMessageContent));
+        } else if ((initMessage instanceof Discord.Message) && !overwriteInitMessage) {
+            response = (!sendToAuthor ? await initMessage.reply(newMessageContent) : await initMessage.author.send(newMessageContent));
+        } else if (initMessage instanceof Discord.CommandInteraction) {
+            if (deferReply) {
+                if (!sendToAuthor) {
+                    if (sendToChannel) {
+                        response = await initMessage.channel!.send({
+                            ...newMessageContent,
+                        });
+                    } else {
+                        response = await initMessage.editReply({
+                            ...newMessageContent,
+                        });
+                    }
                 } else {
-                    response = await initMessage.editReply({
-                        ...newMessageContent,
-                    });
+                    response = await initMessage.user.send(newMessageContent);
                 }
-            } else {
-                response = await initMessage.user.send(newMessageContent);
-            }
-        } else response = (!sendToAuthor ? await initMessage.reply(newMessageContent) : await initMessage.user.send(newMessageContent));
-    } else {
-        // Return error message
-        return initMessage;
+            } else response = (!sendToAuthor ? await initMessage.reply(newMessageContent) : await initMessage.user.send(newMessageContent));
+        } else {
+            // Return error message
+            return initMessage;
+        }
+
+        await handleDeleteMessage(client, initMessage, response, deleteOptions);
+
+        return response;
+    } catch (ex) {
+        //
     }
-
-    await handleDeleteMessage(client, initMessage, response, deleteOptions);
-
-    return response;
 };
 const createResponseToMessage = (client: BahamutClient, newMessageContent: HandleMessageOptions | string) => {
     return createSuccessResponse(client, newMessageContent, true);
@@ -107,7 +111,7 @@ const handleErrorResponseToMessage = async (
     deleteOptions?: MessageDeleteOptions,
     sendToUser?: boolean
 ) => {
-    let response: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse;
+    let response;
 
     if (!(typeof newMessageContent === "string")) {
         if (newMessageContent.embeds && newMessageContent.embeds.length > 0) {
@@ -190,7 +194,7 @@ const handleSuccessResponseToMessage = async (
     deleteOptions?: MessageDeleteOptions,
     sendToAuthor?: boolean
 ) => {
-    let response: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse;
+    let response;
 
     if (!(typeof newMessageContent === "string")) {
         if (newMessageContent.embeds && newMessageContent.embeds.length > 0) {
@@ -275,7 +279,7 @@ const handleErrorResponseToChannel = async (client: BahamutClient, sourceChannel
 const handleDeleteMessage = async (
     client: BahamutClient,
     initMessage: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse | null,
-    responseMessage: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse,
+    responseMessage: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse | null | undefined,
     // if null use default
     deleteOptions: MessageDeleteOptions | null = null
 ) => {
