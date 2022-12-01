@@ -11,6 +11,7 @@ import {
     handleErrorResponseToMessage,
     handleResponseToMessage,
 } from "../../../lib/messageHandlers";
+import { toProperCase } from "../../../lib/toolFunctions";
 // Non ES imports
 const XIVAPI = require("@xivapi/js");
 
@@ -38,7 +39,7 @@ const config: CommandConfig = {
             autocomplete: true,
         },
         {
-            name: "character",
+            name: "character-name",
             description: "Your In-game character name.",
             type: Discord.ApplicationCommandOptionType.String,
             required: true,
@@ -261,6 +262,6 @@ export default {
                 return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, await lang.getMessage(client, channel.guild, "error_generic") || "");
             }
         }
-        return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `No characters found for \`${args.slice(1).join(" ")}\` on server \`${args[0].toProperCase()}\`.`);
+        return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `No characters found for \`${args.slice(1).join(" ")}\` on server \`${toProperCase(args[0])}\`.`);
     },
 };

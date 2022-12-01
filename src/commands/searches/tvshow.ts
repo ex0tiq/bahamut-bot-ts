@@ -13,6 +13,7 @@ import {
     handleResponseToChannel,
     handleResponseToMessage,
 } from "../../lib/messageHandlers";
+import { toProperCase } from "../../lib/toolFunctions";
 
 const config: CommandConfig = {
     name: "tvshow",
@@ -82,7 +83,7 @@ export default {
                         embed.addFields({ name: "Rating", value: `${Math.round((tvshowResult.voteAverage) * 10)}/100`, inline: true });
                         embed.addFields({ name: "Seasons", value: `${tvshowResult.numberOfSeasons}`, inline: true });
                         embed.addFields({ name: "Episodes", value: `${tvshowResult.numberOfEpisodes}`, inline: true });
-                        embed.addFields({ name: "Status", value: tvshowResult.status.toProperCase() });
+                        embed.addFields({ name: "Status", value: toProperCase(tvshowResult.status) });
                         embed.addFields({ name: "Genres", value: tvshowResult.genres.map((elem: { name: any; }) => elem.name).join(", "), inline: true });
 
                         if (tvshowResult.posterPath) {
@@ -198,7 +199,7 @@ export default {
                             embed.addFields({ name: "Rating", value: `${Math.round((tvshowResult.voteAverage) * 10)}/100`, inline: true });
                             embed.addFields({ name: "Seasons", value: `${tvshowResult.numberOfSeasons}`, inline: true });
                             embed.addFields({ name: "Episodes", value: `${tvshowResult.numberOfEpisodes}`, inline: true });
-                            embed.addFields({ name: "Status", value: tvshowResult.status.toProperCase() });
+                            embed.addFields({ name: "Status", value: toProperCase(tvshowResult.status) });
                             embed.addFields({ name: "Genres", value: tvshowResult.genres.map((elem: { name: any; }) => elem.name).join(", "), inline: true });
 
                             if (tvshowResult.posterPath) {
