@@ -29,12 +29,18 @@ const config: CommandConfig = {
     name: "roleroulette",
     type: CommandType.LEGACY,
     description: "Assign random job roles for group members.",
-    minArgs: 2,
-    expectedArgs: "<max-rank-only> [user-1] [user-2] [user-3] [user-4] [user-5] [user-6] [user-7] [user-8]",
+    minArgs: 3,
+    expectedArgs: "<max-rank-only> <unrestricted-jobs> [user-1] [user-2] [user-3] [user-4] [user-5] [user-6] [user-7] [user-8]",
     options: [
         {
             name: "max-rank-only",
             description: "Only choose between max rank jobs.",
+            type: Discord.ApplicationCommandOptionType.Boolean,
+            required: true,
+        },
+        {
+            name: "unrestricted-jobs",
+            description: "Allow any amount of any job class (e.g. more than 2 healers).",
             type: Discord.ApplicationCommandOptionType.Boolean,
             required: true,
         },
@@ -111,7 +117,9 @@ export default {
         const xiv = new XIVAPI({
             private_key: client.bahamut.config.xivapi_token,
             language: settings.language,
-        }), maxRankOnly = parseBool(args[0]), users = args.slice(1), userMap = new Map<string, any>(), resultMap = new Map<string, any | null>();
+        }), maxRankOnly = parseBool(args[0]), unrestrictedJobs = parseBool(args[1]), users = args.slice(2), userMap = new Map<string, any>(), resultMap = new Map<string, any | null>(),
+            jobEmojiList = client.bahamut.config.job_emoji_list;
+        const dpsIDs = [2, 4, 29, 34, 39, 5, 31, 38, 7, 26, 35, 36], healIDs = [6, 26, 33, 40], tankIDs = [1, 3, 32, 37];
 
         if (args.length <= 1) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, createMissingParamsErrorResponse(client, config));
 
@@ -150,8 +158,7 @@ export default {
             if (response) {
                 if (response.Error) continue;
 
-                const jobs: { [key: string]: any } = {},
-                    notJobs = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+                const jobs: { [key: string]: any } = {};
                 let userJobs = [];
 
                 for (const job of response.Character.ClassJobs) {
@@ -159,12 +166,30 @@ export default {
                 }
 
                 if (maxRankOnly) {
-                    userJobs = (response.Character.ClassJobs).filter((e: { Class: { ID: number; }; Level: number; }) => !notJobs.includes(e.Class.ID) && e.Level >= 90);
+                    userJobs = (response.Character.ClassJobs).filter((e: { Class: { ID: number; }; Level: number; }) => [...dpsIDs, ...tankIDs, ...healIDs].includes(e.Class.ID) && e.Level >= 90);
                 } else {
-                    userJobs = (response.Character.ClassJobs).filter((e: { Class: { ID: number; }; }) => !notJobs.includes(e.Class.ID));
+                    userJobs = (response.Character.ClassJobs).filter((e: { Class: { ID: number; }; }) => [...dpsIDs, ...tankIDs, ...healIDs].includes(e.Class.ID));
                 }
 
-                resultMap.set(name, userJobs[randomIntBetween(0, userJobs.length - 1)]);
+                if (unrestrictedJobs) resultMap.set(name, userJobs[randomIntBetween(0, userJobs.length - 1)]);
+                else {
+                    const dpsCount = Array.from(resultMap.values()).filter(e => dpsIDs.includes(e.Class.ID)).length,
+                        healCount = Array.from(resultMap.values()).filter(e => healIDs.includes(e.Class.ID)).length,
+                        tankCount = Array.from(resultMap.values()).filter(e => tankIDs.includes(e.Class.ID)).length;
+
+                    let availableJobs = [], tempJob;
+
+                    do {
+                        availableJobs = [];
+                        if (tankCount < 2) availableJobs.push(...tankIDs);
+                        if (healCount < 2) availableJobs.push(...healIDs);
+                        if (dpsCount < 4) availableJobs.push(...dpsIDs);
+
+                        tempJob = userJobs[randomIntBetween(0, userJobs.length - 1)];
+                    } while (!availableJobs.includes(tempJob.Class.ID));
+
+                    resultMap.set(name, tempJob);
+                }
             } else {
                 resultMap.set(name, null);
             }
@@ -179,7 +204,7 @@ export default {
         for (const [name, job] of resultMap.entries()) {
             if (!name) continue;
 
-            embed.addFields({ name: name, value: `> ${job ? job.UnlockedState.Name : "No matching job found."}`, inline: false });
+            embed.addFields({ name: name, value: `> ${job ? `<:${job.Job.Abbreviation.toLowerCase()}:${jobEmojiList.jobs[job.Job.Abbreviation.toLowerCase()]}> ${job.UnlockedState.Name}` : "No matching job found."}`, inline: false });
         }
 
         return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
