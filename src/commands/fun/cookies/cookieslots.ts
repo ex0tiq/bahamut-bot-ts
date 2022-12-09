@@ -39,7 +39,7 @@ export default {
 
                 if (resultEmojis[0] === resultEmojis[1] && resultEmojis[0] === resultEmojis[2]) {
                     if (await client.bahamut.dbHandler.cookie.addDBCookiesToUser(channel.guild, member, 100)) {
-                        return handleResponseToMessage(client, msg, true, config.deferReply, {
+                        return handleResponseToMessage(client, msg!, true, config.deferReply, {
                             // eslint-disable-next-line no-useless-escape
                             content: `${message.author} spent **10** \:cookie: to play the slots... and won, big time! \:smiley:\n**100** \:cookie: cookies have been added to your account!`,
                             embeds: [embed],
@@ -49,7 +49,7 @@ export default {
                     }
                 } else if (resultEmojis[0] === resultEmojis[1] || resultEmojis[0] === resultEmojis[2] || resultEmojis[1] === resultEmojis[2]) {
                     if (await client.bahamut.dbHandler.cookie.setDBUserCookieData(channel.guild, member, 10)) {
-                        return handleResponseToMessage(client, msg, true, config.deferReply, {
+                        return handleResponseToMessage(client, msg!, true, config.deferReply, {
                             // eslint-disable-next-line no-useless-escape
                             content: `${message.author} spent **10** \:cookie: to play the slots... and almost won! \:neutral_face:`,
                             embeds: [embed],
@@ -58,7 +58,7 @@ export default {
                         return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "An error occurred while doing that. Please try again later.");
                     }
                 } else if (await client.bahamut.dbHandler.cookie.subDBCookiesFromUser(channel.guild, member, 10)) {
-                    return handleResponseToMessage(client, msg, true, config.deferReply, {
+                    return handleResponseToMessage(client, msg!, true, config.deferReply, {
                         // eslint-disable-next-line no-useless-escape
                         content: `${message.author} spent **10** \:cookie: to play the slots... and lost! \:slight_frown:`,
                         embeds: [embed],

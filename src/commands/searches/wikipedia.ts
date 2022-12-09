@@ -192,13 +192,13 @@ export default {
                             }
                         } catch (ex) {
                             console.error("Error querying Wikipedia entry:", ex);
-                            return handleErrorResponseToMessage(client, msg, true, "ephemeral", {
+                            return handleErrorResponseToMessage(client, msg!, true, "ephemeral", {
                                 ...createErrorResponse(client, "An error occured while fetching this Wikipedia entry. Please try again later."),
                                 components: [],
                             });
                         }
                     }).catch(() => {
-                        return handleErrorResponseToMessage(client, msg, true, "ephemeral", {
+                        return handleErrorResponseToMessage(client, msg!, true, "ephemeral", {
                             ...createErrorResponse(client, "Timeout of 30 seconds exceeded, search aborted."),
                             components: [],
                         });

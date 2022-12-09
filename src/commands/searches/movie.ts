@@ -210,13 +210,13 @@ export default {
                             }
                         } catch (ex) {
                             console.error("Error querying TMDb for movie:", ex);
-                            return handleErrorResponseToMessage(client, msg, true, "ephemeral", {
+                            return handleErrorResponseToMessage(client, msg!, true, "ephemeral", {
                                 ...createErrorResponse(client, "An error occured while fetching this movie. Please try again later."),
                                 components: [],
                             });
                         }
                     }).catch(async () => {
-                        return handleErrorResponseToMessage(client, msg, true, "ephemeral", {
+                        return handleErrorResponseToMessage(client, msg!, true, "ephemeral", {
                             ...createErrorResponse(client, "Timeout of 30 seconds exceeded, search aborted."),
                             components: [],
                         });

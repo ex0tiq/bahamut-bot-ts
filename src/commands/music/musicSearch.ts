@@ -175,7 +175,7 @@ export default {
                 }
                 if (!player.playing && !player.paused && !player.queue.size) await player.play();
             }).catch(() => {
-                return handleErrorResponseToMessage(client, msg, true, "ephemeral", {
+                return handleErrorResponseToMessage(client, msg!, true, "ephemeral", {
                     ...createErrorResponse(client, "Timeout of 30 seconds exceeded, search aborted."),
                     components: [],
                 });

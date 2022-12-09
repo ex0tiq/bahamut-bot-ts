@@ -81,7 +81,7 @@ export default {
             // TODO Check why timestamp is minus
             const stats = await fetchBotStatistics(client, guild, data, duration, mem, pack, (message || interaction).createdTimestamp);
 
-            await handleResponseToMessage(client, msg, true, config.deferReply, stats);
+            await handleResponseToMessage(client, msg!, true, config.deferReply, stats);
         });
     },
 };
