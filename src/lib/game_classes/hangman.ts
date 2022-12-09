@@ -20,11 +20,12 @@ export default class HangmanGame {
     private _guessed: string[];
     private _wrongs;
     private _guildSettings: GuildSettings;
+    private _member;
     private _config: { words: string[], color: string } = { words: [], color: "" };
     private _players: Discord.GuildMember[];
     private _lang;
 
-    constructor(bahamut: Bahamut, channel: Discord.TextChannel, settings: GuildSettings) {
+    constructor(bahamut: Bahamut, channel: Discord.TextChannel, settings: GuildSettings, member: Discord.GuildMember) {
         this._gameEmbed = null;
         this._channel = channel;
         this._bahamut = bahamut;
@@ -33,6 +34,7 @@ export default class HangmanGame {
         this._guessed = [];
         this._wrongs = 0;
         this._guildSettings = settings;
+        this._member = member;
         this._players = [];
 
         this._config.words = require(resolve(`assets/games/hangman/words/${this._guildSettings.language}.json`));
@@ -58,6 +60,12 @@ export default class HangmanGame {
             .setDescription(this.getDescription())
             .addFields({ name: this._lang.hangman.guessed, value: "\u200b" })
             .addFields({ name: this._lang.hangman.how, value: "\u200b" });
+
+        this._bahamut.client.bahamut.runningGames.set(this._channel.id, {
+            "type": "hangman",
+            "initiator": this._member,
+            "obj": this,
+        });
 
         this._channel.send({ embeds: [embed] }).then(emsg => {
             this._gameEmbed = emsg;
@@ -130,7 +138,7 @@ export default class HangmanGame {
 
         await this._gameEmbed!.reactions.removeAll();
 
-        this._bahamut.eventHandler.emit("hangman_finish", this._channel);
+        this._bahamut.runningGames.delete(this._channel.id);
 
         for (const id of this._players) {
             await this._bahamut.dbHandler.guildUserStat.addDBGuildUserStat(this._channel.guild, id, "games_hangman_count", 1);
@@ -151,7 +159,7 @@ export default class HangmanGame {
 
         this._gameEmbed!.reactions.removeAll();
 
-        this._bahamut.eventHandler.emit("hangman_finish", this._channel);
+        this._bahamut.runningGames.delete(this._channel.id);
     }
 
     getDescription() {

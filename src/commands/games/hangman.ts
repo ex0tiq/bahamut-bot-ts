@@ -43,13 +43,9 @@ export default {
             }
         }
 
-        const settings = await getGuildSettings(client, channel.guild);
+        const settings = await getGuildSettings(client, channel.guild),
+            obj = new Hangman(client.bahamut, channel, settings, member);
 
-        client.bahamut.runningGames.set(channel.id, {
-            "type": "hangman",
-            "initiator": member,
-            "obj": new Hangman(client.bahamut, channel, settings),
-        });
-        client.bahamut.runningGames.get(channel.id)!.obj.newGame();
+        obj.newGame();
     },
 };
