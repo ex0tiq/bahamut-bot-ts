@@ -9,13 +9,9 @@ import logger from "../../../modules/Logger";
 import Spotify from "./spotify";
 import { QuizArgs } from "./types/quiz-args";
 import { UnresolvedTrack } from "erela.js";
-import similarText = require("locutus/php/strings/similar_text");
-// @ts-ignore
+import latinize from "latinize";
 // import { searchSong, getSong } from "genius-lyrics-api";
-const Genius = require("genius-lyrics");
 
-// @ts-ignore
-import latinize = require("latinize");
 import { Player } from "erela.js";
 import BahamutClient from "../../../modules/BahamutClient";
 import {
@@ -24,6 +20,10 @@ import {
     handleResponseToMessage,
 } from "../../messageHandlers";
 import { resolveUser } from "../../resolveFunctions";
+
+// Non ES imports
+const Genius = require("genius-lyrics");
+const similarText = require("locutus/php/strings/similar_text");
 
 let stopCommand = "stop";
 let skipCommand = "skip";
@@ -81,11 +81,9 @@ export class MusicQuiz {
         this.client.bahamut.musicHandler.manager.on("queueEnd", this.handlePlayEndEvents.bind(this));
         this.client.bahamut.musicHandler.manager.on("nodeError", this.handleNodeErrorEvents.bind(this));
 
-        // @ts-ignore
         if (!stopCommand.startsWith(this.settings.prefix)) {
             stopCommand = this.settings.prefix + stopCommand;
         }
-        // @ts-ignore
         if (!skipCommand.startsWith(this.settings.prefix)) {
             skipCommand = this.settings.prefix + skipCommand;
         }
@@ -122,6 +120,12 @@ export class MusicQuiz {
 
         this.currentSong = 0;
         this.scores = {};
+
+        this.client.bahamut.runningGames.set(this.textChannel.guild.id, {
+            "type": "musicquiz",
+            "initiator": this.member,
+            "obj": this,
+        });
 
         this.startIntro();
         this.messageCollector = this.textChannel
@@ -295,13 +299,13 @@ export class MusicQuiz {
         const titleSimilarity = similarText(content.toLowerCase(), latinize(song.title.toLowerCase()), true) / 100,
             artistSimilarity = similarText(content.toLowerCase(), latinize(song.author!.toLowerCase()), true) / 100;
 
-        if (!this.titleGuessed && (content.includes(latinize(song.title.toLowerCase())) || titleSimilarity > 0.80)) {
+        if (!this.titleGuessed && (content.toLowerCase().includes(latinize(song.title.toLowerCase())) || titleSimilarity > 0.75)) {
             score = score + 2;
             this.titleGuessed = true;
             correct = true;
             await this.reactToMessage(message, "☑");
         }
-        if (!this.artistGuessed && (content.includes(latinize(song.author!.toLowerCase())) || artistSimilarity > 0.80)) {
+        if (!this.artistGuessed && (content.toLowerCase().includes(latinize(song.author!.toLowerCase())) || artistSimilarity > 0.75)) {
             score = score + 3;
             this.artistGuessed = true;
             correct = true;
@@ -325,8 +329,7 @@ export class MusicQuiz {
 
         this.skippers.push(userID);
 
-        const members = this.voiceChannel.members
-            .filter(member => !member.user.bot);
+        const members = this.voiceChannel.members.filter(member => !member.user.bot);
         if (this.skippers.length === members.size) {
             this.nextSong("Song skipped!");
             return;
@@ -353,6 +356,8 @@ export class MusicQuiz {
 
         this.finished = true;
         this.player.set("running_music_quiz", false);
+
+        this.client.bahamut.runningGames.delete(this.textChannel.id);
     }
 
     nextSong(status: string) {

@@ -121,16 +121,13 @@ export default {
                 }
             }
 
-            client.bahamut.runningGames.set(channel.guild.id, {
-                "type": "musicquiz",
-                "initiator": member,
-                "obj": new MusicQuiz(client, message || interaction, channel, member, {
+            const obj = new MusicQuiz(client, message || interaction, channel, member, {
                     "playlists": pls,
                     "songs": "15",
                     "only": "both",
-                }, settings),
-            });
-            return client.bahamut.runningGames.get(channel.guild.id)!.obj.start();
+                }, settings);
+
+            return obj.start();
         } catch (e) {
             console.error("Error while starting music quiz:", e);
             return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "An error occurred while running this command. Please try again later.");
