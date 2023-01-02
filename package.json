@@ -33,7 +33,7 @@
     "cpu-stat": "^2.0.1",
     "cross-env": "^7.0.3",
     "discord-emoji-converter": "^1.2.8",
-    "discord.js": "^14.6.0",
+    "discord.js": "^14.7.1",
     "emoji-aware": "^3.1.0",
     "eorzea-time": "^3.0.0",
     "eorzea-weather": "^3.2.0",
