@@ -226,7 +226,7 @@
   "adr_japanhits": {
 	"name": "Japan Hits Powerplay (asia DREAM radio)",
 	"icon": "https://asiadreamradio.torontocast.stream/stations/en/images/en/logo.jpeg",
-	"stream_url": "https://igor.torontocast.com/JapanHits",
+	"stream_url": "https://cast1.torontocast.com/JapanHits",
 	"website_url": "https://asiadreamradio.torontocast.stream/stations/en/index.html",
 	"tracklist": "",
 	"music_types": "Mainstream (Japanese)"
