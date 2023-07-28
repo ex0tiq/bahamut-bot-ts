@@ -1,11 +1,15 @@
-import { getAllJSFiles, toProperCase } from "../../lib/toolFunctions";
-import { handleErrorResponseToMessage, handleResponseToMessage } from "../../lib/messageHandlers";
+import { getAllJSFiles, toProperCase } from "../../lib/toolFunctions.js";
+import { handleErrorResponseToMessage, handleResponseToMessage } from "../../lib/messageHandlers.js";
 import Discord from "discord.js";
-import BahamutClient from "../../modules/BahamutClient";
-import { CommandConfig } from "../../../typings";
+import BahamutClient from "../../modules/BahamutClient.js";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType } from "wokcommands";
 
-const allEmoteCommands = (() => getAllJSFiles(__dirname).filter(e => e.filePath !== __filename))();
+import url from "url";
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
+
+let allEmoteCommands: any[] = [];
 
 // This is a Slash command handler for all emote commands
 
@@ -39,6 +43,9 @@ const config: CommandConfig = {
 
 export default {
     ...config,
+    init: async() => {
+        allEmoteCommands = (await getAllJSFiles(__dirname)).filter(e => e.filePath !== __filename)
+    },
     autocomplete: () => {
         return ["List"].concat(allEmoteCommands.filter(e => e.fileContents.type !== CommandType.SLASH).map(e => toProperCase(e.fileContents.name)));
     },

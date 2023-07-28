@@ -1,11 +1,15 @@
-import { getAllJSFiles } from "../../lib/toolFunctions";
-import { CommandConfig } from "../../../typings";
+import { getAllJSFiles } from "../../lib/toolFunctions.js";
+import { CommandConfig, FileData } from "../../../typings.js";
 import { CommandType } from "wokcommands";
 import Discord from "discord.js";
-import BahamutClient from "../../modules/BahamutClient";
-import { handleErrorResponseToMessage } from "../../lib/messageHandlers";
+import BahamutClient from "../../modules/BahamutClient.js";
+import { handleErrorResponseToMessage } from "../../lib/messageHandlers.js";
 
-const allFunCommands = (() => getAllJSFiles(__dirname).filter(e => e.filePath !== __filename))();
+import url from "url";
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+
+let allFunCommands: FileData[] = [];
 
 // This is a Slash command handler for all fun commands
 
@@ -13,16 +17,7 @@ const config: CommandConfig = {
     name: "fun",
     type: CommandType.SLASH,
     description: "Different commands related to fun stuff.",
-    options: (() => {
-        return allFunCommands.filter(e => e.fileContents.type !== CommandType.SLASH).map(e => {
-            return {
-                name: e.fileContents.name,
-                type: Discord.ApplicationCommandOptionType.Subcommand,
-                description: e.fileContents.description,
-                options: e.fileContents.options || [],
-            };
-        });
-    })(),
+    options: [],
     minArgs: 0,
     category: "Fun",
     guildOnly: true,
@@ -33,6 +28,18 @@ const config: CommandConfig = {
 
 export default {
     ...config,
+    init: async function() {
+        allFunCommands = (await getAllJSFiles(__dirname)).filter(e => e.filePath !== __filename)
+
+        this.options = allFunCommands.filter(e => e.fileContents.type !== CommandType.SLASH).map(e => {
+                return {
+                    name: e.fileContents.name,
+                    type: Discord.ApplicationCommandOptionType.Subcommand,
+                    description: e.fileContents.description,
+                    options: e.fileContents.options || [],
+                };
+            });
+    },
     autocomplete: (command: string, optionName: string, interaction: Discord.CommandInteraction) => {
         try {
             // @ts-ignore
