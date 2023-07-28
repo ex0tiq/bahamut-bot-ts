@@ -1,5 +1,5 @@
 import SpotifyApi from "spotify-web-api-node";
-import { randomIntBetween } from "../../toolFunctions";
+import { randomIntBetween } from "../../toolFunctions.js";
 
 export default class Spotify {
     client: SpotifyApi;

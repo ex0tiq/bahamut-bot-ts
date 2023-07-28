@@ -1,9 +1,8 @@
 import Discord from "discord.js";
-// const { handleBotMessage, constructMessageEmbed } = require('../lib/messageConstructors');
-import emoji from "node-emoji";
+import * as emoji from "node-emoji";
 import BahamutClient from "../modules/BahamutClient.js";
 import { CommandType, CooldownTypes } from "wokcommands";
-import { handleResponseToMessage } from "../lib/messageHandlers";
+import { handleResponseToMessage } from "../lib/messageHandlers.js";
 
 const config = {
     name: "about",

@@ -1,19 +1,19 @@
-import { isInt } from "../../lib/validateFunctions";
+import { isInt } from "../../lib/validateFunctions.js";
 // @ts-ignore
 import { Tmdb } from "tmdb";
-import { CommandConfig } from "../../../typings";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType, CooldownTypes } from "wokcommands";
 import Discord from "discord.js";
-import BahamutClient from "../../modules/BahamutClient";
-import { getGuildSettings } from "../../lib/getFunctions";
+import BahamutClient from "../../modules/BahamutClient.js";
+import { getGuildSettings } from "../../lib/getFunctions.js";
 import { DateTime } from "luxon";
 import {
     createErrorResponse, createMissingParamsErrorResponse, createSuccessResponse,
     handleErrorResponseToMessage,
     handleResponseToChannel,
     handleResponseToMessage,
-} from "../../lib/messageHandlers";
-import { toProperCase } from "../../lib/toolFunctions";
+} from "../../lib/messageHandlers.js";
+import { toProperCase } from "../../lib/toolFunctions.js";
 
 const config: CommandConfig = {
     name: "tvshow",

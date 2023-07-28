@@ -1,12 +1,12 @@
-import { CommandConfig } from "../../../typings";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType, CooldownTypes } from "wokcommands";
 import { ApplicationCommandOptionType } from "discord-api-types/v10";
 import Discord from "discord.js";
 import Canvacord from "canvacord";
-import { getCurrentUserData, getXpForLevel } from "../../lib/levelFunctions";
-import BahamutClient from "../../modules/BahamutClient";
-import { getGuildSettings } from "../../lib/getFunctions";
-import { resolveUser } from "../../lib/resolveFunctions";
+import { getCurrentUserData, getXpForLevel } from "../../lib/levelFunctions.js";
+import BahamutClient from "../../modules/BahamutClient.js";
+import { getGuildSettings } from "../../lib/getFunctions.js";
+import { resolveUser } from "../../lib/resolveFunctions.js";
 import { DateTime } from "luxon";
 import { resolve } from "path";
 import { promises as fs } from "fs";
@@ -14,7 +14,7 @@ import {
     createMissingParamsErrorResponse,
     handleErrorResponseToMessage,
     handleResponseToMessage,
-} from "../../lib/messageHandlers";
+} from "../../lib/messageHandlers.js";
 
 const config: CommandConfig = {
     name: "profile",

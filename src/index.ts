@@ -1,7 +1,5 @@
 process.env.TZ = "UTC";
 
-const config = require("../config/config.json");
-const apiConfig = require("../config/api_config.json");
 import logger from "./modules/Logger.js";
 
 // Include discord.js ShardingManger
@@ -9,9 +7,11 @@ import Discord from "discord.js";
 import { v4 as uuidv4 } from "uuid";
 import UplinkAPIHandler from "./modules/UplinkAPIHandler.js";
 import BahamutShardingManager from "./modules/BahamutShardingManager.js";
-import BotAPIHandler from "./modules/BotAPIHandler";
-import DB from "./modules/ShardManDBHandler";
+import BotAPIHandler from "./modules/BotAPIHandler.js";
+import DB from "./modules/ShardManDBHandler.js";
 import { BahamutShardingBootManager, BootConfig, BootManager } from "../typings.js";
+import { readFileSync } from 'fs';
+import { resolve } from "path";
 
 console.log(`Running Bahamut v${process.env.npm_package_version} on NodeJS ${process.version} and discord.js v${Discord.version}.`);
 
@@ -20,6 +20,15 @@ console.log(`Running Bahamut v${process.env.npm_package_version} on NodeJS ${pro
 startup().then(() => { /* Nothing */ });
 
 async function startup() {
+
+    const config = JSON.parse(
+        readFileSync(resolve("config/config.json"), "utf-8")
+    );
+    const apiConfig = JSON.parse(
+        readFileSync(resolve("config/api_config.json"), "utf-8")
+    );
+
+
     const bootManager: BootManager = {
             shardReady: false,
             startTime: Date.now(),

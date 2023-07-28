@@ -1,17 +1,17 @@
-import emoji from "node-emoji";
+import * as emoji from "node-emoji";
 import { CommandType } from "wokcommands";
-import BahamutClient from "../../modules/BahamutClient";
+import BahamutClient from "../../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { getGuildSettings } from "../../lib/getFunctions";
+import { getGuildSettings } from "../../lib/getFunctions.js";
 import {
     createMissingParamsErrorResponse,
     createSuccessResponse,
     handleErrorResponseToMessage,
     handleResponseToMessage,
     handleSuccessResponseToMessage,
-} from "../../lib/messageHandlers";
-import { CommandConfig } from "../../../typings";
-import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
+} from "../../lib/messageHandlers.js";
+import { CommandConfig } from "../../../typings.js";
+import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker.js";
 
 const config: CommandConfig = {
     name: "autoplay",

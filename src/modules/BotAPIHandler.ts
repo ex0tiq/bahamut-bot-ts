@@ -1,8 +1,11 @@
 import express from "express";
-import logger from "./Logger";
-import BahamutClient from "./BahamutClient";
-import { BahamutShardingBootManager } from "../../typings";
+import logger from "./Logger.js";
+import BahamutClient from "./BahamutClient.js";
+import { BahamutShardingBootManager } from "../../typings.js";
 import { resolve } from "path";
+
+import * as url from "url";
+const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
 export default class BotAPIHandler {
     private shardManager: BahamutShardingBootManager;
@@ -109,7 +112,11 @@ export default class BotAPIHandler {
                 c(_client, obj);`;
 
                     // DANGEROUS!!
-                    return eval(code);
+                    try {
+                        return eval(code);
+                    } catch (ex: any) {
+                        logger.error("SM", `Eval of remote code failed: ${ex.Message}`);
+                    }
                 }, { shard: req.body.shard,
                     context: {
                         rootPath: rootPath,

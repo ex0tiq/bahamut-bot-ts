@@ -1,14 +1,14 @@
-import { CommandConfig } from "../../../../typings";
+import { CommandConfig } from "../../../../typings.js";
 import { CommandType, CooldownTypes } from "wokcommands";
 import Discord from "discord.js";
-import BahamutClient from "../../../modules/BahamutClient";
+import BahamutClient from "../../../modules/BahamutClient.js";
 import {
     createMissingParamsErrorResponse,
     handleErrorResponseToMessage,
     handleResponseToMessage,
-} from "../../../lib/messageHandlers";
-import { isInt } from "../../../lib/validateFunctions";
-import { resolveUser } from "../../../lib/resolveFunctions";
+} from "../../../lib/messageHandlers.js";
+import { isInt } from "../../../lib/validateFunctions.js";
+import { resolveUser } from "../../../lib/resolveFunctions.js";
 
 const config: CommandConfig = {
     name: "givecookies",

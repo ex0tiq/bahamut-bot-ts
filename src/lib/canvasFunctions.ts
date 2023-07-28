@@ -1,12 +1,12 @@
 import imageSizeOf from "image-size";
 import Canvas, { CanvasRenderingContext2D } from "canvas";
 import axios from "axios";
-import { isUrl } from "./validateFunctions";
+import { isUrl } from "./validateFunctions.js";
 import Discord from "discord.js";
 
-import pify from "pify";
+import util from "util";
 import { resolve } from "path";
-const imageSizeOfP = pify(imageSizeOf);
+const imageSizeOfP = util.promisify(imageSizeOf.default);
 
 const createShipImage = async ({ user1, user2, shipPercent = 20 }: { user1: Discord.GuildMember, user2: Discord.GuildMember, shipPercent: number }) => {
     Canvas.registerFont(resolve("assets/fonts/Manrope-Medium.ttf"), { family: "Manrope Medium" });
@@ -121,7 +121,7 @@ const createPortraitImage = async ({ title, subtitle, source, font = "Manrope Me
                 responseType: "arraybuffer",
             }), dataBuffer = await Buffer.from(data.data);
 
-            const size = imageSizeOf(dataBuffer);
+            const size = imageSizeOf.default(dataBuffer);
             width = size.width || 0;
             height = size.height || 0;
 

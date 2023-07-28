@@ -1,13 +1,13 @@
-import { CommandConfig } from "../../../typings";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType } from "wokcommands";
 import Discord from "discord.js";
-import BahamutClient from "../../modules/BahamutClient";
-import { resolveUser } from "../../lib/resolveFunctions";
+import BahamutClient from "../../modules/BahamutClient.js";
+import { resolveUser } from "../../lib/resolveFunctions.js";
 import {
     createMissingParamsErrorResponse,
     handleErrorResponseToMessage,
     handleResponseToMessage,
-} from "../../lib/messageHandlers";
+} from "../../lib/messageHandlers.js";
 
 const config: CommandConfig = {
     name: "blame",

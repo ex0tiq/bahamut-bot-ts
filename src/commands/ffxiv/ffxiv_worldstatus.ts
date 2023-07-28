@@ -1,11 +1,11 @@
-import { CommandConfig } from "../../../typings";
-import { getAllWorlds, getData } from "../../lib/ffxivWorldStatusFunctions";
-import { serverEmbed, worldEmbed } from "../../lib/ffxivWorldStatusEmbeds";
+import { CommandConfig } from "../../../typings.js";
+import { getAllWorlds, getData } from "../../lib/ffxivWorldStatusFunctions.js";
+import { serverEmbed, worldEmbed } from "../../lib/ffxivWorldStatusEmbeds.js";
 import Discord from "discord.js";
 import { CommandType, CooldownTypes } from "wokcommands";
-import BahamutClient from "../../modules/BahamutClient";
-import { getGuildSettings } from "../../lib/getFunctions";
-import { handleErrorResponseToMessage, handleResponseToMessage } from "../../lib/messageHandlers";
+import BahamutClient from "../../modules/BahamutClient.js";
+import { getGuildSettings } from "../../lib/getFunctions.js";
+import { handleErrorResponseToMessage, handleResponseToMessage } from "../../lib/messageHandlers.js";
 
 const config: CommandConfig = {
     name: "worldstatus",

@@ -1,4 +1,4 @@
-import BahamutClient from "../modules/BahamutClient";
+import BahamutClient from "../modules/BahamutClient.js";
 
 const setGuildOptions = async (client: BahamutClient, guild: string, options: any) => {
     if (!client.guilds.cache.has(guild)) return null;

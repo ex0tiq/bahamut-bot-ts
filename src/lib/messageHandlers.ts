@@ -1,8 +1,8 @@
-import BahamutClient from "../modules/BahamutClient";
+import BahamutClient from "../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { HandleMessageOptions, MessageDeleteOptions } from "../../typings";
+import { HandleMessageOptions, MessageDeleteOptions } from "../../typings.js";
 import { CommandObject } from "wokcommands";
-import { hexToRGB } from "./toolFunctions";
+import { hexToRGB } from "./toolFunctions.js";
 
 /**
  * Handle message response to message or interaction
@@ -16,7 +16,7 @@ import { hexToRGB } from "./toolFunctions";
  */
 const handleResponseToMessage = async (
     client: BahamutClient,
-    initMessage: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse,
+    initMessage: Discord.Message | Discord.ChatInputCommandInteraction | Discord.InteractionResponse,
     overwriteInitMessage: boolean = false,
     deferReply: "ephemeral" | boolean = "ephemeral",
     newMessageContent: HandleMessageOptions | string,
@@ -24,7 +24,7 @@ const handleResponseToMessage = async (
     sendToAuthor?: boolean,
     sendToChannel?: boolean,
 ) => {
-    let response: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse;
+    let response: Discord.Message | Discord.ChatInputCommandInteraction | Discord.InteractionResponse;
 
     if (!(typeof newMessageContent === "string")) {
         if (newMessageContent.embeds && newMessageContent.embeds.length > 0) newMessageContent.embeds = newMessageContent.embeds.filter(e => e);
@@ -70,7 +70,7 @@ const handleResponseToMessage = async (
             response = (!sendToAuthor ? await initMessage.edit(newMessageContent) : await initMessage.author.send(newMessageContent));
         } else if ((initMessage instanceof Discord.Message) && !overwriteInitMessage) {
             response = (!sendToAuthor ? await initMessage.reply(newMessageContent) : await initMessage.author.send(newMessageContent));
-        } else if (initMessage instanceof Discord.CommandInteraction) {
+        } else if (initMessage instanceof Discord.ChatInputCommandInteraction) {
             if (deferReply) {
                 if (!sendToAuthor) {
                     if (sendToChannel) {
@@ -104,7 +104,7 @@ const createResponseToMessage = (client: BahamutClient, newMessageContent: Handl
 
 const handleErrorResponseToMessage = async (
     client: BahamutClient,
-    initMessage: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse,
+    initMessage: Discord.Message | Discord.ChatInputCommandInteraction | Discord.InteractionResponse,
     overwriteInitMessage: boolean = false,
     deferReply: "ephemeral" | boolean = "ephemeral",
     newMessageContent: HandleMessageOptions | string,
@@ -187,7 +187,7 @@ const createMissingPermErrorResponse = (
 
 const handleSuccessResponseToMessage = async (
     client: BahamutClient,
-    initMessage: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse,
+    initMessage: Discord.Message | Discord.ChatInputCommandInteraction | Discord.InteractionResponse,
     overwriteInitMessage: boolean = false,
     deferReply: "ephemeral" | boolean = "ephemeral",
     newMessageContent: HandleMessageOptions | string,
@@ -242,7 +242,7 @@ const createSuccessResponse = (client: BahamutClient, newMessageContent: HandleM
  * @param deleteOptions
  */
 const handleResponseToChannel = async (client: BahamutClient, sourceChannel: Discord.GuildTextBasedChannel, newMessageContent: HandleMessageOptions, deleteOptions?: MessageDeleteOptions) => {
-    let response: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse;
+    let response: Discord.Message | Discord.ChatInputCommandInteraction | Discord.InteractionResponse;
 
     for (const e of newMessageContent.embeds!) {
         // @ts-ignore
@@ -257,7 +257,7 @@ const handleResponseToChannel = async (client: BahamutClient, sourceChannel: Dis
     return response;
 };
 const handleErrorResponseToChannel = async (client: BahamutClient, sourceChannel: Discord.GuildTextBasedChannel, newMessageContent: HandleMessageOptions, deleteOptions?: MessageDeleteOptions) => {
-    let response: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse;
+    let response: Discord.Message | Discord.ChatInputCommandInteraction | Discord.InteractionResponse;
 
     if (newMessageContent.embeds && newMessageContent.embeds.length > 0) {
         for (const e of newMessageContent.embeds!) {
@@ -278,8 +278,8 @@ const handleErrorResponseToChannel = async (client: BahamutClient, sourceChannel
 
 const handleDeleteMessage = async (
     client: BahamutClient,
-    initMessage: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse | null,
-    responseMessage: Discord.Message | Discord.CommandInteraction | Discord.InteractionResponse | null | undefined,
+    initMessage: Discord.Message | Discord.ChatInputCommandInteraction | Discord.InteractionResponse | null,
+    responseMessage: Discord.Message | Discord.ChatInputCommandInteraction | Discord.InteractionResponse | null | undefined,
     // if null use default
     deleteOptions: MessageDeleteOptions | null = null
 ) => {

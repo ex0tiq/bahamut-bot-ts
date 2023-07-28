@@ -1,16 +1,16 @@
-import { CommandConfig } from "../../../typings";
-import { isInt } from "../../lib/validateFunctions";
-import { formatDuration } from "../../lib/durationFunctions";
+import { CommandConfig } from "../../../typings.js";
+import { isInt } from "../../lib/validateFunctions.js";
+import { formatDuration } from "../../lib/durationFunctions.js";
 import Discord from "discord.js";
 import { CommandType } from "wokcommands";
-import BahamutClient from "../../modules/BahamutClient";
-import { getGuildSettings } from "../../lib/getFunctions";
-import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
+import BahamutClient from "../../modules/BahamutClient.js";
+import { getGuildSettings } from "../../lib/getFunctions.js";
+import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker.js";
 import {
     createErrorResponse, createSuccessResponse,
     handleErrorResponseToMessage, handleResponseToChannel,
     handleResponseToMessage,
-} from "../../lib/messageHandlers";
+} from "../../lib/messageHandlers.js";
 import { SearchResult } from "erela.js";
 
 const config: CommandConfig = {

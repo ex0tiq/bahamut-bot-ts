@@ -1,17 +1,21 @@
-import { MusicQuiz } from "../../lib/game_classes/music_quiz/music-quiz";
-import { CommandConfig } from "../../../typings";
+import { MusicQuiz } from "../../lib/game_classes/music_quiz/music-quiz.js";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType } from "wokcommands";
 import Discord from "discord.js";
 import {
     handleErrorResponseToMessage,
     handleResponseToMessage,
-} from "../../lib/messageHandlers";
-import BahamutClient from "../../modules/BahamutClient";
-import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
-import { getGuildSettings } from "../../lib/getFunctions";
-import { toProperCase } from "../../lib/toolFunctions";
+} from "../../lib/messageHandlers.js";
+import BahamutClient from "../../modules/BahamutClient.js";
+import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker.js";
+import { getGuildSettings } from "../../lib/getFunctions.js";
+import { toProperCase } from "../../lib/toolFunctions.js";
+import { readFileSync } from 'fs';
+import { resolve } from "path";
 // Non ES imports
-const playlists = require("../../../assets/games/musicquiz/genre_playlists.json");
+const playlists = JSON.parse(
+    readFileSync("assets/games/musicquiz/genre_playlists.json", "utf-8")
+);
 const genres = (() => Object.keys(playlists).sort((a, b) => a.localeCompare(b)))();
 
 const config: CommandConfig = {

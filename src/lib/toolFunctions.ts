@@ -1,6 +1,7 @@
 import fs from "fs";
 import p from "path";
 import { FileData } from "../../typings.js";
+import { readFileSync } from 'fs';
 
 const randomIntBetween = (min: number, max: number) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -45,39 +46,40 @@ const encodeYoutubeURL = (url: string) => {
     );
 };
 
-const getAllFiles = (path: string, foldersOnly = false) => {
+const getAllFiles = async (path: string, foldersOnly = false) => {
     const files = fs.readdirSync(path, {
-        withFileTypes: true,
+      withFileTypes: true,
     });
     let filesFound: FileData[] = [];
-
+  
     for (const file of files) {
-        const filePath = p.join(path, file.name);
-
-        if (file.isDirectory()) {
-            if (foldersOnly) {
-                filesFound.push({
-                    filePath,
-                    fileContents: file,
-                });
-            } else {
-                filesFound = [...filesFound, ...(getAllFiles(filePath))];
-            }
-            continue;
-        }
-
-        const fileContents = require(filePath);
-        filesFound.push({
+      const filePath = p.join(path, file.name);
+  
+      if (file.isDirectory()) {
+        if (foldersOnly) {
+          filesFound.push({
             filePath,
-            fileContents: fileContents?.default || fileContents,
-        });
+            fileContents: file,
+          });
+        } else {
+          filesFound = [...filesFound, ...(await getAllFiles(filePath))];
+        }
+        continue;
+      }
+      if (!file.name.endsWith('.js') && !file.name.endsWith('.ts')) continue
+  
+      const fileContents = await import(filePath);
+      filesFound.push({
+        filePath,
+        fileContents: fileContents?.default || fileContents,
+      });
     }
-
+  
     return filesFound;
-};
+  };
 
-const getAllJSFiles = (path: string, foldersOnly = false) => {
-    return (getAllFiles(path, foldersOnly)).filter(e => e.filePath.endsWith(".js"));
+const getAllJSFiles = async (path: string, foldersOnly = false) => {
+    return (await getAllFiles(path, foldersOnly)).filter(e => e.filePath.endsWith(".js"));
 };
 
 const toProperCase = (str: string) => {

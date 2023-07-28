@@ -1,4 +1,4 @@
-import BahamutDBHandler, {DBGuildUserLevels} from "../BahamutDBHandler";
+import BahamutDBHandler, {DBGuildUserLevels} from "../BahamutDBHandler.js";
 import Discord from "discord.js";
 
 

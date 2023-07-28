@@ -1,14 +1,14 @@
-import { CommandConfig } from "../../../typings";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType } from "wokcommands";
 import Discord from "discord.js";
-import BahamutClient from "../../modules/BahamutClient";
-import { isUserModOfGuild } from "../../lib/checkFunctions";
+import BahamutClient from "../../modules/BahamutClient.js";
+import { isUserModOfGuild } from "../../lib/checkFunctions.js";
 import {
     handleErrorResponseToMessage,
     handleSuccessResponseToMessage,
-} from "../../lib/messageHandlers";
-import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
-import { getGuildSettings } from "../../lib/getFunctions";
+} from "../../lib/messageHandlers.js";
+import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker.js";
+import { getGuildSettings } from "../../lib/getFunctions.js";
 
 const config: CommandConfig = {
     name: "settopic",

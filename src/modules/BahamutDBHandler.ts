@@ -7,14 +7,14 @@ import {
     QueryTypes,
     Sequelize,
 } from "sequelize";
-import { Bahamut } from "../bahamut";
-import Logger from "./Logger";
-import GuildSettingsHandler from "./databaseHandler/guildSettingsHandler";
-import GuildUserStatHandler from "./databaseHandler/guildUserStatHandler";
-import UserLevelDataHandler from "./databaseHandler/userLevelDataHandler";
-import CookieHandler from "./databaseHandler/cookieHandler";
-import CommandLogHandler from "./databaseHandler/commandLogHandler";
-import FFXIVHandler from "./databaseHandler/ffxivHandler";
+import { Bahamut } from "../bahamut.js";
+import Logger from "./Logger.js";
+import GuildSettingsHandler from "./databaseHandler/guildSettingsHandler.js";
+import GuildUserStatHandler from "./databaseHandler/guildUserStatHandler.js";
+import UserLevelDataHandler from "./databaseHandler/userLevelDataHandler.js";
+import CookieHandler from "./databaseHandler/cookieHandler.js";
+import CommandLogHandler from "./databaseHandler/commandLogHandler.js";
+import FFXIVHandler from "./databaseHandler/ffxivHandler.js";
 
 export default class BahamutDBHandler {
     private readonly _bahamut: Bahamut;

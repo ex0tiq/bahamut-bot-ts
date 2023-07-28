@@ -1,4 +1,4 @@
-import BahamutDBHandler from "./modules/BahamutDBHandler";
+import BahamutDBHandler from "./modules/BahamutDBHandler.js";
 import scheduler, { Job } from "node-schedule";
 
 if (Number(process.version.slice(1).split(".")[0]) < 16) throw new Error("Node 16.0.0 or higher is required. Update Node on your system.");
@@ -9,24 +9,25 @@ import { loadBotStuff } from "./lib/botStartupFunctions.js";
 import Logger from "./modules/Logger.js";
 import { BotConfig, DiscordGame, GuildSettings, StartupMessage } from "../typings.js";
 import WOK from "wokcommands";
-import PremiumManager from "./modules/PremiumManager";
-import LavaManager from "./modules/LavaManager";
-import { isJson } from "./lib/validateFunctions";
-import LevelSystem from "./modules/LevelSystem";
+import PremiumManager from "./modules/PremiumManager.js";
+import LavaManager from "./modules/LavaManager.js";
+import { isJson } from "./lib/validateFunctions.js";
+import LevelSystem from "./modules/LevelSystem.js";
 import { Settings } from "luxon";
-import FFXIV from "./modules/FFXIV";
-import LanguageMessageHandler from "./lib/languageMessageHandlers";
+import FFXIV from "./modules/FFXIV.js";
+import LanguageMessageHandler from "./lib/languageMessageHandlers.js";
 import * as Events from "events";
-import GameListeners from "./modules/EventListeners/GameListeners";
-
-// Non ES imports
-const { client } = require("tenorjs");
+import { readFileSync } from 'fs';
+import { resolve } from "path";
+// @ts-ignore
+import { client as tjsClient } from "tenorjs";
 
 export class Bahamut {
     private _client: BahamutClient = new BahamutClient(this);
     // Here we load the config file that contains our token and our prefix values.
-    private _config: BotConfig = require("../config/config.json");
+    private _config: BotConfig;
     // WOKCommands instance
+    // @ts-ignore
     private _cmdHandler!: WOK;
     // DB Handler
     private _dbHandler: BahamutDBHandler;
@@ -52,13 +53,17 @@ export class Bahamut {
     private _runningGames: Map<string, DiscordGame> = new Map<string, DiscordGame>;
 
     // Set global tenor object
-    private _tenor;
+    private _tenor: any;
 
     constructor() {
         const shardArgs = (process.argv.length > 2 ? process.argv.slice(2).join(" ") : null);
         if (!shardArgs || !isJson(shardArgs)) {
             throw new Error("No boot configuration received!");
         }
+
+        this._config = JSON.parse(
+            readFileSync(resolve("config/config.json"), "utf-8")
+        );
 
         // Load config
         this._config = {
@@ -81,18 +86,6 @@ export class Bahamut {
         // Init FFXIV stuff
         this._ffxiv = new FFXIV(this);
 
-        // Register GameListeners
-        GameListeners(this);
-
-        // Init tenor object
-        this._tenor = client({
-            "Key": this.config.tenor_token,
-            "Filter": "low",
-            "Locale": "en_US",
-            "MediaFilter": "minimal",
-            "DateFormat": "MM/DD/YYYY - H:mm:ss A",
-        });
-
         // Register ready event
         this._client.on("ready", async () => {
             //
@@ -114,6 +107,15 @@ export class Bahamut {
             // for (const g of this.config.test_servers) {
             //    if (this._client.guilds.cache.has(g)) await this._client.guilds.cache.get(g)!.commands.set([]);
             // }
+
+             // Init tenor object
+            this._tenor = tjsClient({
+                "Key": this.config.tenor_token,
+                "Filter": "low",
+                "Locale": "en_US",
+                "MediaFilter": "minimal",
+                "DateFormat": "MM/DD/YYYY - H:mm:ss A",
+            });
 
             // Load bot events, commands, etc.
             await loadBotStuff(this);
@@ -142,6 +144,7 @@ export class Bahamut {
     public get cmdHandler() {
         return this._cmdHandler;
     }
+    // @ts-ignore
     public set cmdHandler(newHandler: WOK) {
         this._cmdHandler = newHandler;
     }

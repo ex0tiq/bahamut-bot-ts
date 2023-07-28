@@ -1,10 +1,10 @@
-import { CommandConfig } from "../../../typings";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType } from "wokcommands";
 import Discord from "discord.js";
-import BahamutClient from "../../modules/BahamutClient";
-import { randomIntBetween } from "../../lib/toolFunctions";
-import lang from "../../lib/languageMessageHandlers";
-import { handleErrorResponseToMessage, handleResponseToMessage } from "../../lib/messageHandlers";
+import BahamutClient from "../../modules/BahamutClient.js";
+import { randomIntBetween } from "../../lib/toolFunctions.js";
+import lang from "../../lib/languageMessageHandlers.js";
+import { handleErrorResponseToMessage, handleResponseToMessage } from "../../lib/messageHandlers.js";
 
 const config: CommandConfig = {
     name: "gif",

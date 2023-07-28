@@ -1,14 +1,14 @@
 // Class to combine pre checks for commands
 
-import {CommandConfig} from "../../typings";
+import {CommandConfig} from "../../typings.js";
 import {CommandUsage} from "wokcommands";
-import BahamutClient from "./BahamutClient";
+import BahamutClient from "./BahamutClient.js";
 import {
     createMissingParamsErrorResponse,
     createMissingPermErrorResponse,
     handleErrorResponseToMessage
-} from "../lib/messageHandlers";
-import {getGuildSettings} from "../lib/getFunctions";
+} from "../lib/messageHandlers.js";
+import {getGuildSettings} from "../lib/getFunctions.js";
 import {Player} from "erela.js";
 import Discord from "discord.js";
 

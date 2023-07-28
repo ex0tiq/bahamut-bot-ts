@@ -1,16 +1,16 @@
-import { CommandConfig } from "../../../typings";
+import { CommandConfig } from "../../../typings.js";
 import wiki from "wikijs";
-import { isInt } from "../../lib/validateFunctions";
+import { isInt } from "../../lib/validateFunctions.js";
 import { CommandType, CooldownTypes } from "wokcommands";
 import Discord from "discord.js";
-import BahamutClient from "../../modules/BahamutClient";
-import { getGuildSettings } from "../../lib/getFunctions";
+import BahamutClient from "../../modules/BahamutClient.js";
+import { getGuildSettings } from "../../lib/getFunctions.js";
 import {
     createErrorResponse, createMissingParamsErrorResponse, createSuccessResponse,
     handleErrorResponseToMessage,
     handleResponseToChannel,
     handleResponseToMessage,
-} from "../../lib/messageHandlers";
+} from "../../lib/messageHandlers.js";
 
 const config: CommandConfig = {
     name: "wikipedia",
@@ -53,16 +53,18 @@ export default {
 
         try {
             if (args.length > 0) {
-                const results = await wiki({
+                const results = (await wiki({
                     apiUrl: `https://${settings.language}.wikipedia.org/w/api.php`,
-                }).search(args.join(" "), 10);
+                    // @ts-ignore
+                })).search(args.join(" "), 10);
                 let queueString = "";
 
                 if (results.results.length == 1) {
                     try {
-                        const wikiResults = await wiki({
+                        const wikiResults = (await wiki({
                             apiUrl: `https://${settings.language}.wikipedia.org/w/api.php`,
-                        }).page(results.results[0]);
+                            // @ts-ignore
+                        })).page(results.results[0]);
 
                         if (!wikiResults) return handleErrorResponseToMessage(client, message || interaction, false, true, "No search results for this query.");
 
@@ -161,9 +163,10 @@ export default {
                                 });
                             }
 
-                            const wikiResults = await wiki({
+                            const wikiResults = (await wiki({
                                 apiUrl: `https://${settings.language}.wikipedia.org/w/api.php`,
-                            }).page(results.results[selectedId]);
+                                // @ts-ignore
+                            })).page(results.results[selectedId]);
 
                             if (!wikiResults) return handleErrorResponseToMessage(client, message || interaction, false, true, "No search results for this query.");
 

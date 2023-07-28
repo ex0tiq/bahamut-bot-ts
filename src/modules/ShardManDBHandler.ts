@@ -3,12 +3,12 @@ import {
     QueryTypes,
     Sequelize, WhereOptions,
 } from "sequelize";
-import logger from "./Logger";
-import { BahamutShardingBootManager, GuildSettings } from "../../typings";
-import { DBGuildSettings, DBGuildUserStats } from "./BahamutDBHandler";
+import logger from "./Logger.js";
+import { BahamutShardingBootManager, GuildSettings } from "../../typings.js";
+import { DBGuildSettings, DBGuildUserStats } from "./BahamutDBHandler.js";
 import Discord from "discord.js";
-const { isInt, isJson } = require("../lib/validateFunctions");
-const { parseBool } = require("../lib/parseFunctions");
+import { isInt, isJson } from "../lib/validateFunctions.js";
+import { parseBool } from "../lib/parseFunctions.js";
 
 export default class ShardManDBHandler {
     private readonly _manager: BahamutShardingBootManager;

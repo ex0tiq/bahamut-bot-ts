@@ -1,12 +1,12 @@
-import emoji from "node-emoji";
-import { formatDuration } from "../../lib/durationFunctions";
-import { CommandConfig } from "../../../typings";
+import * as emoji from "node-emoji";
+import { formatDuration } from "../../lib/durationFunctions.js";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType } from "wokcommands";
-import BahamutClient from "../../modules/BahamutClient";
+import BahamutClient from "../../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { getGuildSettings } from "../../lib/getFunctions";
-import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
-import { handleErrorResponseToMessage, handleSuccessResponseToMessage } from "../../lib/messageHandlers";
+import { getGuildSettings } from "../../lib/getFunctions.js";
+import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker.js";
+import { handleErrorResponseToMessage, handleSuccessResponseToMessage } from "../../lib/messageHandlers.js";
 
 const config: CommandConfig = {
     name: "seek",

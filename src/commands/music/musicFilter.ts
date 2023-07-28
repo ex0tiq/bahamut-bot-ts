@@ -1,16 +1,18 @@
-import emoji from "node-emoji";
+import * as emoji from "node-emoji";
 import { CommandType } from "wokcommands";
-import { toProperCase } from "../../lib/toolFunctions";
-import BahamutClient from "../../modules/BahamutClient";
+import { toProperCase } from "../../lib/toolFunctions.js";
+import BahamutClient from "../../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { getGuildSettings } from "../../lib/getFunctions";
+import { getGuildSettings } from "../../lib/getFunctions.js";
 import {
     handleErrorResponseToMessage,
     handleResponseToMessage,
     handleSuccessResponseToMessage,
-} from "../../lib/messageHandlers";
-import { CommandConfig } from "../../../typings";
-import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
+} from "../../lib/messageHandlers.js";
+import { CommandConfig } from "../../../typings.js";
+import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker.js";
+import { readFileSync } from 'fs';
+import { resolve } from "path";
 
 const config: CommandConfig = {
     name: "filter",
@@ -26,7 +28,9 @@ const config: CommandConfig = {
             required: false,
             choices: (() => {
                 const choices = [];
-                const filters = require("../../../assets/music_filters.json");
+                const filters = JSON.parse(
+                    readFileSync(resolve("assets/music_filters.json"), "utf-8")
+                );
                 for (const [name] of Object.entries(filters).sort(([a1], [a2]) => a1.localeCompare(a2))) {
                     choices.push({ name: toProperCase(name), value: name });
                 }

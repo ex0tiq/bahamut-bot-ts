@@ -1,10 +1,10 @@
-import Discord from "discord.js";
+import Discord, { ChannelType } from "discord.js";
 import { CommandType } from "wokcommands";
-import { getGuildSettings } from "../../lib/getFunctions";
-import BahamutClient from "../../modules/BahamutClient";
-import { handleErrorResponseToMessage, handleResponseToMessage } from "../../lib/messageHandlers";
-import { CommandConfig } from "../../../typings";
-import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
+import { getGuildSettings } from "../../lib/getFunctions.js";
+import BahamutClient from "../../modules/BahamutClient.js";
+import { handleErrorResponseToMessage, handleResponseToMessage } from "../../lib/messageHandlers.js";
+import { CommandConfig } from "../../../typings.js";
+import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker.js";
 
 const config: CommandConfig = {
     name: "play",
@@ -129,6 +129,12 @@ export default {
             await player.play();
         } else if (!player.playing) {
             await player.play();
+        }
+
+        // Check if stage channel
+        if (channel.guild.members.me?.voice.channel?.type === ChannelType.GuildStageVoice) {
+            await channel.guild.members.me?.voice.setSuppressed(false);
+            if (channel.guild.members.me?.voice.suppress) channel.guild.members.me?.voice.setRequestToSpeak(true);
         }
 
         // ////////////////////////////////////////////////////////////////////////////////////////////////////////////

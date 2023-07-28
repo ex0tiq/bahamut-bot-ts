@@ -1,10 +1,10 @@
-import { CommandConfig } from "../../../typings";
-import Hangman from "../../lib/game_classes/hangman";
+import { CommandConfig } from "../../../typings.js";
+import Hangman from "../../lib/game_classes/hangman.js";
 import { CommandType } from "wokcommands";
-import BahamutClient from "../../modules/BahamutClient";
+import BahamutClient from "../../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { handleErrorResponseToMessage } from "../../lib/messageHandlers";
-import { getGuildSettings } from "../../lib/getFunctions";
+import { handleErrorResponseToMessage } from "../../lib/messageHandlers.js";
+import { getGuildSettings } from "../../lib/getFunctions.js";
 
 const config: CommandConfig = {
     name: "hangman",

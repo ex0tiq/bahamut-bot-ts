@@ -1,24 +1,26 @@
 import Discord from "discord.js";
-import { CommandConfig } from "../../../../typings";
+import { CommandConfig } from "../../../../typings.js";
 import { CommandType, CooldownTypes } from "wokcommands";
-import BahamutClient from "../../../modules/BahamutClient";
-import lang from "../../../lib/languageMessageHandlers";
+import BahamutClient from "../../../modules/BahamutClient.js";
+import lang from "../../../lib/languageMessageHandlers.js";
 import fs from "fs";
 import { resolve } from "path";
-import { getGuildSettings } from "../../../lib/getFunctions";
+import { getGuildSettings } from "../../../lib/getFunctions.js";
 import {
     createMissingParamsErrorResponse,
     handleErrorResponseToMessage,
     handleResponseToMessage,
-} from "../../../lib/messageHandlers";
-import { toProperCase } from "../../../lib/toolFunctions";
-// Non ES imports
-const XIVAPI = require("@xivapi/js");
+} from "../../../lib/messageHandlers.js";
+import { toProperCase } from "../../../lib/toolFunctions.js";
+// @ts-ignore
+import XIVAPI from "@xivapi/js";
 
 const allServers: string[] = (() => {
     const path = resolve("cache/ffxiv_servers.json");
     if (fs.existsSync(path)) {
-        return require(path);
+        return JSON.parse(
+            fs.readFileSync(path, "utf-8")
+        );
     } else {
         return[];
     }

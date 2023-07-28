@@ -1,10 +1,12 @@
 import getUrls from "get-urls";
-import BahamutClient from "../../modules/BahamutClient";
+import BahamutClient from "../../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { getGuildSettings } from "../getFunctions";
-import { GuildSettings } from "../../../typings";
-// Non ES imports
-const emojiAware = require("emoji-aware").onlyEmoji;
+import { getGuildSettings } from "../getFunctions.js";
+import { GuildSettings } from "../../../typings.js";
+import { readFileSync } from 'fs';
+import { resolve } from "path";
+// @ts-ignore
+import { onlyEmoji as emojiAware } from "emoji-aware";
 
 export default class AutoModeration {
     private client: BahamutClient;
@@ -15,7 +17,9 @@ export default class AutoModeration {
     private deleteMessage: boolean;
     private warnUser: boolean;
 
-    static default_bad_words = require("../../../assets/default_badWords.json");
+    static default_bad_words = JSON.parse(
+        readFileSync(resolve("assets/default_badWords.json"), "utf-8")
+    );
 
     constructor(client: BahamutClient, guild: Discord.Guild, message: Discord.Message) {
         this.client = client;

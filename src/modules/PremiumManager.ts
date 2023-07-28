@@ -1,12 +1,12 @@
-import { getGuildSettings } from "../lib/getFunctions";
+import { getGuildSettings } from "../lib/getFunctions.js";
 import Discord from "discord.js";
-import { Bahamut } from "../bahamut";
-import { resolveUser } from "../lib/resolveFunctions";
-import { flattenArray } from "../lib/toolFunctions";
-import { createErrorResponse, createSuccessResponse } from "../lib/messageHandlers";
-import logger from "./Logger";
-import { HandleMessageOptions } from "../../typings";
-import BahamutClient from "./BahamutClient";
+import { Bahamut } from "../bahamut.js";
+import { resolveUser } from "../lib/resolveFunctions.js";
+import { flattenArray } from "../lib/toolFunctions.js";
+import { createErrorResponse, createSuccessResponse } from "../lib/messageHandlers.js";
+import logger from "./Logger.js";
+import { HandleMessageOptions } from "../../typings.js";
+import BahamutClient from "./BahamutClient.js";
 
 export default class PremiumManager {
     private readonly _bahamut: Bahamut;
@@ -315,7 +315,7 @@ export default class PremiumManager {
         if (usr.id === this._bahamut.config.owner_id) return -1;
 
         const roles_arr = Object.keys(this._bahamut.config.premium_settings.roles);
-        for (const [key, rl] of usr.roles.cache.filter(e => (e.id !== guild.roles.everyone.id && e.rawPosition !== 0)).sort((e1, e2) => e2.rawPosition - e1.rawPosition)) {
+        for (const [key, rl] of usr.roles.cache.filter((e: { id: string; rawPosition: number; }) => (e.id !== guild.roles.everyone.id && e.rawPosition !== 0)).sort((e1: any, e2: any) => e2.rawPosition - e1.rawPosition)) {
             if (roles_arr.includes(key)) {
                 return {
                     "id": "" + key,

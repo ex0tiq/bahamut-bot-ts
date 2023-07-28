@@ -1,15 +1,15 @@
 import Discord from "discord.js";
-import { resolveUser } from "../../lib/resolveFunctions";
-import { CommandConfig } from "../../../typings";
-import BahamutClient from "../../modules/BahamutClient";
-import { getGuildSettings } from "../../lib/getFunctions";
-import { isUserModOfGuild } from "../../lib/checkFunctions";
+import { resolveUser } from "../../lib/resolveFunctions.js";
+import { CommandConfig } from "../../../typings.js";
+import BahamutClient from "../../modules/BahamutClient.js";
+import { getGuildSettings } from "../../lib/getFunctions.js";
+import { isUserModOfGuild } from "../../lib/checkFunctions.js";
 import {
     createMissingParamsErrorResponse,
     handleErrorResponseToMessage,
     handleSuccessResponseToMessage,
-} from "../../lib/messageHandlers";
-import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
+} from "../../lib/messageHandlers.js";
+import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker.js";
 import { CommandType } from "wokcommands";
 
 const config: CommandConfig = {

@@ -1,10 +1,10 @@
-import { randomIntBetween } from "../../lib/toolFunctions";
-import { CommandConfig } from "../../../typings";
+import { randomIntBetween } from "../../lib/toolFunctions.js";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType } from "wokcommands";
 import { ApplicationCommandOptionType } from "discord-api-types/v10";
-import BahamutClient from "../../modules/BahamutClient";
+import BahamutClient from "../../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { handleErrorResponseToMessage, handleResponseToMessage } from "../../lib/messageHandlers";
+import { handleErrorResponseToMessage, handleResponseToMessage } from "../../lib/messageHandlers.js";
 
 const config: CommandConfig = {
     name: "choose",

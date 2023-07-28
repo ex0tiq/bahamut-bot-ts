@@ -1,11 +1,11 @@
-import { CommandConfig } from "../../../typings";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType } from "wokcommands";
-import BahamutClient from "../../modules/BahamutClient";
+import BahamutClient from "../../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { getGuildSettings } from "../../lib/getFunctions";
-import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
-import { isUserModOfGuild } from "../../lib/checkFunctions";
-import { handleErrorResponseToMessage } from "../../lib/messageHandlers";
+import { getGuildSettings } from "../../lib/getFunctions.js";
+import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker.js";
+import { isUserModOfGuild } from "../../lib/checkFunctions.js";
+import { handleErrorResponseToMessage } from "../../lib/messageHandlers.js";
 import { DateTime } from "luxon";
 
 const config: CommandConfig = {

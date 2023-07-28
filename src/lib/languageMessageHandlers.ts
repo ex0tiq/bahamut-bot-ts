@@ -1,9 +1,9 @@
 import path, { resolve } from "path";
-import emoji from "node-emoji";
-import { getAllFiles } from "./toolFunctions";
-import BahamutClient from "../modules/BahamutClient";
+import * as emoji from "node-emoji";
+import { getAllFiles } from "./toolFunctions.js";
+import BahamutClient from "../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { getGuildSettings } from "./getFunctions";
+import { getGuildSettings } from "./getFunctions.js";
 
 export default class LanguageMessageHandler {
     static language_files: Map<string, Map<string, string>> = new Map();
@@ -12,7 +12,7 @@ export default class LanguageMessageHandler {
      * Initialize all language files
      */
     static initLanguageFiles = async () => {
-        const langFiles = getAllFiles(resolve("assets/lang/"));
+        const langFiles = await getAllFiles(resolve("assets/lang/"));
         langFiles.forEach(file => {
             try {
                 const parse = path.parse(file.filePath);
@@ -50,7 +50,7 @@ export default class LanguageMessageHandler {
             const matches = langString!.toLowerCase().match(/%emoji-.+?%/g) || [];
             for (const m of matches) {
                 const em = m.replace(/%/g, "").replace(/emoji-/g, "");
-                langString = langString!.replace(m, emoji.get(em));
+                langString = langString.replace(m, emoji.get(em) || "");
             }
         }
         if (replacers) {

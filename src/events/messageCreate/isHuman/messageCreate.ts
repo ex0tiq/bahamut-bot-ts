@@ -1,10 +1,10 @@
-import BahamutClient from "../../../modules/BahamutClient";
-import { flattenArray } from "../../../lib/toolFunctions";
+import BahamutClient from "../../../modules/BahamutClient.js";
+import { flattenArray } from "../../../lib/toolFunctions.js";
 import Discord from "discord.js";
-import { getGuildSettings } from "../../../lib/getFunctions";
-import { handleResponseToMessage } from "../../../lib/messageHandlers";
-import RestrictedChannels from "../../../lib/automoderation/restrictedChannels";
-import AutoModeration from "../../../lib/automoderation/automoderation";
+import { getGuildSettings } from "../../../lib/getFunctions.js";
+import { handleResponseToMessage } from "../../../lib/messageHandlers.js";
+import RestrictedChannels from "../../../lib/automoderation/restrictedChannels.js";
+import AutoModeration from "../../../lib/automoderation/automoderation.js";
 
 // eslint-disable-next-line no-unused-vars
 export default async (message: Discord.Message, client: BahamutClient) => {

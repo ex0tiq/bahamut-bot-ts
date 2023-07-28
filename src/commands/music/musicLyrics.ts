@@ -1,12 +1,11 @@
 import { CommandType, CooldownTypes } from "wokcommands";
-import BahamutClient from "../../modules/BahamutClient";
+import BahamutClient from "../../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { getGuildSettings } from "../../lib/getFunctions";
-import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
-import { handleErrorResponseToMessage, handleResponseToMessage } from "../../lib/messageHandlers";
-import { CommandConfig } from "../../../typings";
-// Not ES compatible imports
-const Genius = require("genius-lyrics");
+import { getGuildSettings } from "../../lib/getFunctions.js";
+import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker.js";
+import { handleErrorResponseToMessage, handleResponseToMessage } from "../../lib/messageHandlers.js";
+import { CommandConfig } from "../../../typings.js";
+import Genius from "genius-lyrics";
 
 const config: CommandConfig = {
     name: "lyrics",

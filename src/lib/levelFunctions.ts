@@ -1,4 +1,4 @@
-import BahamutClient from "../modules/BahamutClient";
+import BahamutClient from "../modules/BahamutClient.js";
 import Discord from "discord.js";
 
 /**

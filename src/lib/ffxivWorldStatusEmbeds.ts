@@ -1,7 +1,7 @@
-import { FFXIVWorldData } from "../../typings";
-import BahamutClient from "../modules/BahamutClient";
+import { FFXIVWorldData } from "../../typings.js";
+import BahamutClient from "../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { hexToRGB } from "./toolFunctions";
+import { hexToRGB } from "./toolFunctions.js";
 
 const region: any = {
     jp: {

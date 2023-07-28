@@ -1,12 +1,12 @@
 // Non ES imports
-import { CommandConfig } from "../../../../typings";
+import { CommandConfig } from "../../../../typings.js";
 import { CommandType, CooldownTypes } from "wokcommands";
-import BahamutClient from "../../../modules/BahamutClient";
+import BahamutClient from "../../../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { getGuildSettings } from "../../../lib/getFunctions";
-import { handleErrorResponseToMessage, handleResponseToMessage } from "../../../lib/messageHandlers";
-
-const XIVAPI = require("@xivapi/js");
+import { getGuildSettings } from "../../../lib/getFunctions.js";
+import { handleErrorResponseToMessage, handleResponseToMessage } from "../../../lib/messageHandlers.js";
+// @ts-ignore
+import XIVAPI from "@xivapi/js";
 
 const config: CommandConfig = {
     name: "whoami",

@@ -1,6 +1,6 @@
-import BahamutShardingManager from "./BahamutShardingManager";
-import BahamutClient from "./BahamutClient";
-import { getUserGuilds, getGuildDetails } from "../lib/getFunctions";
+import BahamutShardingManager from "./BahamutShardingManager.js";
+import BahamutClient from "./BahamutClient.js";
+import { getUserGuilds, getGuildDetails } from "../lib/getFunctions.js";
 
 export default class ShardManagerFunctions {
     private _manager: BahamutShardingManager;

@@ -1,10 +1,10 @@
-import { CommandConfig } from "../../../typings";
-import BahamutClient from "../../modules/BahamutClient";
+import { CommandConfig } from "../../../typings.js";
+import BahamutClient from "../../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { handleResponseToMessage } from "../../lib/messageHandlers";
+import { handleResponseToMessage } from "../../lib/messageHandlers.js";
 import { CommandType } from "wokcommands";
-// Non ES imports
-const lenny = require("lenny");
+// @ts-ignore
+import lenny from "lenny";
 
 const config: CommandConfig = {
     name: "lenny",

@@ -1,7 +1,7 @@
-import BahamutClient from "../modules/BahamutClient";
+import BahamutClient from "../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { getGuildSettings } from "./getFunctions";
-import { resolveRole, resolveUser } from "./resolveFunctions";
+import { getGuildSettings } from "./getFunctions.js";
+import { resolveRole, resolveUser } from "./resolveFunctions.js";
 
 const isUserAdminOfGuild = async (client: BahamutClient, user: Discord.GuildMember | string, guild: Discord.Guild | undefined) => {
     if (!guild) return null;

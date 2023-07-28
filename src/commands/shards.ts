@@ -1,12 +1,12 @@
-import { numberWithCommas } from "../lib/toolFunctions";
-import { CommandConfig } from "../../typings";
+import { numberWithCommas } from "../lib/toolFunctions.js";
+import { CommandConfig } from "../../typings.js";
 import { CommandType, CooldownTypes } from "wokcommands";
-import BahamutClient from "../modules/BahamutClient";
+import BahamutClient from "../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { handleResponseToMessage } from "../lib/messageHandlers";
+import { handleResponseToMessage } from "../lib/messageHandlers.js";
 import { DateTime } from "luxon";
 import humanize from "humanize-duration";
-import { getGuildSettings } from "../lib/getFunctions";
+import { getGuildSettings } from "../lib/getFunctions.js";
 
 const config: CommandConfig = {
     name: "shards",

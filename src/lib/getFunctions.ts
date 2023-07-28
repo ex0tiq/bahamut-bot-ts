@@ -1,9 +1,9 @@
-import BahamutClient from "../modules/BahamutClient";
+import BahamutClient from "../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { GuildSettings } from "../../typings";
-import { resolveRole } from "./resolveFunctions";
-import { isUserAdminOfGuild, isUserModOfGuild } from "./checkFunctions";
-import { bigintValuesToString } from "./toolFunctions";
+import { GuildSettings } from "../../typings.js";
+import { resolveRole } from "./resolveFunctions.js";
+import { isUserAdminOfGuild, isUserModOfGuild } from "./checkFunctions.js";
+import { bigintValuesToString } from "./toolFunctions.js";
 
 
 const getGuildSettings = async (client: BahamutClient, guild: Discord.Guild | string | undefined, forceDb = false, resolveRoles = false, resolveChannels = false, adminRoles = false): Promise<GuildSettings> => {

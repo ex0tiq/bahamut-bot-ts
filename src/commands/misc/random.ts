@@ -1,13 +1,13 @@
-import { CommandConfig } from "../../../typings";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType } from "wokcommands";
 import Discord from "discord.js";
-import BahamutClient from "../../modules/BahamutClient";
-import { getGuildSettings } from "../../lib/getFunctions";
+import BahamutClient from "../../modules/BahamutClient.js";
+import { getGuildSettings } from "../../lib/getFunctions.js";
 import {
     createMissingParamsErrorResponse,
     handleErrorResponseToMessage, handleResponseToMessage,
-} from "../../lib/messageHandlers";
-import { randomIntBetween } from "../../lib/toolFunctions";
+} from "../../lib/messageHandlers.js";
+import { randomIntBetween } from "../../lib/toolFunctions.js";
 
 const config: CommandConfig = {
     name: "random",

@@ -58,13 +58,13 @@ const registerCommands = (bahamut: Bahamut) => {
         // @ts-ignore
         client: bahamut.client,
         // The name of the local folder for your command files
-        commandsDir: path.resolve(__dirname, "../commands"),
+        commandsDir: path.resolve("dist/commands"),
 
         // Configure your event handlers
         events: {
             // Where your events are located. This is required if you
             // provide this events object
-            dir: path.resolve(__dirname, "../events"),
+            dir: path.resolve("dist/events"),
         },
 
         // What language your bot should use

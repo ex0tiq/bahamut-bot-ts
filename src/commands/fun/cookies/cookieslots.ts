@@ -1,11 +1,11 @@
-import { randomIntBetween } from "../../../lib/toolFunctions";
-import { CommandConfig } from "../../../../typings";
+import { randomIntBetween } from "../../../lib/toolFunctions.js";
+import { CommandConfig } from "../../../../typings.js";
 import { CommandType } from "wokcommands";
-import BahamutClient from "../../../modules/BahamutClient";
+import BahamutClient from "../../../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { handleErrorResponseToMessage, handleResponseToMessage } from "../../../lib/messageHandlers";
-const { generateSlotsEmbed } = require("../../../lib/slotsFunctions");
-const { isInt } = require("../../../lib/validateFunctions");
+import { handleErrorResponseToMessage, handleResponseToMessage } from "../../../lib/messageHandlers.js";
+import { generateSlotsEmbed } from "../../../lib/slotsFunctions.js";
+import { isInt } from "../../../lib/validateFunctions.js";
 
 const config: CommandConfig = {
     name: "cookieslots",
@@ -25,10 +25,10 @@ export default {
             // eslint-disable-next-line no-useless-escape
             emojis = ["\:cherries:", "\:watermelon:", "\:tangerine:", "\:strawberry:", "\:grapes:", "\:kiwi:"];
 
-        if (!cookies || (isInt(cookies) && cookies === 0)) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "You don't have any cookies! You need at least **10** cookies to play the slot machine!");
-        if (isInt(cookies) && (cookies) < 10) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "You don't have enough cookies! You need at least **10** cookies to play the slot machine!");
+        if (!cookies || cookies === 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "You don't have any cookies! You need at least **10** cookies to play the slot machine!");
+        if (cookies < 10) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "You don't have enough cookies! You need at least **10** cookies to play the slot machine!");
 
-        handleResponseToMessage(client, message || interaction, false, config.deferReply, { embeds: [generateSlotsEmbed(client, emojis, [])] }).then((msg) => {
+        handleResponseToMessage(client, message || interaction, false, config.deferReply, { embeds: [generateSlotsEmbed(client, emojis, [])!] }).then((msg) => {
             const resultEmojis: string[] = [];
             for (let i = 0; i < 3; i++) {
                 resultEmojis.push(emojis[randomIntBetween(0, 2)]);
@@ -42,7 +42,7 @@ export default {
                         return handleResponseToMessage(client, msg!, true, config.deferReply, {
                             // eslint-disable-next-line no-useless-escape
                             content: `${message.author} spent **10** \:cookie: to play the slots... and won, big time! \:smiley:\n**100** \:cookie: cookies have been added to your account!`,
-                            embeds: [embed],
+                            embeds: [embed!],
                         });
                     } else {
                         return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "An error occurred while doing that. Please try again later.");
@@ -52,7 +52,7 @@ export default {
                         return handleResponseToMessage(client, msg!, true, config.deferReply, {
                             // eslint-disable-next-line no-useless-escape
                             content: `${message.author} spent **10** \:cookie: to play the slots... and almost won! \:neutral_face:`,
-                            embeds: [embed],
+                            embeds: [embed!],
                         });
                     } else {
                         return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "An error occurred while doing that. Please try again later.");
@@ -61,7 +61,7 @@ export default {
                     return handleResponseToMessage(client, msg!, true, config.deferReply, {
                         // eslint-disable-next-line no-useless-escape
                         content: `${message.author} spent **10** \:cookie: to play the slots... and lost! \:slight_frown:`,
-                        embeds: [embed],
+                        embeds: [embed!],
                     });
 
                 } else {

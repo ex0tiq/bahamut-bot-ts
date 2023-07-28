@@ -1,13 +1,13 @@
-import BahamutClient from "../../modules/BahamutClient";
-import { flipString } from "../../lib/toolFunctions";
+import BahamutClient from "../../modules/BahamutClient.js";
+import { flipString } from "../../lib/toolFunctions.js";
 import Discord from "discord.js";
-import { resolveUser } from "../../lib/resolveFunctions";
+import { resolveUser } from "../../lib/resolveFunctions.js";
 import {
     createMissingParamsErrorResponse,
     handleErrorResponseToMessage,
     handleResponseToMessage,
-} from "../../lib/messageHandlers";
-import { CommandConfig } from "../../../typings";
+} from "../../lib/messageHandlers.js";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType } from "wokcommands";
 
 const config: CommandConfig = {

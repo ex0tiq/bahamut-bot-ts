@@ -1,5 +1,5 @@
 import Discord from 'discord.js';
-import BahamutClient from "../modules/BahamutClient";
+import BahamutClient from "../modules/BahamutClient.js";
 
 /**
  * Resolve a guildmember. If not cached fetch from discord

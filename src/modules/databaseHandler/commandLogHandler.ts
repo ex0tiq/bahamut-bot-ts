@@ -1,4 +1,4 @@
-import BahamutDBHandler, { DBGuildCommandLog } from "../BahamutDBHandler";
+import BahamutDBHandler, { DBGuildCommandLog } from "../BahamutDBHandler.js";
 import Discord from "discord.js";
 
 export default class CommandLogHandler {

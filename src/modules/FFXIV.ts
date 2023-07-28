@@ -1,13 +1,13 @@
-import { Bahamut } from "../bahamut";
+import { Bahamut } from "../bahamut.js";
 import axios from "axios";
 import { promises as fs } from "fs";
 import fsExists from "fs.promises.exists";
 import fse from "fs-extra";
 import { resolve } from "path";
 import { DateTime } from "luxon";
-import logger from "./Logger";
-// Non ES imports
-const XIVAPI = require("@xivapi/js");
+import logger from "./Logger.js";
+// @ts-ignore
+import XIVAPI from "@xivapi/js";
 
 export default class FFXIV {
     private _bahamut: Bahamut;

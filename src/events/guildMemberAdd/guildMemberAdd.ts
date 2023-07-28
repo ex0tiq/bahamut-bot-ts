@@ -1,7 +1,7 @@
 // eslint-disable-next-line no-unused-vars
-import BahamutClient from "../../modules/BahamutClient";
+import BahamutClient from "../../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { getGuildSettings } from "../../lib/getFunctions";
+import { getGuildSettings } from "../../lib/getFunctions.js";
 
 export default async (member: Discord.GuildMember, client: BahamutClient) => {
     if (member && member.user.bot) return;

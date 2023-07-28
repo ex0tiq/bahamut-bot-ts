@@ -1,13 +1,15 @@
-import { CommandConfig } from "../../../typings";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType } from "wokcommands";
-import BahamutClient from "../../modules/BahamutClient";
+import BahamutClient from "../../modules/BahamutClient.js";
 import Discord from "discord.js";
 import {
     createMissingParamsErrorResponse,
     handleErrorResponseToMessage,
     handleSuccessResponseToMessage,
-} from "../../lib/messageHandlers";
-import logger from "../../modules/Logger";
+} from "../../lib/messageHandlers.js";
+import logger from "../../modules/Logger.js";
+import { readFileSync } from 'fs';
+import { resolve } from "path";
 
 const config: CommandConfig = {
     name: "reload",
@@ -45,7 +47,9 @@ export default {
                 }
             } else if (["radiostations", "rstations", "radio"].includes(args[0].toLowerCase())) {
                 try {
-                    client.bahamut.musicHandler.radioStations = require("../../../assets/radio_stations.json");
+                    client.bahamut.musicHandler.radioStations = JSON.parse(
+                        readFileSync(resolve("assets/radio_stations.json"), "utf-8")
+                    );
 
                     logger.log(client.shardId, "Radio stations have been reloaded!");
                     return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, "Radio stations have been reloaded!");
@@ -54,7 +58,9 @@ export default {
                 }
             } else if (["musicfilters", "filters"].includes(args[0].toLowerCase())) {
                 try {
-                    client.bahamut.musicHandler.filters = require("../../../assets/music_filters.json");
+                    client.bahamut.musicHandler.radioStations = JSON.parse(
+                        readFileSync(resolve("assets/music_filters.json"), "utf-8")
+                    );
 
                     logger.log(client.shardId, "Music filters have been reloaded!");
                     return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, "Music filters have been reloaded!");

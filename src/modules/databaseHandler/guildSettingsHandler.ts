@@ -1,10 +1,10 @@
-import BahamutDBHandler, { DBGuildSettings } from "../BahamutDBHandler";
-import { GuildSettings } from "../../../typings";
+import BahamutDBHandler, { DBGuildSettings } from "../BahamutDBHandler.js";
+import { GuildSettings } from "../../../typings.js";
 import Discord from "discord.js";
-import { isInt, isJson } from "../../lib/validateFunctions";
-import { parseBool } from "../../lib/parseFunctions";
-import { getGuildDetails, getGuildSettings, getUserGuilds } from "../../lib/getFunctions";
-import { setGuildOptions } from "../../lib/setFunctions";
+import { isInt, isJson } from "../../lib/validateFunctions.js";
+import { parseBool } from "../../lib/parseFunctions.js";
+import { getGuildDetails, getGuildSettings, getUserGuilds } from "../../lib/getFunctions.js";
+import { setGuildOptions } from "../../lib/setFunctions.js";
 
 export default class GuildSettingsHandler {
     // DB Handler instance

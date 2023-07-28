@@ -1,14 +1,14 @@
 import Discord from "discord.js";
-import { CommandConfig } from "../../../typings";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType } from "wokcommands";
-import { randomIntBetween } from "../../lib/toolFunctions";
-import { resolveUser } from "../../lib/resolveFunctions";
+import { randomIntBetween } from "../../lib/toolFunctions.js";
+import { resolveUser } from "../../lib/resolveFunctions.js";
 import {
     createMissingParamsErrorResponse,
     handleErrorResponseToMessage,
     handleResponseToMessage,
-} from "../../lib/messageHandlers";
-import BahamutClient from "../../modules/BahamutClient";
+} from "../../lib/messageHandlers.js";
+import BahamutClient from "../../modules/BahamutClient.js";
 
 const config: CommandConfig = {
     name: "rate",

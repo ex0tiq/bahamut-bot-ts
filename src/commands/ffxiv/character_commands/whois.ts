@@ -1,16 +1,16 @@
-import { CommandConfig } from "../../../../typings";
+import { CommandConfig } from "../../../../typings.js";
 import { CommandType, CooldownTypes } from "wokcommands";
-import BahamutClient from "../../../modules/BahamutClient";
+import BahamutClient from "../../../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { resolveUser } from "../../../lib/resolveFunctions";
-import { getGuildSettings } from "../../../lib/getFunctions";
+import { resolveUser } from "../../../lib/resolveFunctions.js";
+import { getGuildSettings } from "../../../lib/getFunctions.js";
 import {
     createMissingParamsErrorResponse,
     handleErrorResponseToMessage,
     handleResponseToMessage,
-} from "../../../lib/messageHandlers";
-// Non ES imports
-const XIVAPI = require("@xivapi/js");
+} from "../../../lib/messageHandlers.js";
+// @ts-ignore
+import XIVAPI from "@xivapi/js";
 
 const config: CommandConfig = {
     name: "whois",

@@ -3,12 +3,12 @@ import {
     handleErrorResponseToMessage,
     handleResponseToMessage,
     handleSuccessResponseToMessage,
-} from "../lib/messageHandlers";
+} from "../lib/messageHandlers.js";
 import Discord from "discord.js";
-import BahamutClient from "../modules/BahamutClient";
-import { getGuildSettings } from "../lib/getFunctions";
+import BahamutClient from "../modules/BahamutClient.js";
+import { getGuildSettings } from "../lib/getFunctions.js";
 import { CommandType, CooldownTypes } from "wokcommands";
-import { isUserAdminOfGuild } from "../lib/checkFunctions";
+import { isUserAdminOfGuild } from "../lib/checkFunctions.js";
 
 const config = {
     name: "prefix",

@@ -1,5 +1,5 @@
 import Discord from "discord.js";
-import BahamutClient from "../../modules/BahamutClient";
+import BahamutClient from "../../modules/BahamutClient.js";
 
 export default async (oldMember: Discord.GuildMember, newMember: Discord.GuildMember, client: BahamutClient) => {
     // Call guildMember update function

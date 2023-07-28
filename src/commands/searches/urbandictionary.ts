@@ -1,12 +1,12 @@
-import { CommandConfig } from "../../../typings";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType, CooldownTypes } from "wokcommands";
-import BahamutClient from "../../modules/BahamutClient";
+import BahamutClient from "../../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { getGuildSettings } from "../../lib/getFunctions";
+import { getGuildSettings } from "../../lib/getFunctions.js";
 import {
     handleErrorResponseToMessage,
     handleResponseToMessage,
-} from "../../lib/messageHandlers";
+} from "../../lib/messageHandlers.js";
 import axios from "axios";
 
 const trim = (str: string, max: number) => ((str.length > max) ? `${str.slice(0, max - 3)}...` : str);

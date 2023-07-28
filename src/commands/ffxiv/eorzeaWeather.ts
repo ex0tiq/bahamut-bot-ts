@@ -1,12 +1,12 @@
-import { CommandConfig } from "../../../typings";
+import { CommandConfig } from "../../../typings.js";
 import Discord from "discord.js";
-import emoji from "node-emoji";
+import * as emoji from "node-emoji";
 import EorzeaWeather from "eorzea-weather";
 import { CommandType } from "wokcommands";
-import { toProperCase } from "../../lib/toolFunctions";
-import { handleErrorResponseToMessage, handleResponseToMessage } from "../../lib/messageHandlers";
-import { getGuildSettings } from "../../lib/getFunctions";
-import BahamutClient from "../../modules/BahamutClient";
+import { toProperCase } from "../../lib/toolFunctions.js";
+import { handleErrorResponseToMessage, handleResponseToMessage } from "../../lib/messageHandlers.js";
+import { getGuildSettings } from "../../lib/getFunctions.js";
+import BahamutClient from "../../modules/BahamutClient.js";
 import { DateTime } from "luxon";
 
 type ObjectKey = keyof typeof EorzeaWeather;
@@ -17,6 +17,7 @@ const convertZoneToString = (zone: string | null) => {
 };
 const convertStringToZone = (zoneString: string, returnZoneString = false): string | null => {
     const zone = "ZONE_" + zoneString.replace(/ /g, "_").toUpperCase();
+    // @ts-ignore
     return (!returnZoneString ? EorzeaWeather[zone as ObjectKey] as string || null : zone);
 };
 
@@ -89,7 +90,7 @@ export default {
         }
 
         try {
-            const weather = [{ weather: EorzeaWeather.getWeather(zone, curDate.toJSDate()), date: curDate }];
+            const weather = [{ weather: EorzeaWeather.default.getWeather(zone, curDate.toJSDate()), date: curDate }];
 
             for (let i = 0; i < 12600; i += 5) {
                 if (weather.length > 5) {
@@ -98,7 +99,7 @@ export default {
 
                 const t = curDate.setZone(settings.timezone || "Europe/Berlin").plus({ seconds: i });
                 const w = {
-                    weather: EorzeaWeather.getWeather(zone, t.toJSDate()),
+                    weather: EorzeaWeather.default.getWeather(zone, t.toJSDate()),
                     date: t,
                 };
 

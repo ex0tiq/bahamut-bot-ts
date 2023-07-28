@@ -1,10 +1,10 @@
-import { fileIsVideo } from "../../lib/validateFunctions";
+import { fileIsVideo } from "../../lib/validateFunctions.js";
 import axios from "axios";
-import { CommandConfig } from "../../../typings";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType } from "wokcommands";
-import BahamutClient from "../../modules/BahamutClient";
+import BahamutClient from "../../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { handleErrorResponseToMessage, handleResponseToMessage } from "../../lib/messageHandlers";
+import { handleErrorResponseToMessage, handleResponseToMessage } from "../../lib/messageHandlers.js";
 
 const config: CommandConfig = {
     name: "dog",

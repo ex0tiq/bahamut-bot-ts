@@ -1,15 +1,15 @@
-import { CommandConfig } from "../../../typings";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType } from "wokcommands";
-import emoji from "node-emoji";
-import BahamutClient from "../../modules/BahamutClient";
+import * as emoji from "node-emoji";
+import BahamutClient from "../../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { getGuildSettings } from "../../lib/getFunctions";
-import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
+import { getGuildSettings } from "../../lib/getFunctions.js";
+import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker.js";
 import {
     handleErrorResponseToMessage,
     handleResponseToMessage,
     handleSuccessResponseToMessage,
-} from "../../lib/messageHandlers";
+} from "../../lib/messageHandlers.js";
 
 const config: CommandConfig = {
     name: "skip",

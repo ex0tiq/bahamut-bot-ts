@@ -1,19 +1,20 @@
-import { CommandConfig } from "../../../typings";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType, CooldownTypes } from "wokcommands";
-import anilist from "anilist-node";
-import { isInt } from "../../lib/validateFunctions";
+import { default as anilist } from "anilist-node";
+import { isInt } from "../../lib/validateFunctions.js";
 import Discord from "discord.js";
-import BahamutClient from "../../modules/BahamutClient";
-import { getGuildSettings } from "../../lib/getFunctions";
-import { toProperCase } from "../../lib/toolFunctions";
+import BahamutClient from "../../modules/BahamutClient.js";
+import { getGuildSettings } from "../../lib/getFunctions.js";
+import { toProperCase } from "../../lib/toolFunctions.js";
 import {
     createErrorResponse, createMissingParamsErrorResponse,
     createSuccessResponse,
     handleErrorResponseToMessage,
     handleResponseToChannel,
     handleResponseToMessage,
-} from "../../lib/messageHandlers";
+} from "../../lib/messageHandlers.js";
 
+// @ts-ignore
 const Anilist = new anilist();
 
 const config: CommandConfig = {
@@ -84,7 +85,7 @@ export default {
                         embed.addFields({ name: "NSFW", value: ((mangaResult.isAdult) ? "Yes" : "No"), inline: true });
                         embed.addFields({ name: "Status", value: toProperCase(mangaResult.status) });
                         embed.addFields({ name: "Genres", value: mangaResult.genres.join(", "), inline: true });
-                        embed.addFields({ name: "Tags", value: mangaResult.tags.map((elem) => elem.name).join(", "), inline: true });
+                        embed.addFields({ name: "Tags", value: mangaResult.tags.map((elem: { name: any; }) => elem.name).join(", "), inline: true });
 
                         // Make this reply deferred
                         if (interaction) {
@@ -192,7 +193,7 @@ export default {
                             embed.addFields({ name: "NSFW", value: ((mangaResult.isAdult) ? "Yes" : "No"), inline: true });
                             embed.addFields({ name: "Status", value: toProperCase(mangaResult.status) });
                             embed.addFields({ name: "Genres", value: mangaResult.genres.join(", "), inline: true });
-                            embed.addFields({ name: "Tags", value: mangaResult.tags.map((elem) => elem.name).join(", "), inline: true });
+                            embed.addFields({ name: "Tags", value: mangaResult.tags.map((elem: { name: any; }) => elem.name).join(", "), inline: true });
 
                             await handleResponseToChannel(client, channel, { embeds: [embed] });
 

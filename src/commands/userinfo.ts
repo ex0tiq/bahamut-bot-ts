@@ -1,16 +1,16 @@
-import { numberWithCommas } from "../lib/toolFunctions";
-import { resolveUser } from "../lib/resolveFunctions";
+import { numberWithCommas } from "../lib/toolFunctions.js";
+import { resolveUser } from "../lib/resolveFunctions.js";
 import { DateTime } from "luxon";
 import Discord from "discord.js";
-import { CommandConfig } from "../../typings";
+import { CommandConfig } from "../../typings.js";
 import { CommandType, CooldownTypes } from "wokcommands";
-import BahamutClient from "../modules/BahamutClient";
+import BahamutClient from "../modules/BahamutClient.js";
 import {
     createMissingParamsErrorResponse,
     handleErrorResponseToMessage,
     handleResponseToMessage,
-} from "../lib/messageHandlers";
-import { getGuildSettings } from "../lib/getFunctions";
+} from "../lib/messageHandlers.js";
+import { getGuildSettings } from "../lib/getFunctions.js";
 
 const config: CommandConfig = {
     name: "userinfo",

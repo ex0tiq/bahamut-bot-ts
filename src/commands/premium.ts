@@ -1,14 +1,14 @@
 import { CommandType, CooldownTypes } from "wokcommands";
-import BahamutClient from "../modules/BahamutClient";
+import BahamutClient from "../modules/BahamutClient.js";
 import Discord from "discord.js";
 import {
     createMissingParamsErrorResponse,
     createSuccessResponse,
     handleResponseToMessage,
-} from "../lib/messageHandlers";
-import { getGuildSettings } from "../lib/getFunctions";
-import { resolveUser } from "../lib/resolveFunctions";
-import { CommandConfig } from "../../typings";
+} from "../lib/messageHandlers.js";
+import { getGuildSettings } from "../lib/getFunctions.js";
+import { resolveUser } from "../lib/resolveFunctions.js";
+import { CommandConfig } from "../../typings.js";
 
 const config: CommandConfig = {
     name: "premium",

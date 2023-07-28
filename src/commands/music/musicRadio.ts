@@ -1,15 +1,15 @@
-import { CommandConfig } from "../../../typings";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType } from "wokcommands";
-import emoji from "node-emoji";
-import Discord from "discord.js";
-import BahamutClient from "../../modules/BahamutClient";
-import { getGuildSettings } from "../../lib/getFunctions";
+import * as emoji from "node-emoji";
+import Discord, { ChannelType } from "discord.js";
+import BahamutClient from "../../modules/BahamutClient.js";
+import { getGuildSettings } from "../../lib/getFunctions.js";
 import {
     createMissingParamsErrorResponse,
     handleErrorResponseToMessage,
     handleResponseToMessage,
-} from "../../lib/messageHandlers";
-import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
+} from "../../lib/messageHandlers.js";
+import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker.js";
 
 const config: CommandConfig = {
     name: "radio",
@@ -128,6 +128,12 @@ export default {
             await player.play();
         } else {
             await player.stop();
+        }
+
+        // Check if stage channel
+        if (channel.guild.members.me?.voice.channel?.type === ChannelType.GuildStageVoice) {
+            const voice = await channel.guild.members.me?.voice.setSuppressed(false);
+            if (voice.suppress) channel.guild.members.me?.voice.setRequestToSpeak(true);
         }
 
         const embed = await client.bahamut.musicHandler.getTrackStartEmbed(player, res.tracks[0], member);

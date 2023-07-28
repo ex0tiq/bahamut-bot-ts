@@ -1,7 +1,8 @@
 import Discord from "discord.js";
-import { Bahamut } from "../../bahamut";
-import { GuildSettings } from "../../../typings";
+import { Bahamut } from "../../bahamut.js";
+import { GuildSettings } from "../../../typings.js";
 import { resolve } from "path";
+import { readFileSync } from 'fs';
 
 const letterEmojisMap: { [key: string]: string } = {
     "🅰️": "A", "🇦": "A", "🅱️": "B", "🇧": "B", "🇨": "C", "🇩": "D", "🇪": "E",
@@ -37,10 +38,14 @@ export default class HangmanGame {
         this._member = member;
         this._players = [];
 
-        this._config.words = require(resolve(`assets/games/hangman/words/${this._guildSettings.language}.json`));
+        this._config.words = JSON.parse(
+            readFileSync(resolve(`assets/games/hangman/words/${this._guildSettings.language}.json`), "utf-8")
+        );
         this._config.color = this._bahamut.config.primary_message_color;
 
-        this._lang = require(resolve(`assets/games/hangman/langs/${this._guildSettings.language}.json`));
+        this._lang = JSON.parse(
+            readFileSync(resolve(`assets/games/hangman/langs/${this._guildSettings.language}.json`), "utf-8")
+        );
     }
 
     newGame() {

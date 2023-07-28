@@ -1,6 +1,6 @@
-import BahamutClient from "../../../../modules/BahamutClient";
+import BahamutClient from "../../../../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { getGuildSettings } from "../../../getFunctions";
+import { getGuildSettings } from "../../../getFunctions.js";
 
 /**
  * Add a level role to db

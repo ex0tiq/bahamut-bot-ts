@@ -1,9 +1,9 @@
-import { CommandConfig } from "../../../../typings";
+import { CommandConfig } from "../../../../typings.js";
 import { CommandType, CooldownTypes } from "wokcommands";
-import { resolveUser } from "../../../lib/resolveFunctions";
-import BahamutClient from "../../../modules/BahamutClient";
+import { resolveUser } from "../../../lib/resolveFunctions.js";
+import BahamutClient from "../../../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { handleErrorResponseToMessage, handleResponseToMessage } from "../../../lib/messageHandlers";
+import { handleErrorResponseToMessage, handleResponseToMessage } from "../../../lib/messageHandlers.js";
 
 const config: CommandConfig = {
     name: "cookieleaderboard",

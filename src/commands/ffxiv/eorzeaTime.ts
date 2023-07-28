@@ -1,12 +1,12 @@
-import { CommandConfig } from "../../../typings";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType } from "wokcommands";
-import emoji from "node-emoji";
+import * as emoji from "node-emoji";
 import EZTime from "eorzea-time";
-import BahamutClient from "../../modules/BahamutClient";
+import BahamutClient from "../../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { getGuildSettings } from "../../lib/getFunctions";
+import { getGuildSettings } from "../../lib/getFunctions.js";
 import { DateTime } from "luxon";
-import { handleResponseToMessage } from "../../lib/messageHandlers";
+import { handleResponseToMessage } from "../../lib/messageHandlers.js";
 
 const config: CommandConfig = {
     name: "eorzeatime",
@@ -26,7 +26,7 @@ export default {
         // Abort if module is disabled
         if (settings.disabled_categories.includes("ffxiv")) return;
 
-        const ezt = new EZTime(), time = DateTime.fromFormat(ezt.toString(), "HH:mm:ss");
+        const ezt = new EZTime.default(), time = DateTime.fromFormat(ezt.toString(), "HH:mm:ss");
         let timeString = "";
 
         if (settings.time_format_24h) timeString = time.toFormat("HH:mm:ss");

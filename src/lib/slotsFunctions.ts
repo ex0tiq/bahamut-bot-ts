@@ -1,5 +1,5 @@
-import { randomIntBetween } from "./toolFunctions";
-import BahamutClient from "../modules/BahamutClient";
+import { randomIntBetween } from "./toolFunctions.js";
+import BahamutClient from "../modules/BahamutClient.js";
 import Discord from "discord.js";
 
 /**
@@ -9,7 +9,7 @@ import Discord from "discord.js";
  * @param emojis
  * @param resultEmojis
  */
-const generateSlotsEmbed = (client: BahamutClient, emojis = [], resultEmojis = []) => {
+const generateSlotsEmbed = (client: BahamutClient, emojis: string[] = [], resultEmojis: string[] = []) => {
     const objEmojiAnim = [
         { "slots4_anim": "809832919538335854" },
         { "slots3_anim": "809832919471357982" },

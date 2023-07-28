@@ -1,4 +1,4 @@
-import BahamutDBHandler, { DBGuildUserStats } from "../BahamutDBHandler";
+import BahamutDBHandler, { DBGuildUserStats } from "../BahamutDBHandler.js";
 import Discord from "discord.js";
 import { Op, WhereOptions } from "sequelize";
 

@@ -1,17 +1,17 @@
-import emoji from "node-emoji";
+import * as emoji from "node-emoji";
 import { CommandType } from "wokcommands";
-import { formatDuration } from "../../lib/durationFunctions";
-import { encodeYoutubeURL } from "../../lib/toolFunctions";
-import BahamutClient from "../../modules/BahamutClient";
+import { formatDuration } from "../../lib/durationFunctions.js";
+import { encodeYoutubeURL } from "../../lib/toolFunctions.js";
+import BahamutClient from "../../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { getGuildSettings } from "../../lib/getFunctions";
+import { getGuildSettings } from "../../lib/getFunctions.js";
 import {
     handleErrorResponseToMessage, handleResponseToMessage,
-} from "../../lib/messageHandlers";
-import { CommandConfig, ExtendedTrack } from "../../../typings";
-import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
-// No ES import support
-const radio = require("node-internet-radio");
+} from "../../lib/messageHandlers.js";
+import { CommandConfig, ExtendedTrack } from "../../../typings.js";
+import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker.js";
+// @ts-ignore
+import radio from "node-internet-radio";
 
 
 const config: CommandConfig = {

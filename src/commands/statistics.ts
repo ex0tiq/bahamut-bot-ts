@@ -1,16 +1,17 @@
 import { DateTime } from "luxon";
 import humanize from "humanize-duration";
-import { numberWithCommas } from "../lib/toolFunctions";
+import { numberWithCommas } from "../lib/toolFunctions.js";
 import osu from "node-os-utils";
 import Discord from "discord.js";
-import { CommandConfig } from "../../typings";
+import { CommandConfig } from "../../typings.js";
 import { CommandType, CooldownTypes } from "wokcommands";
-import BahamutClient from "../modules/BahamutClient";
-import { createResponseToMessage, handleResponseToMessage } from "../lib/messageHandlers";
-import { getGuildSettings } from "../lib/getFunctions";
-
-// Non ES imports
-const cpu = require("cpu-stat");
+import BahamutClient from "../modules/BahamutClient.js";
+import { createResponseToMessage, handleResponseToMessage } from "../lib/messageHandlers.js";
+import { getGuildSettings } from "../lib/getFunctions.js";
+import { readFileSync } from 'fs';
+import { resolve } from "path";
+//@ts-ignore
+import cpu from "cpu-stat";
 
 const config: CommandConfig = {
     name: "statistics",
@@ -72,7 +73,9 @@ export default {
                 // @ts-ignore
             })), duration = humanize(DateTime.now().minus(client.uptime).diff(DateTime.now()).as("milliseconds"), { language: settings.language, round: true }),
             mem = await osu.mem.used();
-        const pack = require("../../package.json");
+        const pack = JSON.parse(
+            readFileSync(resolve("./package.json"), "utf-8")
+        );
 
         handleResponseToMessage(client, message || interaction, false, config.deferReply, {
             // eslint-disable-next-line no-useless-escape

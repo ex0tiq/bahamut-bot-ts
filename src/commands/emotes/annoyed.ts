@@ -1,15 +1,15 @@
-import { CommandConfig } from "../../../typings";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType } from "wokcommands";
-import { resolveUser } from "../../lib/resolveFunctions";
+import { resolveUser } from "../../lib/resolveFunctions.js";
 import {
     createMissingParamsErrorResponse,
     handleErrorResponseToMessage,
     handleResponseToMessage,
-} from "../../lib/messageHandlers";
-import BahamutClient from "../../modules/BahamutClient";
-import { randomIntBetween } from "../../lib/toolFunctions";
+} from "../../lib/messageHandlers.js";
+import BahamutClient from "../../modules/BahamutClient.js";
+import { randomIntBetween } from "../../lib/toolFunctions.js";
 import Discord from "discord.js";
-import lang from "../../lib/languageMessageHandlers";
+import lang from "../../lib/languageMessageHandlers.js";
 
 const config: CommandConfig = {
     name: "annoyed",

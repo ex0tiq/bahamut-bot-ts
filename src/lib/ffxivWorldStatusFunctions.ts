@@ -1,7 +1,6 @@
-import { FFXIVWorldData } from "../../typings";
+import { FFXIVWorldData } from "../../typings.js";
 import axios from "axios";
-// Non ES Imports
-const cheerio = require("cheerio");
+import { load } from "cheerio";
 
 const getStatus = async () => {
     const data: any = {};
@@ -10,7 +9,7 @@ const getStatus = async () => {
 
     if (!html) return null;
 
-    const $ = cheerio.load(html, {
+    const $ = load(html, {
         decodeEntities: false,
     });
 
@@ -23,7 +22,9 @@ const getStatus = async () => {
     /*
     * Regions (JP, NA, EU)
     */
+    // @ts-ignore
     regions.each(async (i: number, e: number) => {
+        // @ts-ignore
         const servers = $("li[class=\"world-dcgroup__item\"]", e);
         const serversData: { [key: string]: FFXIVWorldData[] } = {};
 
@@ -32,9 +33,11 @@ const getStatus = async () => {
         /*
         * Each World Server per Data Center
         */
+        // @ts-ignore
         servers.each((ii: number, el: number) => {
+            // @ts-ignore
             const serverName = $("h2[class=\"world-dcgroup__header\"]", el).first().text();
-
+            // @ts-ignore
             const worlds = $("div[class=\"world-list__item\"]", el);
             const worldsData: FFXIVWorldData[] = [];
 

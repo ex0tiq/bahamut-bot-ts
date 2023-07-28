@@ -1,7 +1,7 @@
-import BahamutClient from "../../modules/BahamutClient";
+import BahamutClient from "../../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { GuildSettings } from "../../../typings";
-import { getGuildSettings } from "../getFunctions";
+import { GuildSettings } from "../../../typings.js";
+import { getGuildSettings } from "../getFunctions.js";
 
 export default class RestrictedChannels {
     private client: BahamutClient;

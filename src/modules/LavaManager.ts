@@ -2,22 +2,24 @@ import { Manager, Track, SearchResult, Player } from "erela.js";
 import Spotify from "erela.js-spotify";
 import Deezer from "erela.js-deezer";
 import { Client } from "genius-lyrics";
-import emoji from "node-emoji";
+import * as emoji from 'node-emoji'
 import ytdl from "ytdl-core";
-import { randomIntBetween, toProperCase } from "../lib/toolFunctions";
+import { randomIntBetween, toProperCase } from "../lib/toolFunctions.js";
 import { DateTime } from "luxon";
 import Discord from "discord.js";
-import { Bahamut } from "../bahamut";
-import { ExtendedTrack, RadioStation } from "../../typings";
-import { getGuildSettings } from "../lib/getFunctions";
+import { Bahamut } from "../bahamut.js";
+import { ExtendedTrack, RadioStation } from "../../typings.js";
+import { getGuildSettings } from "../lib/getFunctions.js";
 import {
     createErrorResponse,
     createSuccessResponse,
     handleErrorResponseToChannel,
     handleResponseToChannel,
-} from "../lib/messageHandlers";
-import logger from "./Logger";
-import { isUserAdminOfGuild, isUserModOfGuild } from "../lib/checkFunctions";
+} from "../lib/messageHandlers.js";
+import logger from "./Logger.js";
+import { isUserAdminOfGuild, isUserModOfGuild } from "../lib/checkFunctions.js";
+import { readFileSync } from 'fs';
+import { resolve } from "path";
 
 export default class LavaManager {
     // Bahamut parent class
@@ -38,8 +40,12 @@ export default class LavaManager {
     
     constructor(bahamut: Bahamut) {
         this._bahamut = bahamut;
-        this._radioStations = require("../../assets/radio_stations.json");
-        this._filters = require("../../assets/music_filters.json");
+        this._radioStations = JSON.parse(
+            readFileSync(resolve("assets/radio_stations.json"), "utf-8")
+        );
+        this._filters = JSON.parse(
+            readFileSync(resolve("assets/music_filters.json"), "utf-8")
+        );
 
         this._geniusClient = new Client(this._bahamut.config.genius_token);
 

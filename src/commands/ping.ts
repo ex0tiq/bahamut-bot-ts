@@ -1,7 +1,7 @@
 import { CommandType, CooldownTypes } from "wokcommands";
 import Discord from "discord.js";
-import { handleResponseToMessage } from "../lib/messageHandlers";
-import BahamutClient from "../modules/BahamutClient";
+import { handleResponseToMessage } from "../lib/messageHandlers.js";
+import BahamutClient from "../modules/BahamutClient.js";
 
 const config = {
     name: "ping",

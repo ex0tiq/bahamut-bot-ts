@@ -1,14 +1,14 @@
-import { CommandConfig } from "../../../typings";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType } from "wokcommands";
 import Discord from "discord.js";
-import BahamutClient from "../../modules/BahamutClient";
-import { getGuildSettings } from "../../lib/getFunctions";
-import { isUserModOfGuild } from "../../lib/checkFunctions";
+import BahamutClient from "../../modules/BahamutClient.js";
+import { getGuildSettings } from "../../lib/getFunctions.js";
+import { isUserModOfGuild } from "../../lib/checkFunctions.js";
 import {
     handleErrorResponseToMessage,
     handleSuccessResponseToMessage,
-} from "../../lib/messageHandlers";
-import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker";
+} from "../../lib/messageHandlers.js";
+import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker.js";
 
 const config: CommandConfig = {
     name: "slowmode",

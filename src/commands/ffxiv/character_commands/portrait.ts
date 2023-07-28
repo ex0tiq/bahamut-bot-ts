@@ -1,17 +1,17 @@
 import Discord from "discord.js";
-import { CommandConfig } from "../../../../typings";
+import { CommandConfig } from "../../../../typings.js";
 import { CommandType, CooldownTypes } from "wokcommands";
-import BahamutClient from "../../../modules/BahamutClient";
-import { getGuildSettings } from "../../../lib/getFunctions";
+import BahamutClient from "../../../modules/BahamutClient.js";
+import { getGuildSettings } from "../../../lib/getFunctions.js";
 import {
     createMissingParamsErrorResponse,
     handleErrorResponseToMessage,
     handleResponseToMessage,
-} from "../../../lib/messageHandlers";
-import { createPortraitImage } from "../../../lib/canvasFunctions";
-import { resolveUser } from "../../../lib/resolveFunctions";
-// Non ES imports
-const XIVAPI = require("@xivapi/js");
+} from "../../../lib/messageHandlers.js";
+import { createPortraitImage } from "../../../lib/canvasFunctions.js";
+import { resolveUser } from "../../../lib/resolveFunctions.js";
+// @ts-ignore
+import XIVAPI from "@xivapi/js";
 
 const config: CommandConfig = {
     name: "portrait",

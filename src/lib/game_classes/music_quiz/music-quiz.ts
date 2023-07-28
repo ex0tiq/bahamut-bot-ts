@@ -3,27 +3,26 @@ import {
     MessageCollector,
     TextChannel,
     Guild,
-    GuildMember, CommandInteraction, EmbedBuilder, VoiceBasedChannel, GuildTextBasedChannel,
+    GuildMember, ChatInputCommandInteraction, EmbedBuilder, VoiceBasedChannel, GuildTextBasedChannel,
 } from "discord.js";
-import logger from "../../../modules/Logger";
-import Spotify from "./spotify";
-import { QuizArgs } from "./types/quiz-args";
+import logger from "../../../modules/Logger.js";
+import Spotify from "./spotify.js";
+import { QuizArgs } from "./types/quiz-args.js";
 import { UnresolvedTrack } from "erela.js";
 import latinize from "latinize";
 // import { searchSong, getSong } from "genius-lyrics-api";
 
 import { Player } from "erela.js";
-import BahamutClient from "../../../modules/BahamutClient";
+import BahamutClient from "../../../modules/BahamutClient.js";
 import {
     createErrorResponse,
     handleErrorResponseToMessage,
     handleResponseToMessage,
-} from "../../messageHandlers";
-import { resolveUser } from "../../resolveFunctions";
-
-// Non ES imports
-const Genius = require("genius-lyrics");
-const similarText = require("locutus/php/strings/similar_text");
+} from "../../messageHandlers.js";
+import { resolveUser } from "../../resolveFunctions.js";
+import Genius from "genius-lyrics";
+// @ts-ignore
+import similarText from "locutus/php/strings/similar_text.js";
 
 let stopCommand = "stop";
 let skipCommand = "skip";
@@ -35,7 +34,7 @@ export class MusicQuiz {
     guild: Guild;
     textChannel: GuildTextBasedChannel;
     voiceChannel: VoiceBasedChannel;
-    message: Message | CommandInteraction;
+    message: Message | ChatInputCommandInteraction;
     member: GuildMember;
     messageCollector: MessageCollector | undefined;
     arguments: QuizArgs;
@@ -56,7 +55,7 @@ export class MusicQuiz {
 
     private _firstPlay: boolean = true;
 
-    constructor(client: BahamutClient, message: Message | CommandInteraction, channel: TextChannel, member: GuildMember, args: QuizArgs, settings: any) {
+    constructor(client: BahamutClient, message: Message | ChatInputCommandInteraction, channel: TextChannel, member: GuildMember, args: QuizArgs, settings: any) {
         this.guild = message.guild!;
         this.message = message;
         this.textChannel = channel;

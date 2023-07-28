@@ -1,13 +1,13 @@
 import Discord from "discord.js";
-import { CommandConfig } from "../../../typings";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType } from "wokcommands";
-import emoji from "node-emoji";
-import BahamutClient from "../../modules/BahamutClient";
+import * as emoji from "node-emoji";
+import BahamutClient from "../../modules/BahamutClient.js";
 import {
     createMissingParamsErrorResponse,
     handleErrorResponseToMessage,
     handleResponseToMessage,
-} from "../../lib/messageHandlers";
+} from "../../lib/messageHandlers.js";
 
 const config: CommandConfig = {
     name: "cat",

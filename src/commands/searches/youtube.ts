@@ -1,10 +1,11 @@
-import { CommandConfig } from "../../../typings";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType, CooldownTypes } from "wokcommands";
-import YouTube from "youtube-sr";
+// @ts-ignore
+import * as YouTube from "youtube-sr";
 import Discord from "discord.js";
-import BahamutClient from "../../modules/BahamutClient";
-import { getGuildSettings } from "../../lib/getFunctions";
-import { createErrorResponse, handleErrorResponseToMessage, handleResponseToMessage } from "../../lib/messageHandlers";
+import BahamutClient from "../../modules/BahamutClient.js";
+import { getGuildSettings } from "../../lib/getFunctions.js";
+import { createErrorResponse, handleErrorResponseToMessage, handleResponseToMessage } from "../../lib/messageHandlers.js";
 
 const config: CommandConfig = {
     name: "youtube",

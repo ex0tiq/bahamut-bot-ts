@@ -1,4 +1,4 @@
-import BahamutDBHandler, { DBGuildCharacters } from "../BahamutDBHandler";
+import BahamutDBHandler, { DBGuildCharacters } from "../BahamutDBHandler.js";
 import Discord from "discord.js";
 
 export default class FFXIVHandler {

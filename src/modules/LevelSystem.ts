@@ -1,20 +1,24 @@
-import { removeLevelRole } from "../lib/command_handler/config/tools/levelRolesFunctions";
-import { Bahamut } from "../bahamut";
-import { LevelConfig } from "../../typings";
+import { removeLevelRole } from "../lib/command_handler/config/tools/levelRolesFunctions.js";
+import { Bahamut } from "../bahamut.js";
+import { LevelConfig } from "../../typings.js";
 import Discord from "discord.js";
-import { getGuildSettings } from "../lib/getFunctions";
+import { getGuildSettings } from "../lib/getFunctions.js";
 import {
     handleErrorResponseToMessage,
     handleResponseToMessage,
     handleSuccessResponseToMessage,
-} from "../lib/messageHandlers";
-const { getXpForLevel } = require("../lib/levelFunctions");
+} from "../lib/messageHandlers.js";
+import { getXpForLevel } from "../lib/levelFunctions.js";
+import { readFileSync } from 'fs';
+import { resolve } from "path";
 
 export default class LevelSystem {
     // Bahamut instance
     private _bahamut: Bahamut;
     // Load level config
-    private _levelConfig: LevelConfig = require("../../assets/level_config.json");
+    private _levelConfig: LevelConfig = JSON.parse(
+        readFileSync(resolve("assets/level_config.json"), "utf-8")
+    );
     // Cache for all guild user level data
     private _guildUserLevelDataCache: {
         [guild: string]: {
@@ -94,7 +98,7 @@ export default class LevelSystem {
 
         // if new level is greater than previous level
         if (new_level > lvl) {
-            const level_xp = getXpForLevel(this._bahamut.client, (lvl + 1)), overflow_xp = new_xp - level_xp;
+            const level_xp = await getXpForLevel(this._bahamut.client, (lvl + 1)), overflow_xp = new_xp - level_xp;
             if (overflow_xp > 0) {
                 new_xp = overflow_xp;
             } else {

@@ -1,11 +1,11 @@
-import { CommandConfig } from "../../../typings";
+import { CommandConfig } from "../../../typings.js";
 import { CommandType } from "wokcommands";
 import { ApplicationCommandOptionType } from "discord-api-types/v10";
-import BahamutClient from "../../modules/BahamutClient";
+import BahamutClient from "../../modules/BahamutClient.js";
 import Discord from "discord.js";
-import { getGuildSettings } from "../../lib/getFunctions";
-import { resolveUser } from "../../lib/resolveFunctions";
-import { createMissingParamsErrorResponse, handleErrorResponseToMessage } from "../../lib/messageHandlers";
+import { getGuildSettings } from "../../lib/getFunctions.js";
+import { resolveUser } from "../../lib/resolveFunctions.js";
+import { createMissingParamsErrorResponse, handleErrorResponseToMessage } from "../../lib/messageHandlers.js";
 
 const config: CommandConfig = {
     name: "avatar",

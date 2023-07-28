@@ -1,6 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 import Discord from "discord.js";
-import BahamutClient from "../../modules/BahamutClient";
+import BahamutClient from "../../modules/BahamutClient.js";
 
 export default async ({
                           fullCommand,

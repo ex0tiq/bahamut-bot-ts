@@ -1,14 +1,16 @@
 import Discord from "discord.js";
 import { BotAPIConfig, BotConfig } from "../../typings.js";
 import UplinkAPIHandler from "./UplinkAPIHandler.js";
-import BotAPIHandler from "./BotAPIHandler";
-import ShardManagerFunctions from "./ShardManagerFunctions";
-import ShardManDBHandler from "./ShardManDBHandler";
+import BotAPIHandler from "./BotAPIHandler.js";
+import ShardManagerFunctions from "./ShardManagerFunctions.js";
+import ShardManDBHandler from "./ShardManDBHandler.js";
+import { readFileSync } from 'fs';
+import { resolve } from "path";
 
 export default class BahamutShardingManager extends Discord.ShardingManager {
     private _uplinkApiHandler: UplinkAPIHandler;
-    private _apiConfig: BotAPIConfig = require("../../config/api_config.json");
-    private _config: BotConfig = require("../../config/config.json");
+    private _apiConfig: BotAPIConfig;
+    private _config: BotConfig;
 
     private _startTime: number = Date.now();
     private _shardRady: boolean = false;
@@ -21,6 +23,15 @@ export default class BahamutShardingManager extends Discord.ShardingManager {
         super(file, options);
 
         this._uplinkApiHandler = uplinkApiHandler;
+
+        this._apiConfig = JSON.parse(
+            readFileSync(resolve("config/api_config.json"), "utf-8")
+        );
+
+        this._config = JSON.parse(
+            readFileSync(resolve("config/config.json"), "utf-8")
+        );
+
         this._fn = new ShardManagerFunctions(this);
     }
 
@@ -68,5 +79,9 @@ export default class BahamutShardingManager extends Discord.ShardingManager {
     }
     public get fn() {
         return this._fn;
+    }
+
+    private async loadConfigs() {
+        
     }
 }
