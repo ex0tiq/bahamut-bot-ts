@@ -63,13 +63,15 @@ export default {
                     try {
                         const aniResult = await Anilist.media.anime(anim.media[0].id),
                             embed = new Discord.EmbedBuilder()
-                            .setTitle(`${aniResult.title.userPreferred} (${aniResult.startDate.year} - ${(aniResult.status === "RELEASING") ? "" : aniResult.endDate.year})`)
-                            .setThumbnail((aniResult.coverImage.small) ? aniResult.coverImage.small : aniResult.coverImage.medium)
-                            .setDescription(aniResult.description.replace(/<br>/g, "\n").replace(/\n\n/g, "\n").replace(/(<([^>]+)>)/gi, "") + ((aniResult.trailer) ? `\n\n**[Trailer](${aniResult.trailer})**` : ""))
-                            .setURL(aniResult.siteUrl)
-                            .setFooter({ text: "Powered by Anilist.co" });
+                                .setTitle(`${aniResult.title.userPreferred} (${aniResult.startDate.year} - ${(aniResult.status === "RELEASING") ? "" : aniResult.endDate.year})`)
+                                .setThumbnail((aniResult.coverImage.small) ? aniResult.coverImage.small : aniResult.coverImage.medium)
+                                .setURL(aniResult.siteUrl)
+                                .setFooter({ text: "Powered by Anilist.co" }),
+                            tags = aniResult.tags.map((elem: { name: any; }) => elem.name);
 
-
+                        if (aniResult.description) {
+                            embed.setDescription(aniResult.description.replace(/<br>/g, "\n").replace(/\n\n/g, "\n").replace(/(<([^>]+)>)/gi, "") + ((aniResult.trailer) ? `\n\n**[Trailer](${aniResult.trailer})**` : ""));
+                        }
                         if (aniResult.title.romaji) {
                             embed.addFields({ name: "Japanese name", value: aniResult.title.romaji });
                         }
@@ -85,7 +87,7 @@ export default {
                         embed.addFields({ name: "NSFW", value: ((aniResult.isAdult) ? "Yes" : "No"), inline: true });
                         embed.addFields({ name: "Status", value: toProperCase(aniResult.status) });
                         embed.addFields({ name: "Genres", value: aniResult.genres.join(", "), inline: true });
-                        embed.addFields({ name: "Tags", value: aniResult.tags.map((elem: { name: any; }) => elem.name).join(", "), inline: true });
+                        embed.addFields({ name: "Tags", value: (tags.length > 0 ? tags.join(", ") : "-"), inline: true });
 
                         if (aniResult.bannerImage) {
                             embed.setImage(aniResult.bannerImage);
@@ -116,7 +118,7 @@ export default {
 
                     const row = new Discord.ActionRowBuilder()
                         .addComponents(
-                            new Discord.SelectMenuBuilder()
+                            new Discord.StringSelectMenuBuilder()
                                 .setCustomId("animeSearchSelect")
                                 .setPlaceholder("Nothing selected...")
                                 .addOptions([{ label: "Cancel", value: "cancel" }].concat([...Array(anim.media.length > 10 ? 10 : anim.media.length).keys()].map(e => {
@@ -179,10 +181,13 @@ export default {
                                 embed = new Discord.EmbedBuilder()
                                     .setTitle(`${aniResult.title.userPreferred} (${aniResult.startDate.year} - ${(aniResult.status === "RELEASING") ? "" : aniResult.endDate.year})`)
                                     .setThumbnail(aniResult.coverImage.small ? aniResult.coverImage.small : aniResult.coverImage.medium)
-                                    .setDescription(aniResult.description.replace(/<br>/g, "\n").replace(/\n\n/g, "\n").replace(/(<([^>]+)>)/gi, "") + ((aniResult.trailer) ? `\n\n**[Trailer](${aniResult.trailer})**` : ""))
                                     .setURL(aniResult.siteUrl)
-                                    .setFooter({ text: "Powered by Anilist.co" });
+                                    .setFooter({ text: "Powered by Anilist.co" }),
+                                tags = aniResult.tags.map((elem: { name: any; }) => elem.name);
 
+                            if (aniResult.description) {
+                                embed.setDescription(aniResult.description.replace(/<br>/g, "\n").replace(/\n\n/g, "\n").replace(/(<([^>]+)>)/gi, "") + ((aniResult.trailer) ? `\n\n**[Trailer](${aniResult.trailer})**` : ""));
+                            }
                             if (aniResult.title.romaji) {
                                 embed.addFields({ name: "Japanese name", value: aniResult.title.romaji });
                             }
@@ -198,7 +203,7 @@ export default {
                             embed.addFields({ name: "NSFW", value: ((aniResult.isAdult) ? "Yes" : "No"), inline: true });
                             embed.addFields({ name: "Status", value: toProperCase(aniResult.status) });
                             embed.addFields({ name: "Genres", value: aniResult.genres.join(", "), inline: true });
-                            embed.addFields({ name: "Tags", value: aniResult.tags.map((elem: { name: any; }) => elem.name).join(", "), inline: true });
+                            embed.addFields({ name: "Tags", value: (tags.length > 0 ? tags.join(", ") : "-"), inline: true });
 
                             if (aniResult.bannerImage) {
                                 embed.setImage(aniResult.bannerImage);

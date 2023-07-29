@@ -6,7 +6,7 @@ import BahamutClient from "../modules/BahamutClient.js";
 const config = {
     name: "ping",
     aliases: [],
-    type: CommandType.LEGACY,
+    type: CommandType.BOTH,
     description: "It like... Pings. Then Pongs. And it's not Ping Pong.",
     category: "Miscellaneous",
     cooldowns: {
@@ -26,7 +26,8 @@ export default {
             message,
             false,
             config.deferReply,
-            { content: `Pong! Latency is ${Date.now() - message.createdTimestamp}ms. API Latency is ${Math.round(client.ws.ping)}ms`,
+            { 
+                content: `Pong! Latency is ${Date.now() - message.createdTimestamp}ms. API Latency is ${Math.round(client.ws.ping)}ms`,
             }
         );
     },

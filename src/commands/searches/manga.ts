@@ -62,15 +62,17 @@ export default {
 
                 if (manga.media.length == 1) {
                     try {
-                        const mangaResult = await Anilist.media.manga(manga.media[0].id);
+                        const mangaResult = await Anilist.media.manga(manga.media[0].id),
+                            embed = new Discord.EmbedBuilder()
+                                .setTitle(`${mangaResult.title.userPreferred} (${mangaResult.startDate.year} - ${(mangaResult.status === "RELEASING") ? "" : mangaResult.endDate.year})`)
+                                .setThumbnail(mangaResult.coverImage.small ? mangaResult.coverImage.small : mangaResult.coverImage.medium)
+                                .setURL(mangaResult.siteUrl)
+                                .setFooter({ text: "Powered by Anilist.co" }),
+                            tags = mangaResult.tags.map((elem: { name: any; }) => elem.name);
 
-                        const embed = new Discord.EmbedBuilder()
-                            .setTitle(`${mangaResult.title.userPreferred} (${mangaResult.startDate.year} - ${(mangaResult.status === "RELEASING") ? "" : mangaResult.endDate.year})`)
-                            .setThumbnail(mangaResult.coverImage.small ? mangaResult.coverImage.small : mangaResult.coverImage.medium)
-                            .setDescription(mangaResult.description.replace(/<br>/g, "\n").replace(/\n\n/g, "\n").replace(/(<([^>]+)>)/gi, ""))
-                            .setURL(mangaResult.siteUrl)
-                            .setFooter({ text: "Powered by Anilist.co" });
-
+                        if (mangaResult.description) {
+                            embed.setDescription(mangaResult.description.replace(/<br>/g, "\n").replace(/\n\n/g, "\n").replace(/(<([^>]+)>)/gi, ""));
+                        }
                         if (mangaResult.title.romaji) {
                             embed.addFields({ name: "Japanese name", value: mangaResult.title.romaji });
                         }
@@ -85,7 +87,7 @@ export default {
                         embed.addFields({ name: "NSFW", value: ((mangaResult.isAdult) ? "Yes" : "No"), inline: true });
                         embed.addFields({ name: "Status", value: toProperCase(mangaResult.status) });
                         embed.addFields({ name: "Genres", value: mangaResult.genres.join(", "), inline: true });
-                        embed.addFields({ name: "Tags", value: mangaResult.tags.map((elem: { name: any; }) => elem.name).join(", "), inline: true });
+                        embed.addFields({ name: "Tags", value: (tags.length > 0 ? tags.join(", ") : "-"), inline: true });
 
                         // Make this reply deferred
                         if (interaction) {
@@ -112,7 +114,7 @@ export default {
 
                     const row = new Discord.ActionRowBuilder()
                         .addComponents(
-                            new Discord.SelectMenuBuilder()
+                            new Discord.StringSelectMenuBuilder()
                                 .setCustomId("mangaSearchSelect")
                                 .setPlaceholder("Nothing selected...")
                                 .addOptions([{ label: "Cancel", value: "cancel" }].concat([...Array(manga.media.length > 10 ? 10 : manga.media.length).keys()].map(e => {
@@ -175,10 +177,13 @@ export default {
                                 embed = new Discord.EmbedBuilder()
                                     .setTitle(`${mangaResult.title.userPreferred} (${mangaResult.startDate.year} - ${(mangaResult.status === "RELEASING") ? "" : mangaResult.endDate.year})`)
                                     .setThumbnail(mangaResult.coverImage.small ? mangaResult.coverImage.small : mangaResult.coverImage.medium)
-                                    .setDescription(mangaResult.description.replace(/<br>/g, "\n").replace(/\n\n/g, "\n").replace(/(<([^>]+)>)/gi, ""))
                                     .setURL(mangaResult.siteUrl)
-                                    .setFooter({ text: "Powered by Anilist.co" });
-
+                                    .setFooter({ text: "Powered by Anilist.co" }),
+                                tags = mangaResult.tags.map((elem: { name: any; }) => elem.name);
+                            
+                            if (mangaResult.description) {
+                                embed.setDescription(mangaResult.description.replace(/<br>/g, "\n").replace(/\n\n/g, "\n").replace(/(<([^>]+)>)/gi, ""));
+                            }
                             if (mangaResult.title.romaji) {
                                 embed.addFields({ name: "Japanese name", value: mangaResult.title.romaji });
                             }
@@ -193,7 +198,7 @@ export default {
                             embed.addFields({ name: "NSFW", value: ((mangaResult.isAdult) ? "Yes" : "No"), inline: true });
                             embed.addFields({ name: "Status", value: toProperCase(mangaResult.status) });
                             embed.addFields({ name: "Genres", value: mangaResult.genres.join(", "), inline: true });
-                            embed.addFields({ name: "Tags", value: mangaResult.tags.map((elem: { name: any; }) => elem.name).join(", "), inline: true });
+                            embed.addFields({ name: "Tags", value: (tags.length > 0 ? tags.join(", ") : "-"), inline: true });
 
                             await handleResponseToChannel(client, channel, { embeds: [embed] });
 

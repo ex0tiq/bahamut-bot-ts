@@ -43,31 +43,74 @@ export default {
         const serverCreatedDateString = settings.time_format_24h ? serverCreatedDate.toFormat("dd LLL yyyy") : serverCreatedDate.toLocaleString(DateTime.DATE_MED),
             botJoinedDateString = settings.time_format_24h ? botJoinedDate.toFormat("dd LLL yyyy") : botJoinedDate.toLocaleString(DateTime.DATE_MED);
 
-        return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
-            embeds: [
-                new Discord.EmbedBuilder()
-                    .setAuthor({ name: `Server: ${channel.guild.name}`, iconURL: client.bahamut.config.message_icons.info })
-                    .setDescription(`Created on: \`${serverCreatedDateString} (${serverCreatedDate.toRelative()})\`.\nBot joined on: \`${botJoinedDateString} (${botJoinedDate.toRelative()})\`.`)
-                    .setThumbnail(channel.guild.iconURL())
-                    .setFields(
-                        // @ts-ignore
-                        { name: `<:crown:${client.bahamut.config.status_emojis.crown}> Owner`, value: channel.guild.members.cache.get(channel.guild.ownerId)?.toString(), inline: false },
-                        { name: `<:user:${client.bahamut.config.status_emojis.user}> Members`, value: numberWithCommas(channel.guild.memberCount), inline: true },
-                        { name: `<:stack:${client.bahamut.config.status_emojis.stack}> Shard`, value: `${client.shardId + 1}/${data.length}`, inline: true },
-                        // eslint-disable-next-line no-useless-escape
-                        { name: `<:heart:${client.bahamut.config.status_emojis.heart}> Premium`, value: `${settings.premium_user ? "\:white_check_mark: Yes" : "\:x: No"}`, inline: true },
-                        { name: `<:region:${client.bahamut.config.status_emojis.region}> Language`, value: (channel.guild.preferredLocale ?
-                                (ISO6391.getName(channel.guild.preferredLocale.split("-")[0]) ? ISO6391.getName(channel.guild.preferredLocale.split("-")[0]) : toProperCase(channel.guild.preferredLocale.toString())) :
-                                "N/A"), inline: true },
-                        { name: `<:console:${client.bahamut.config.status_emojis.console}> Commands`, value: (guildCommandCount ? numberWithCommas(guildCommandCount + 1) : "1"), inline: true },
-                        // eslint-disable-next-line no-useless-escape
-                        { name: "\:cookie: Cookies", value: (guildUserStats && guildUserStats.has("cookies") ? (guildUserStats.has("cookies") ? numberWithCommas(guildUserStats.get("cookies")?.val || 0) : "0") : "0"), inline: true },
-                        { name: `<:toolbox:${client.bahamut.config.status_emojis.toolbox}> Settings`, value: `Prefix: \`${settings.prefix}\``, inline: true },
-                        // eslint-disable-next-line no-useless-escape
-                        { name: "\:headphones: DJ", value: (settings.music_dj_role ? channel.guild.roles.resolve(settings.music_dj_role)?.toString() : "Not set"), inline: true },
-                        { name: `<:cancel:${client.bahamut.config.status_emojis.cancel}> Ignored Channels`, value: "NaN", inline: true },
-                    ),
-            ],
-        });
+        try {
+            return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
+                embeds: [
+                    new Discord.EmbedBuilder()
+                        .setAuthor({ name: `Server: ${channel.guild.name}`, iconURL: client.bahamut.config.message_icons.info })
+                        .setDescription(`Created on: \`${serverCreatedDateString} (${serverCreatedDate.toRelative()})\`.\nBot joined on: \`${botJoinedDateString} (${botJoinedDate.toRelative()})\`.`)
+                        .setThumbnail(channel.guild.iconURL())
+                        .setFields([
+                            { 
+                                name: `<:crown:${client.bahamut.config.status_emojis.crown}> Owner`, 
+                                value: channel.guild.members.cache.get(channel.guild.ownerId)?.toString() || "-", 
+                                inline: false 
+                            },
+                            { 
+                                name: `<:user:${client.bahamut.config.status_emojis.user}> Members`, 
+                                value: numberWithCommas(channel.guild.memberCount) || "0", 
+                                inline: true 
+                            },
+                            { 
+                                name: `<:stack:${client.bahamut.config.status_emojis.stack}> Shard`, 
+                                value: `${client.shardId + 1}/${data.length}` || "-", 
+                                inline: true 
+                            },
+                            // eslint-disable-next-line no-useless-escape
+                            { 
+                                name: `<:heart:${client.bahamut.config.status_emojis.heart}> Premium`, 
+                                value: `${settings.premium_user ? "\:white_check_mark: Yes" : "\:x: No"}` || "No", 
+                                inline: true 
+                            },
+                            { 
+                                name: `<:region:${client.bahamut.config.status_emojis.region}> Language`, 
+                                value: (channel.guild.preferredLocale ?
+                                    (ISO6391.getName(channel.guild.preferredLocale.split("-")[0]) ? ISO6391.getName(channel.guild.preferredLocale.split("-")[0]) : toProperCase(channel.guild.preferredLocale.toString())) :
+                                    "N/A") || "N/A", 
+                                    inline: true 
+                            },
+                            { 
+                                name: `<:console:${client.bahamut.config.status_emojis.console}> Commands`, 
+                                value: (guildCommandCount ? numberWithCommas(guildCommandCount + 1) : "1") || "1", 
+                                inline: true 
+                            },
+                            // eslint-disable-next-line no-useless-escape
+                            { 
+                                name: "\:cookie: Cookies", 
+                                value: (guildUserStats && guildUserStats.has("cookies") ? (guildUserStats.has("cookies") ? numberWithCommas(guildUserStats.get("cookies")?.val || 0) : "0") : "0") || "0", 
+                                inline: true 
+                            },
+                            { 
+                                name: `<:toolbox:${client.bahamut.config.status_emojis.toolbox}> Settings`, 
+                                value: `Prefix: \`${settings.prefix}\``, 
+                                inline: true 
+                            },
+                            // eslint-disable-next-line no-useless-escape
+                            { 
+                                name: "\:headphones: DJ", 
+                                value: (settings.music_dj_role ? channel.guild.roles.resolve(settings.music_dj_role)?.toString() : "Not set") || "Not set", 
+                                inline: true 
+                            },
+                            { 
+                                name: `<:cancel:${client.bahamut.config.status_emojis.cancel}> Ignored Channels`, 
+                                value: "NaN", 
+                                inline: true 
+                            },
+                        ]),
+                ],
+            });
+        } catch (ex) {
+            console.log(ex);
+        }
     },
 };

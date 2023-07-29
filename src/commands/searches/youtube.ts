@@ -1,7 +1,7 @@
 import { CommandConfig } from "../../../typings.js";
 import { CommandType, CooldownTypes } from "wokcommands";
 // @ts-ignore
-import * as YouTube from "youtube-sr";
+import YouTube from "youtube-sr";
 import Discord from "discord.js";
 import BahamutClient from "../../modules/BahamutClient.js";
 import { getGuildSettings } from "../../lib/getFunctions.js";

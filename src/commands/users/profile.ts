@@ -129,12 +129,13 @@ export default {
             profileCard.setRequiredXP(xpNeeded);
             profileCard.setUsername(target!.displayName);
             profileCard.setLevel(userData.level);
-            profileCard.setDiscriminator(target!.user.discriminator);
+            profileCard.setDiscriminator(target!.user.discriminator !== "0" ? target!.user.discriminator : target!.user.username);
             profileCard.setBackground("IMAGE", await fs.readFile(resolve("assets/img/cards/bot_card_background.jpg")));
 
-            msg.addFields({ name: "Level", value: `**${userData.level}** ${((userData.level === 150) ? "(Max)" : (`(${userData.xp}/${await getXpForLevel(client, userData.level + 1)} XP)`))}`, inline: true });
-            // @ts-ignore
-            msg.addFields({ name: "Title", value: (rank.name ? rank.name : "Not ranked"), inline: true });
+            msg.addFields([
+                { name: "Level", value: `**${userData.level}** ${((userData.level === 150) ? "(Max)" : (`(${userData.xp}/${await getXpForLevel(client, userData.level + 1)} XP)`))}`, inline: true },
+                { name: "Title", value: (rank.name ? rank.name : "Not ranked"), inline: true }
+            ]);
 
             if (rank.name && rank.level >= 0) {
                 profileCard.setRank(rank.level, rank.name);
@@ -161,9 +162,11 @@ export default {
             userJoinedDateString = settings.time_format_24h ? userJoinedDate.toFormat("dd LLL yyyy") : userJoinedDate.toLocaleString(DateTime.DATE_MED);
 
 
-        msg.addFields({ name: "Joined On", value: `${userJoinedDateString} (${userJoinedDate.toRelative()})`, inline: false });
-        msg.addFields({ name: "Created On", value: `${userCreatedDateString} (${userCreatedDate.toRelative()})`, inline: false });
+        msg.addFields([
+            { name: "Joined On", value: `${userJoinedDateString} (${userJoinedDate.toRelative()})`, inline: false },
+            { name: "Created On", value: `${userCreatedDateString} (${userCreatedDate.toRelative()})`, inline: false }
+        ]);
 
-        return handleResponseToMessage(client, message || interaction, false, config.deferReply, { ...sendOptions, embeds: [msg] });
+        handleResponseToMessage(client, message || interaction, false, config.deferReply, { ...sendOptions, embeds: [msg] });
     },
 };

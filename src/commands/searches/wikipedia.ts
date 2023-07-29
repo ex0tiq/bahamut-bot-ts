@@ -53,7 +53,7 @@ export default {
 
         try {
             if (args.length > 0) {
-                const results = (await wiki({
+                const results = await (await wiki({
                     apiUrl: `https://${settings.language}.wikipedia.org/w/api.php`,
                     // @ts-ignore
                 })).search(args.join(" "), 10);
@@ -61,7 +61,7 @@ export default {
 
                 if (results.results.length == 1) {
                     try {
-                        const wikiResults = (await wiki({
+                        const wikiResults = await (await wiki({
                             apiUrl: `https://${settings.language}.wikipedia.org/w/api.php`,
                             // @ts-ignore
                         })).page(results.results[0]);
@@ -104,7 +104,7 @@ export default {
 
                     const row = new Discord.ActionRowBuilder()
                         .addComponents(
-                            new Discord.SelectMenuBuilder()
+                            new Discord.StringSelectMenuBuilder()
                                 .setCustomId("wikipediaSearchSelect")
                                 .setPlaceholder("Nothing selected...")
                                 .addOptions([{ label: "Cancel", value: "cancel" }].concat([...Array(results.results.length > 10 ? 10 : results.results.length).keys()].map(e => {
@@ -163,7 +163,7 @@ export default {
                                 });
                             }
 
-                            const wikiResults = (await wiki({
+                            const wikiResults = await (await wiki({
                                 apiUrl: `https://${settings.language}.wikipedia.org/w/api.php`,
                                 // @ts-ignore
                             })).page(results.results[selectedId]);
@@ -211,7 +211,7 @@ export default {
                 return handleResponseToMessage(client, message || interaction, false, "ephemeral", createMissingParamsErrorResponse(client, config));
             }
         } catch (err) {
-            console.error("Error querying TMDb for tv show:", err);
+            console.error("Error querying Wikipedia for tv show:", err);
             return handleErrorResponseToMessage(client, message, false, "ephemeral", {
                 ...createErrorResponse(client, "An error occured while fetching Wikipedia data. Please try again later."),
                 components: [],

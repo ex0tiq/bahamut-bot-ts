@@ -67,10 +67,11 @@ export default {
                     try {
                         const movieResult = await tmdb.getMovie(results.results[0].id),
                             embed = new Discord.EmbedBuilder()
-                            .setTitle(`${results.name} (${DateTime.fromFormat(results.releaseDate, "yyyy-MM-dd").toFormat("yyyy")})`)
-                            .setDescription(results.overview.replace(/<br>/g, "\n").replace(/\n\n/g, "\n").replace(/(<([^>]+)>)/gi, ""))
-                            .setURL(`https://www.themoviedb.org/movie/${results.id}`)
-                            .setFooter({ text: "Powered by TMDb" });
+                                .setTitle(`${results.name} (${DateTime.fromFormat(results.releaseDate, "yyyy-MM-dd").toFormat("yyyy")})`)
+                                .setDescription(results.overview.replace(/<br>/g, "\n").replace(/\n\n/g, "\n").replace(/(<([^>]+)>)/gi, ""))
+                                .setURL(`https://www.themoviedb.org/movie/${results.id}`)
+                                .setFooter({ text: "Powered by TMDb" }),
+                            genres = movieResult.genres.map((elem: { name: any; }) => elem.name);
 
                         if (movieResult.posterPath) {
                             embed.setThumbnail(`${api_config.images.secureBaseUrl}w500${movieResult.posterPath}`);
@@ -84,7 +85,7 @@ export default {
                         embed.addFields({ name: "Release year", value: DateTime.fromFormat(movieResult.releaseDate, "yyyy-MM-dd").toFormat("yyyy"), inline: true });
                         embed.addFields({ name: "NSFW", value: ((movieResult.adult) ? "Yes" : "No"), inline: true });
                         embed.addFields({ name: "Status", value: toProperCase(movieResult.status) });
-                        embed.addFields({ name: "Genres", value: movieResult.genres.map((elem: { name: any; }) => elem.name).join(", "), inline: true });
+                        embed.addFields({ name: "Genres", value: (genres.length > 0 ? genres.join(", ") : "-"), inline: true });
 
                         if (movieResult.posterPath) {
                             embed.setImage(`${api_config.images.secureBaseUrl}w780${movieResult.backdropPath}`);
@@ -115,7 +116,7 @@ export default {
 
                     const row = new Discord.ActionRowBuilder()
                         .addComponents(
-                            new Discord.SelectMenuBuilder()
+                            new Discord.StringSelectMenuBuilder()
                                 .setCustomId("movieSearchSelect")
                                 .setPlaceholder("Nothing selected...")
                                 .addOptions([{ label: "Cancel", value: "cancel" }].concat([...Array(results.results.length > 10 ? 10 : results.results.length).keys()].map(e => {
@@ -179,7 +180,8 @@ export default {
                                     .setTitle(`${movieResult.title} (${DateTime.fromFormat(movieResult.releaseDate, "yyyy-MM-dd").toFormat("yyyy")})`)
                                     .setDescription(movieResult.overview.replace(/<br>/g, "\n").replace(/\n\n/g, "\n").replace(/(<([^>]+)>)/gi, ""))
                                     .setURL(`https://www.themoviedb.org/movie/${movieResult.id}`)
-                                    .setFooter({ text: "Powered by TMDb" });
+                                    .setFooter({ text: "Powered by TMDb" }),
+                                genres = movieResult.genres.map((elem: { name: any; }) => elem.name);
 
                             if (movieResult.posterPath) {
                                 embed.setThumbnail(`${api_config.images.secureBaseUrl}w500${movieResult.posterPath}`);
@@ -193,7 +195,7 @@ export default {
                             embed.addFields({ name: "Release year", value: DateTime.fromFormat(movieResult.releaseDate, "yyyy-MM-dd").toFormat("yyyy"), inline: true });
                             embed.addFields({ name: "NSFW", value: ((movieResult.adult) ? "Yes" : "No"), inline: true });
                             embed.addFields({ name: "Status", value: toProperCase(movieResult.status) });
-                            embed.addFields({ name: "Genres", value: movieResult.genres.map((elem: { name: any; }) => elem.name).join(", "), inline: true });
+                            embed.addFields({ name: "Genres", value: (genres.length > 0 ? genres.join(", ") : "-") , inline: true });
 
                             if (movieResult.posterPath) {
                                 embed.setImage(`${api_config.images.secureBaseUrl}w780${movieResult.backdropPath}`);

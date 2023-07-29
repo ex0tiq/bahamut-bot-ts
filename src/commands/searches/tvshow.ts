@@ -68,10 +68,11 @@ export default {
                     try {
                         const tvshowResult = await tmdb.get(`tv/${results.results[0].id}`),
                             embed = new Discord.EmbedBuilder()
-                                .setTitle(`${results.name} (${DateTime.fromFormat(results.firstAirDate, "yyyy-MM-dd").toFormat("yyyy")} - ${results.inProduction ? "" : DateTime.fromFormat(results.lastAirDate, "yyyy-MM-dd").toFormat("yyyy")})`)
-                                .setDescription(results.overview.replace(/<br>/g, "\n").replace(/\n\n/g, "\n").replace(/(<([^>]+)>)/gi, ""))
-                                .setURL(`https://www.themoviedb.org/tv/${results.id}`)
-                                .setFooter({ text: "Powered by TMDb" });
+                                .setTitle(`${tvshowResult.name} (${DateTime.fromFormat(tvshowResult.firstAirDate, "yyyy-MM-dd").toFormat("yyyy")} - ${tvshowResult.inProduction ? "" : DateTime.fromFormat(tvshowResult.lastAirDate, "yyyy-MM-dd").toFormat("yyyy")})`)
+                                .setDescription(tvshowResult.overview.replace(/<br>/g, "\n").replace(/\n\n/g, "\n").replace(/(<([^>]+)>)/gi, ""))
+                                .setURL(`https://www.themoviedb.org/tv/${tvshowResult.id}`)
+                                .setFooter({ text: "Powered by TMDb" }),
+                            genres = tvshowResult.genres.map((elem: { name: any; }) => elem.name);
 
                         if (tvshowResult.posterPath) {
                             embed.setThumbnail(`${api_config.images.secureBaseUrl}w500${tvshowResult.posterPath}`);
@@ -84,7 +85,7 @@ export default {
                         embed.addFields({ name: "Seasons", value: `${tvshowResult.numberOfSeasons}`, inline: true });
                         embed.addFields({ name: "Episodes", value: `${tvshowResult.numberOfEpisodes}`, inline: true });
                         embed.addFields({ name: "Status", value: toProperCase(tvshowResult.status) });
-                        embed.addFields({ name: "Genres", value: tvshowResult.genres.map((elem: { name: any; }) => elem.name).join(", "), inline: true });
+                        embed.addFields({ name: "Genres", value: (genres.length > 0 ? genres.join(", ") : "-"), inline: true });
 
                         if (tvshowResult.posterPath) {
                             embed.setImage(`${api_config.images.secureBaseUrl}w780${tvshowResult.backdropPath}`);
@@ -123,7 +124,7 @@ export default {
 
                     const row = new Discord.ActionRowBuilder()
                         .addComponents(
-                            new Discord.SelectMenuBuilder()
+                            new Discord.StringSelectMenuBuilder()
                                 .setCustomId("tvshowSearchSelect")
                                 .setPlaceholder("Nothing selected...")
                                 .addOptions([{ label: "Cancel", value: "cancel" }].concat([...Array(results.results.length > 10 ? 10 : results.results.length).keys()].map(e => {
@@ -184,10 +185,11 @@ export default {
 
                             const tvshowResult = await tmdb.get(`tv/${results.results[0].id}`),
                                 embed = new Discord.EmbedBuilder()
-                                    .setTitle(`${results.name} (${DateTime.fromFormat(results.firstAirDate, "yyyy-MM-dd").toFormat("yyyy")} - ${results.inProduction ? "" : DateTime.fromFormat(results.lastAirDate, "yyyy-MM-dd").toFormat("yyyy")})`)
-                                    .setDescription(results.overview.replace(/<br>/g, "\n").replace(/\n\n/g, "\n").replace(/(<([^>]+)>)/gi, ""))
-                                    .setURL(`https://www.themoviedb.org/tv/${results.id}`)
-                                    .setFooter({ text: "Powered by TMDb" });
+                                    .setTitle(`${tvshowResult.name} (${DateTime.fromFormat(tvshowResult.firstAirDate, "yyyy-MM-dd").toFormat("yyyy")} - ${tvshowResult.inProduction ? "" : DateTime.fromFormat(tvshowResult.lastAirDate, "yyyy-MM-dd").toFormat("yyyy")})`)
+                                    .setDescription(tvshowResult.overview.replace(/<br>/g, "\n").replace(/\n\n/g, "\n").replace(/(<([^>]+)>)/gi, ""))
+                                    .setURL(`https://www.themoviedb.org/tv/${tvshowResult.id}`)
+                                    .setFooter({ text: "Powered by TMDb" }),
+                                genres = tvshowResult.genres.map((elem: { name: any; }) => elem.name);
 
                             if (tvshowResult.posterPath) {
                                 embed.setThumbnail(`${api_config.images.secureBaseUrl}w500${tvshowResult.posterPath}`);
@@ -200,7 +202,7 @@ export default {
                             embed.addFields({ name: "Seasons", value: `${tvshowResult.numberOfSeasons}`, inline: true });
                             embed.addFields({ name: "Episodes", value: `${tvshowResult.numberOfEpisodes}`, inline: true });
                             embed.addFields({ name: "Status", value: toProperCase(tvshowResult.status) });
-                            embed.addFields({ name: "Genres", value: tvshowResult.genres.map((elem: { name: any; }) => elem.name).join(", "), inline: true });
+                            embed.addFields({ name: "Genres", value: (genres.length > 0 ? genres.join(", ") : "-"), inline: true });
 
                             if (tvshowResult.posterPath) {
                                 embed.setImage(`${api_config.images.secureBaseUrl}w780${tvshowResult.backdropPath}`);
