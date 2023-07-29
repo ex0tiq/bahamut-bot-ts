@@ -20,7 +20,7 @@ export default class ShardManagerFunctions {
                 uptime: _client.uptime,
                 time: Date.now(),
                 totalMusicQueues: _client.bahamut.musicHandler.manager.players.size,
-                playingMusicQueues: _client.bahamut.musicHandler.manager.players.reduce((a, q) => a + ((q.playing || !q.paused) ? 1 : 0), 0),
+                playingMusicQueues: Array.from(_client.bahamut.musicHandler.manager.players.values()).reduce((a, q) => a + ((q.playing || !q.paused) ? 1 : 0), 0),
             };
         })).sort((a, b) => a.shardId - b.shardId);
     };
@@ -168,7 +168,7 @@ export default class ShardManagerFunctions {
                 "membersTotal": _client.guilds.cache.reduce((a, g) => a + g.memberCount, 0),
                 "channelCount": _client.channels.cache.size,
                 "totalMusicQueues": _client.bahamut.musicHandler.manager.players.size,
-                "playingMusicQueues": _client.bahamut.musicHandler.manager.players.reduce((a, q) => a + ((q.playing || !q.paused) ? 1 : 0), 0),
+                "playingMusicQueues": Array.from(_client.bahamut.musicHandler.manager.players.values()).reduce((a, q) => a + ((q.playing || !q.paused) ? 1 : 0), 0),
                 "uptime": _client.uptime,
                 "time": Date.now(),
             };

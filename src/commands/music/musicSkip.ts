@@ -31,51 +31,49 @@ export default {
 
         if ([...client.bahamut.runningGames.entries()].filter(([key, val]) => key === channel.guild.id && val.type === "musicquiz").length > 0) return;
 
+        const player = client.bahamut.musicHandler.getPlayer(channel.guild.id);
+
         // Run pre checks
         const checks = new BahamutCommandPreChecker(client, { client, message, channel, member, interaction }, config, [
             { type: PreCheckType.CHANNEl_IS_MUSIC_CHANNEL },
             { type: PreCheckType.USER_IN_VOICE_CHANNEL },
             { type: PreCheckType.USER_IN_SAME_VOICE_CHANNEL_AS_BOT },
             { type: PreCheckType.MUSIC_NODES_AVAILABLE },
+            { type: PreCheckType.MUSIC_IS_AVAILABLE, player: player }
         ]);
         if (await checks.runChecks()) return;
 
         if (!(userIsDJ = await client.bahamut.musicHandler.userHasDJRights(member, channel.guild))) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, client.bahamut.musicHandler.getUserNoDJPermMessage());
 
-        const player = client.bahamut.musicHandler.manager.create({
-            guild: channel.guild.id,
-            textChannel: channel.id,
-        });
-
         const musicPlayingCheck = new BahamutCommandPreChecker(client, { client, message, channel, interaction }, config, [
-            { type: PreCheckType.MUSIC_IS_PLAYING, player: player },
+            { type: PreCheckType.MUSIC_IS_AVAILABLE, player: player },
         ]);
         if (await musicPlayingCheck.runChecks()) return;
 
         if (userIsDJ) {
-            player.stop();
+            player!.kazaPlayer.skip();
 
-            return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("next_track")} Current track has been skipped!`);
+            return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("next_track_button")} Current track has been skipped!`);
         } else if (member.voice.channel && member.voice.channel.members.size > 2) {
             // TODO: Implement vote skips
             const max = member.voice.channel.members.size - 1;
             const needed = Math.ceil(max / 2);
 
-            if (!client.bahamut.musicHandler.voteSkips.has(player.queue.current!.identifier!)) client.bahamut.musicHandler.voteSkips.set(player.queue.current!.identifier!, []);
-            const voteSkips = client.bahamut.musicHandler.voteSkips.get(player.queue.current!.identifier!) || [];
+            if (!client.bahamut.musicHandler.voteSkips.has(player!.kazaPlayer.queue.current!.identifier!)) client.bahamut.musicHandler.voteSkips.set(player!.kazaPlayer.queue.current!.identifier!, []);
+            const voteSkips = client.bahamut.musicHandler.voteSkips.get(player!.kazaPlayer.queue.current!.identifier!) || [];
 
             if (voteSkips.includes(member.id)) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "You already voted to skip the current song!");
 
             // Add the member to voteSkips
             voteSkips.push(member.id);
-            client.bahamut.musicHandler.voteSkips.set(player.queue.current!.identifier!, voteSkips);
+            client.bahamut.musicHandler.voteSkips.set(player!.kazaPlayer.queue.current!.identifier!, voteSkips);
 
             if (voteSkips.length >= needed) {
-                player.stop();
+                player!.kazaPlayer.skip();
 
-                client.bahamut.musicHandler.voteSkips.delete(player.queue.current!.identifier!);
+                client.bahamut.musicHandler.voteSkips.delete(player!.kazaPlayer.queue.current!.identifier!);
 
-                return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("next_track")} Skipped!\n\n\`${voteSkips.length}\` users voted to skip the current song.`);
+                return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("next_track_button")} Skipped!\n\n\`${voteSkips.length}\` users voted to skip the current song.`);
             } else {
                 return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
                     embeds: [
@@ -86,9 +84,9 @@ export default {
                 });
             }
         } else {
-            player.stop();
+            player!.kazaPlayer.skip();
 
-            return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("next_track")} Current track has been skipped!`);
+            return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("next_track_button")} Current track has been skipped!`);
         }
     },
 };

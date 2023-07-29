@@ -81,20 +81,17 @@ export default {
         ]);
         if (await checks.runChecks()) return;
 
-        const player = client.bahamut.musicHandler.manager.create({
-            guild: channel.guild.id,
-            textChannel: channel.id,
-        });
+        const player = client.bahamut.musicHandler.getPlayer(channel.guild.id);
 
         const musicPlayingCheck = new BahamutCommandPreChecker(client, { client, message, channel, interaction }, config, [
-            { type: PreCheckType.MUSIC_IS_PLAYING, player: player },
+            { type: PreCheckType.MUSIC_IS_AVAILABLE, player: player },
         ]);
         if (await musicPlayingCheck.runChecks()) return;
 
         if ([...client.bahamut.runningGames.entries()].filter(([key, val]) => key === channel.guild.id && val.type === "musicquiz").length > 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There is a running music quiz on this server. Please finish it.");
 
         let max_page = 1;
-        if (player.queue.length > 11) max_page = Math.ceil((player.queue.length - 1) / 10);
+        if (player!.kazaPlayer.queue.length > 11) max_page = Math.ceil((player!.kazaPlayer.queue.length - 1) / 10);
 
         if (args.length === 0 || (args.length === 1 && parseInt(args[0]))) {
             let page = 1;
@@ -112,31 +109,31 @@ export default {
             const from = ((page === 1) ? 0 : ((page * 10) - 10));
             const to = (page * 10);
             let queueString = "";
-            for(let i = from; i < ((page != max_page) ? to : player.queue.size); i++) {
-                queueString += `\`${i + 1}\` [${player.queue[i].title}](${player.queue[i].uri}) \`[${formatDuration(player.queue[i].duration!)}]\` ${player.queue[i].requester}${player.queue[i].isStream ? ` ${emoji.get("radio")}` : ` ${emoji.get("musical_note")}`}\n`;
+            for(let i = from; i < ((page != max_page) ? to : player!.kazaPlayer.queue.size); i++) {
+                queueString += `\`${i + 1}\` [${!["youtube","soundcloud"].includes(player!.kazaPlayer.queue[i].sourceName) ? `${player!.kazaPlayer.queue[i].author} - ` : ""}${player!.kazaPlayer.queue[i].title}](${player!.kazaPlayer.queue[i].realUri || player!.kazaPlayer.queue[i].uri}) \`[${formatDuration(player!.kazaPlayer.queue[i].length!)}]\` ${player!.kazaPlayer.queue[i].requester}${player!.kazaPlayer.queue[i].isStream ? ` ${emoji.get("radio")}` : ` ${emoji.get("musical_note")}`}\n`;
             }
 
             let embed = new Discord.EmbedBuilder()
                 .setTitle(`${emoji.get("page_facing_up")}  Music Queue`)
-                .setDescription(`**Now Playing**\n${player.queue.current!.isStream ? `${emoji.get("radio")} ` : `${emoji.get("musical_note")} `}[${player.queue.current!.title}](${player.queue.current!.uri})\n\n**Up Next**\n${player.queue.size >= 1 ? queueString : "Nothing"}`)
+                .setDescription(`**Now Playing**\n${player!.kazaPlayer.queue.current!.isStream ? `${emoji.get("radio")} ` : `${emoji.get("musical_note")} `}[${!["youtube","soundcloud"].includes(player!.kazaPlayer.queue.current!.sourceName)? `${player!.kazaPlayer.queue.current!.author} - ` : ""}${player!.kazaPlayer.queue.current!.title}](${player!.kazaPlayer.queue.current!.realUri || player!.kazaPlayer.queue.current!.uri})\n\n**Up Next**\n${player!.kazaPlayer.queue.size >= 1 ? queueString : "Nothing"}`)
                 .setFields(
-                    { name: "Entries", value: "" + player.queue.size, inline: true },
-                    { name: "Total Duration", value: (player.queue.current!.isStream ? "∞" : formatDuration(player.queue.duration)), inline: true },
+                    { name: "Entries left", value: "" + player!.kazaPlayer.queue.size, inline: true },
+                    { name: "Total Duration", value: (player!.kazaPlayer.queue.current!.isStream ? "∞" : formatDuration(player!.kazaPlayer.queue.durationLength + (player!.kazaPlayer.queue.current ? player!.kazaPlayer.queue.current.length! : 0))), inline: true },
                     { name: "\u200B", value: "\u200B", inline: true }
                 )
                 .setFooter({ text: `Page ${page}/${max_page}` });
 
             // Add status fields
-            embed = await client.bahamut.musicHandler.musicStatus(player, embed);
+            embed = await client.bahamut.musicHandler.musicStatus(player!, embed);
 
             return handleResponseToMessage(client, message || interaction, false, config.deferReply, { embeds: [embed] });
         } else if (args.length === 1) {
             if (["clear", "cls", "delall", "remall", "rma"].includes(args[0].toLowerCase())) {
                 if (await djCheck.runChecks()) return;
 
-                const size = player.queue.size;
+                const size = player!.kazaPlayer.queue.size;
 
-                player.queue.clear();
+                player!.kazaPlayer.queue.clear();
 
                 return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
                     embeds: [
@@ -152,17 +149,17 @@ export default {
             if (["remove", "delete", "rm", "rmv", "del"].includes(args[0].toLowerCase())) {
                 if (await djCheck.runChecks()) return;
 
-                if (!parseInt(args[1])) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Second parameter must be a number between \`1\` and \`${player.queue.size}\`!`);
-                if ((player.queue.size) < (parseInt(args[1]) - 1) || (parseInt(args[1]) - 1) < 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Second parameter must be a number between \`1\` and \`${player.queue.size}\`!`);
+                if (!parseInt(args[1])) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Second parameter must be a number between \`1\` and \`${player!.kazaPlayer.queue.size}\`!`);
+                if ((player!.kazaPlayer.queue.size) < (parseInt(args[1]) - 1) || (parseInt(args[1]) - 1) < 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Second parameter must be a number between \`1\` and \`${player!.kazaPlayer.queue.size}\`!`);
 
                 try {
-                    player.queue.remove(parseInt(args[1]) - 1);
+                    player!.kazaPlayer.queue.remove(parseInt(args[1]) - 1);
 
                     return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
                         embeds: [
                             new Discord.EmbedBuilder()
                                 .setTitle(`${emoji.get("page_facing_up")}  Music Queue`)
-                                .setDescription(`${emoji.get("white_check_mark")} Successfully removed queue item at position \`${args[1]}\`!\n${emoji.get("arrow_right")} \`${player.queue.size}\` entries remaining!`),
+                                .setDescription(`${emoji.get("white_check_mark")} Successfully removed queue item at position \`${args[1]}\`!\n${emoji.get("arrow_right")} \`${player!.kazaPlayer.queue.size}\` entries remaining!`),
                         ],
                     });
                 } catch (e) {
@@ -180,13 +177,13 @@ export default {
                 }
 
                 if (id > 0) {
-                    if (player.queue.size < id || id > player.queue.size) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Second parameter must be a number between \`1\` and \`${player.queue.size}\`!`);
+                    if (player!.kazaPlayer.queue.size < id || id > player!.kazaPlayer.queue.size) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Second parameter must be a number between \`1\` and \`${player!.kazaPlayer.queue.size}\`!`);
 
                     for (let i = 0; i < (id - 1); i++) {
-                        player.queue.remove(0);
+                        player!.kazaPlayer.queue.remove(0);
                     }
 
-                    player.stop();
+                    player!.destroy();
 
                     return handleResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("twisted_rightwards_arrows")} Jumped to song number \`${id}\` in the queue!`);
                 } else {
@@ -198,14 +195,14 @@ export default {
         } else if (args.length === 3) {
             if (["move", "mv"].includes(args[0].toLowerCase())) {
                 if (await djCheck.runChecks()) return;
-                if (!parseInt(args[1]) || !parseInt(args[2])) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Second and third parameter must be numbers between \`1\` and \`${player.queue.size}\` and can't be the same!`);
-                if ((((player.queue.size) < (parseInt(args[1]) - 1) || (parseInt(args[1]) - 1) < 0) || ((player.queue.size) < (parseInt(args[2]) - 1) || (parseInt(args[2]) - 1) < 0)) || ((parseInt(args[2]) - 1) === (parseInt(args[1]) - 1))) {return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Second and third parameter must be numbers between \`1\` and \`${player.queue.size}\` and can't be the same!`);}
+                if (!parseInt(args[1]) || !parseInt(args[2])) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Second and third parameter must be numbers between \`1\` and \`${player!.kazaPlayer.queue.size}\` and can't be the same!`);
+                if ((((player!.kazaPlayer.queue.size) < (parseInt(args[1]) - 1) || (parseInt(args[1]) - 1) < 0) || ((player!.kazaPlayer.queue.size) < (parseInt(args[2]) - 1) || (parseInt(args[2]) - 1) < 0)) || ((parseInt(args[2]) - 1) === (parseInt(args[1]) - 1))) {return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Second and third parameter must be numbers between \`1\` and \`${player!.kazaPlayer.queue.size}\` and can't be the same!`);}
 
                 try {
-                    const track = player.queue[parseInt(args[1]) - 1];
+                    const track = player!.kazaPlayer.queue[parseInt(args[1]) - 1];
 
-                    player.queue.remove(parseInt(args[1]) - 1);
-                    player.queue.add(track, parseInt(args[2]) - 1);
+                    player!.kazaPlayer.queue.remove(parseInt(args[1]) - 1);
+                    player!.kazaPlayer.queue.splice(parseInt(args[2]) - 1, 0, track);
 
                     return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
                         embeds: [

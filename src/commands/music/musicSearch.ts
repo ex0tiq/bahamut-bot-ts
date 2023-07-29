@@ -11,7 +11,7 @@ import {
     handleErrorResponseToMessage, handleResponseToChannel,
     handleResponseToMessage,
 } from "../../lib/messageHandlers.js";
-import { SearchResult } from "erela.js";
+import { KazagumoSearchResult, PlayerState } from "kazagumo";
 
 const config: CommandConfig = {
     name: "search",
@@ -73,7 +73,7 @@ export default {
 
         if ([...client.bahamut.runningGames.entries()].filter(([key, val]) => key === channel.guild.id && val.type === "musicquiz").length > 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There is a running music quiz on this server. Please finish it before playing music.");
 
-        let res: SearchResult,
+        let res: KazagumoSearchResult,
             selectedId,
             queueString = "";
 
@@ -82,22 +82,22 @@ export default {
         try {
             try {
                 // Search for tracks using a url, using a query searches youtube automatically and the track requester object
-                res = await client.bahamut.musicHandler.manager.search(search, member);
+                res = await client.bahamut.musicHandler.manager.search(search, { requester: member });
 
                 // Check the load type as this command is not that advanced for basics
-                if (res.loadType === "LOAD_FAILED") return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "An internal error occurred while doing that. Please try again later.");
-                else if (res.loadType === "NO_MATCHES") return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "This search did not return any results! Please try again!");
+                if (!res) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "An internal error occurred while doing that. Please try again later.");
+                else if (res.tracks.length <= 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "This search did not return any results! Please try again!");
             } catch (err) {
                 return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "An internal error occurred while doing that. Please try again later.");
             }
 
             for (let i = 1; i <= ((res.tracks.length > 10) ? 10 : res.tracks.length); i++) {
-                queueString += `\`${i}\` [${res.tracks[i - 1].title}](${res.tracks[i - 1].uri}) \`[${formatDuration(res.tracks[i - 1].duration)}]\`\n`;
+                queueString += `\`${i}\` [${res.tracks[i - 1].title}](${res.tracks[i - 1].realUri || res.tracks[i - 1].uri}) \`[${formatDuration(res.tracks[i - 1].length!)}]\`\n`;
             }
 
             const row = new Discord.ActionRowBuilder()
                 .addComponents(
-                    new Discord.SelectMenuBuilder()
+                    new Discord.StringSelectMenuBuilder()
                         .setCustomId("musicSearchSelect")
                         .setPlaceholder("Nothing selected...")
                         .addOptions([{ label: "Cancel", value: "cancel" }].concat([...Array(res.tracks.length > 10 ? 10 : res.tracks.length).keys()].map(e => {
@@ -146,22 +146,19 @@ export default {
                     });
                 }
 
-                const player = client.bahamut.musicHandler.manager.create({
-                    guild: channel.guild.id,
-                    voiceChannel: member.voice.channelId!,
-                    textChannel: channel.id,
-                });
-                if (!player.voiceChannel) player.setVoiceChannel(member.voice.channelId!.toString());
+                const player = await client.bahamut.musicHandler.createPlayer(channel.guild.id, member.voice.channelId!, channel.id);
+
+                if (!player.kazaPlayer.voiceId) player.kazaPlayer.setVoiceChannel(member.voice.channelId!.toString());
 
                 // Connect to the voice channel and add the track to the queue
-                if (player.state !== "CONNECTED") player.connect();
+                if (player.kazaPlayer.state !== PlayerState.CONNECTED && player.kazaPlayer.state !== PlayerState.CONNECTING) player.kazaPlayer.connect();
 
-                player.queue.add(res.tracks[selectedId]);
+                player.kazaPlayer.queue.add(res.tracks[selectedId]);
 
-                if (player.queue.length > 0) {
-                    await handleResponseToChannel(client, channel, (await client.bahamut.musicHandler.getTrackAddEmbed(player, res.tracks[selectedId]!, member))!);
+                if (player.kazaPlayer.queue.length > 0) {
+                    await handleResponseToChannel(client, channel, (await client.bahamut.musicHandler.getTrackAddEmbed(player.kazaPlayer, res.tracks[selectedId]!, member))!);
                 } else {
-                    player.set("skip_trackstart", true);
+                    player.setSkipTrackStart(true);
                     await handleResponseToChannel(client, channel, (await client.bahamut.musicHandler.getTrackStartEmbed(player, res.tracks[selectedId]!, member))!);
                 }
 
@@ -170,10 +167,10 @@ export default {
                     components: [],
                 });
 
-                if (player.playing && player.queue.current!.isStream) {
-                    await player.stop();
+                if (player.kazaPlayer.playing && player.kazaPlayer.queue.current!.isStream) {
+                    await player.destroy();
                 }
-                if (!player.playing && !player.paused && !player.queue.size) await player.play();
+                if (!player.kazaPlayer.playing && !player.kazaPlayer.paused && !player.kazaPlayer.queue.size) await player.kazaPlayer.play();
             }).catch(() => {
                 return handleErrorResponseToMessage(client, msg!, true, "ephemeral", {
                     ...createErrorResponse(client, "Timeout of 30 seconds exceeded, search aborted."),

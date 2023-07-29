@@ -5,6 +5,7 @@ import BahamutClient from "../../modules/BahamutClient.js";
 import { handleErrorResponseToMessage, handleResponseToMessage } from "../../lib/messageHandlers.js";
 import { CommandConfig } from "../../../typings.js";
 import { BahamutCommandPreChecker, PreCheckType } from "../../modules/BahamutCommandPreChecker.js";
+import { PlayerState } from "kazagumo";
 
 const config: CommandConfig = {
     name: "play",
@@ -70,11 +71,11 @@ export default {
 
         try {
             // Search for tracks using a url, using a query searches youtube automatically and the track requester object
-            res = await client.bahamut.musicHandler.manager.search(search, member);
+            res = await client.bahamut.musicHandler.manager.search(search, { requester: member });
 
             // Check the load type as this command is not that advanced for basics
-            if (res.loadType === "LOAD_FAILED") return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "An internal error occurred while doing that. Please try again later.");
-            else if (res.loadType === "NO_MATCHES") return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "This search did not return any results! Please try again!");
+            if (!res) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "An internal error occurred while doing that. Please try again later.");
+            else if (res.tracks.length <= 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "This search did not return any results! Please try again!");
         } catch (err) {
             return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "An internal error occurred while doing that. Please try again later.");
         }
@@ -85,50 +86,46 @@ export default {
         }
 
         // Create the player
-        const player = client.bahamut.musicHandler.manager.create({
-            guild: channel.guild.id,
-            voiceChannel: member.voice?.channelId || undefined,
-            textChannel: channel.id,
-        });
+        const player = await client.bahamut.musicHandler.createPlayer(channel.guild.id, channel.id, member.voice.channel!.id);
 
-        if (!player.voiceChannel && member.voice.channelId) player.setVoiceChannel(member.voice.channelId.toString());
+        if (!player.kazaPlayer.voiceId && member.voice.channelId) player.kazaPlayer.setVoiceChannel(member.voice.channelId.toString());
 
         // Connect to the voice channel and add the track to the queue
-        if (player.state !== "CONNECTED") player.connect();
+        if (player.kazaPlayer.state !== PlayerState.CONNECTED && player.kazaPlayer.state !== PlayerState.CONNECTING) player.kazaPlayer.connect();
 
-        if (res.loadType === "SEARCH_RESULT") player.queue.add(res.tracks[0]);
-        else player.queue.add(res.tracks);
+        if (res.tracks.length > 1) player.kazaPlayer.queue.add(res.tracks[0]);
+        else player.kazaPlayer.queue.add([...res.tracks]);
 
-        player.set("radio_station", null);
+        if (player.getCurrentRadioStationName()) player.setCurrentRadioStationName(null);
 
         let lastEmbed;
 
-        if (player.playing) {
-            if (player.queue.current!.isStream) {
-                await player.stop();
+        if (player.kazaPlayer.playing) {
+            if (player.kazaPlayer.queue.current!.isStream) {
+                await player.kazaPlayer.skip();
 
-                player.set("skip_trackstart", true);
+                player.setSkipTrackStart(true);
 
                 lastEmbed = await client.bahamut.musicHandler.getTrackStartEmbed(player, res.tracks[0], member);
-            } else if (res.loadType === "SEARCH_RESULT" || res.loadType === "TRACK_LOADED" || res.tracks.length === 1) {
-                lastEmbed = await client.bahamut.musicHandler.getTrackAddEmbed(player, res.tracks[0], member);
+            } else if (res.type === "SEARCH" || res.type === "TRACK" || res.tracks.length === 1) {
+                lastEmbed = await client.bahamut.musicHandler.getTrackAddEmbed(player.kazaPlayer, res.tracks[0], member);
             } else {
-                lastEmbed = await client.bahamut.musicHandler.getListAddEmbed(player, res, member);
+                lastEmbed = await client.bahamut.musicHandler.getListAddEmbed(player.kazaPlayer, res, member);
             }
-        } else if (res.loadType === "SEARCH_RESULT" || res.loadType === "TRACK_LOADED" || res.tracks.length === 1) {
-            player.set("skip_trackstart", true);
+        } else if (res.type === "SEARCH" || res.type === "TRACK" || res.tracks.length === 1) {
+            player.setSkipTrackStart(true);
 
             lastEmbed = await client.bahamut.musicHandler.getTrackStartEmbed(player, res.tracks[0], member);
         } else {
-            lastEmbed = await client.bahamut.musicHandler.getListStartEmbed(player, res, member);
+            lastEmbed = await client.bahamut.musicHandler.getListStartEmbed(player.kazaPlayer, res, member);
         }
 
-        if (player.playing && player.queue.current?.isStream) {
-            player.stop();
-        } else if (!player.playing && !player.paused && !player.queue.size) {
-            await player.play();
-        } else if (!player.playing) {
-            await player.play();
+        if (player.kazaPlayer.playing && player.kazaPlayer.queue.current?.isStream) {
+            player.kazaPlayer.skip();
+        } else if (!player.kazaPlayer.playing && !player.kazaPlayer.paused && !player.kazaPlayer.queue.size) {
+            await player.kazaPlayer.play();
+        } else if (!player.kazaPlayer.playing) {
+            await player.kazaPlayer.play();
         }
 
         // Check if stage channel

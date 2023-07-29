@@ -2,10 +2,11 @@
 import Discord, { Serialized } from "discord.js";
 import UplinkAPIHandler from "./src/modules/UplinkAPIHandler.js";
 import BahamutShardingManager from "./src/modules/BahamutShardingManager.js";
-import { Track } from "erela.js";
 import { CommandObject, CommandUsage } from "wokcommands";
 import BahamutClient from "./src/modules/BahamutClient";
 import { Awaitable } from "@discordjs/util";
+import { KazagumoTrack } from "kazagumo";
+import ExtendedKazagumoPlayer from "./src/modules/ExtendedKazagumoPlayer.ts";
 
 export interface StartupMessage {
     type: string | null;
@@ -124,9 +125,10 @@ export interface BotStaticDBConfig {
 }
 
 export interface LavalinkNode {
-    host: string;
-    password: string;
-    port: number;
+    name: string;
+    url: string;
+    auth: string;
+    secure?: boolean = false;
 }
 
 export interface RadioStation {
@@ -138,7 +140,7 @@ export interface RadioStation {
     music_types: string;
 }
 
-export interface ExtendedTrack extends Track {
+export interface ExtendedTrack extends KazagumoTrack {
     website_url?; string;
     tracklist?: string;
     title?: string;
@@ -339,5 +341,12 @@ declare module "discord.js" {
             fn: (client: BahamutClient<true>, context: Serialized<P>) => Awaitable<T>,
             options: { context: P; shard: number },
         ): Promise<Serialized<T>>;
+    }
+}
+
+declare module "kazagumo" {
+    export interface Kazagumo {
+        on(event: 'playerStart', listener: (player: ExtendedKazagumoPlayer, track: KazagumoTrack) => void): this;
+        on(event: 'playerEnd', listener: (player: ExtendedKazagumoPlayer) => void): this;
     }
 }

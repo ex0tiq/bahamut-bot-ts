@@ -42,24 +42,21 @@ export default {
         ]);
         if (await checks.runChecks()) return;
 
-        const player = client.bahamut.musicHandler.manager.create({
-            guild: channel.guild.id,
-            textChannel: channel.id,
-        });
+        const player = client.bahamut.musicHandler.getPlayer(channel.guild.id);
 
         const musicPlayingCheck = new BahamutCommandPreChecker(client, { client, message, channel, interaction }, config, [
-            { type: PreCheckType.MUSIC_IS_PLAYING, player: player },
+            { type: PreCheckType.MUSIC_IS_AVAILABLE, player: player },
         ]);
         if (await musicPlayingCheck.runChecks()) return;
 
         if ([...client.bahamut.runningGames.entries()].filter(([key, val]) => key === channel.guild.id && val.type === "musicquiz").length > 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There is a running music quiz on this server. Please finish it.");
 
-        const track = player.queue.current,
-            running_time = formatDuration(player.position);
+        const track = player!.kazaPlayer.queue.current,
+            running_time = formatDuration(player!.kazaPlayer.position);
 
         if (!track) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "Error fetching playing song! Please try again later.");
 
-        const full_time = formatDuration(track.duration!);
+        const full_time = formatDuration(track.length!);
 
         const song = {
             website_url: undefined,
@@ -67,9 +64,9 @@ export default {
             ...track,
         } as ExtendedTrack;
 
-        if (song.isStream && (player.get("radio_station") !== null)) {
+        if (song.isStream && (player!.getCurrentRadioStationName() !== null)) {
             for (const [, val] of Object.entries(client.bahamut.musicHandler.radioStations)) {
-                if (val.name.toLowerCase() === player.get("radio_station")) {
+                if (val.name.toLowerCase() === player!.getCurrentRadioStationName()) {
                     song.website_url = val.website_url;
                     song.tracklist = val.tracklist;
                     song.title = val.name;
@@ -79,11 +76,11 @@ export default {
             }
 
             const res: Discord.EmbedBuilder = await new Promise((resolve, reject) => {
-                radio.getStationInfo(song.uri, async (err: Error, stat: { title: string }) => {
+                radio.getStationInfo(song.realUri || song.uri, async (err: Error, stat: { title: string }) => {
                     if (err) reject(false);
                     let embed = new Discord.EmbedBuilder()
                         .setTitle(`${emoji.get("radio")} Now playing (Radio)`)
-                        .setThumbnail(song.thumbnail)
+                        .setThumbnail(song.thumbnail || null)
                         .setDescription(`**[${(stat.title ? stat.title : song.title)}](${(stat.title ? `https://www.youtube.com/results?search_query=${encodeYoutubeURL(stat.title)}` : "")})**${song.website_url ? `\n\nStation:\n[${song.title}](${song.website_url})` : ""}${song.tracklist ? `\n\nPlaylist:\n${song.tracklist}` : ""}`)
                         .setFields(
                             {
@@ -95,7 +92,7 @@ export default {
                         );
 
                     // Add status fields
-                    embed = await client.bahamut.musicHandler.musicStatus(player, embed);
+                    embed = await client.bahamut.musicHandler.musicStatus(player!, embed);
 
                     resolve(embed);
                 }, radio.StreamSource.STREAM);
@@ -112,8 +109,8 @@ export default {
         } else {
             let embed = new Discord.EmbedBuilder()
                 .setTitle(`${emoji.get("notes")} Now playing`)
-                .setThumbnail(song.thumbnail)
-                .setDescription(`**[${song.title}](${song.uri})**`)
+                .setThumbnail(song.thumbnail || null)
+                .setDescription(`**[${!["youtube","soundcloud"].includes(song.sourceName) ? `${song.author} - ` : ""}${song.title}](${song.realUri || song.uri})**`)
                 .setFields(
                     {
                         name: "Requester",
@@ -125,7 +122,7 @@ export default {
                 .setFooter({ text: `Use "${settings.prefix}lyrics" to see the lyrics of this song!` });
 
             // Add status fields
-            embed = await client.bahamut.musicHandler.musicStatus(player, embed);
+            embed = await client.bahamut.musicHandler.musicStatus(player!, embed);
 
             handleResponseToMessage(client, message || interaction, false, config.deferReply, { embeds: [embed] }, undefined, true).then(async () => {
                 await handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, "Message sent!");

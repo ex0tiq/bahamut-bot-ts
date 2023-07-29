@@ -36,14 +36,11 @@ export default {
 
         if ([...client.bahamut.runningGames.entries()].filter(([key, val]) => key === channel.guild.id && val.type === "musicquiz").length > 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There is a running music quiz on this server. Please finish it before resuming music.");
 
-        const player = client.bahamut.musicHandler.manager.create({
-            guild: channel.guild.id,
-            textChannel: channel.id,
-        });
+        const player = client.bahamut.musicHandler.getPlayer(channel.guild.id);
 
-        if (!player.paused) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "Playback is not paused!");
+        if (!player || !player.kazaPlayer.paused) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "Playback is not paused!");
 
-        player.pause(false);
+        player.kazaPlayer.pause(false);
 
         return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("arrow_forward")} Playback has been resumed!`);
     },

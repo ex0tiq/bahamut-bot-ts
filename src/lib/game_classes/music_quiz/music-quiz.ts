@@ -8,11 +8,9 @@ import {
 import logger from "../../../modules/Logger.js";
 import Spotify from "./spotify.js";
 import { QuizArgs } from "./types/quiz-args.js";
-import { UnresolvedTrack } from "erela.js";
 import latinize from "latinize";
 // import { searchSong, getSong } from "genius-lyrics-api";
 
-import { Player } from "erela.js";
 import BahamutClient from "../../../modules/BahamutClient.js";
 import {
     createErrorResponse,
@@ -23,6 +21,8 @@ import { resolveUser } from "../../resolveFunctions.js";
 import Genius from "genius-lyrics";
 // @ts-ignore
 import similarText from "locutus/php/strings/similar_text.js";
+import { KazagumoPlayer, KazagumoTrack, PlayerState } from "kazagumo";
+import ExtendedKazagumoPlayer from "../../../modules/ExtendedKazagumoPlayer.js";
 
 let stopCommand = "stop";
 let skipCommand = "skip";
@@ -38,7 +38,7 @@ export class MusicQuiz {
     member: GuildMember;
     messageCollector: MessageCollector | undefined;
     arguments: QuizArgs;
-    songs: UnresolvedTrack[] | null | undefined;
+    songs: KazagumoTrack[] | null | undefined;
     currentSong: number = 0;
     skippers: string[] = [];
     scores: { [key: string]: number; } | undefined;
@@ -49,7 +49,7 @@ export class MusicQuiz {
     reactPermissionNotified: boolean = false;
     client: BahamutClient;
     settings: any;
-    player: Player;
+    player?: ExtendedKazagumoPlayer;
     finished: boolean;
     GeniusClient: any;
 
@@ -61,11 +61,6 @@ export class MusicQuiz {
         this.textChannel = channel;
         this.member = member;
         this.voiceChannel = member.voice!.channel!;
-        this.player = client.bahamut.musicHandler.manager.create({
-            guild: channel.guild.id,
-            voiceChannel: member.voice.channel?.id,
-            textChannel: channel.id,
-        });
         this.GeniusClient = new Genius.Client(client.bahamut.config.genius_token);
         this.arguments = args;
         this.client = client;
@@ -76,9 +71,8 @@ export class MusicQuiz {
         this.titleGuessed = false;
         this.finished = false;
 
-        this.client.bahamut.musicHandler.manager.on("trackError", this.handlePlayEndEvents.bind(this));
-        this.client.bahamut.musicHandler.manager.on("queueEnd", this.handlePlayEndEvents.bind(this));
-        this.client.bahamut.musicHandler.manager.on("nodeError", this.handleNodeErrorEvents.bind(this));
+        this.client.bahamut.musicHandler.manager.on("playerException", this.handlePlayEndEvents.bind(this));
+        this.client.bahamut.musicHandler.manager.on("playerEmpty", this.handlePlayEndEvents.bind(this));
 
         if (!stopCommand.startsWith(this.settings.prefix)) {
             stopCommand = this.settings.prefix + stopCommand;
@@ -89,7 +83,9 @@ export class MusicQuiz {
     }
 
     async start() {
-        this.player.set("running_music_quiz", true);
+        this.player = await this.client.bahamut.musicHandler.createPlayer(this.textChannel.guild.id, this.textChannel.id, this.member.voice.channel!.id );
+
+        this.player.setCurrentlyRunningGameName("music-quiz");
 
         this.songs = await this.getSongs(
             this.arguments.playlists,
@@ -108,8 +104,8 @@ export class MusicQuiz {
         }
 
         try {
-            if (!this.player.voiceChannel) this.player.setVoiceChannel(this.voiceChannel.toString());
-            if (this.player.state !== "CONNECTED") this.player.connect();
+            if (!this.player.kazaPlayer.voiceId) this.player.kazaPlayer.setVoiceChannel(this.voiceChannel.toString());
+            if (this.player.kazaPlayer.state !== PlayerState.CONNECTED && this.player.kazaPlayer.state !== PlayerState.CONNECTING) this.player.kazaPlayer.connect();
         } catch (e) {
             console.error(e);
             await handleErrorResponseToMessage(this.client, this.message, false, true, "Could not join voice channel. Is it full?");
@@ -135,7 +131,7 @@ export class MusicQuiz {
     async startIntro() {
         try {
             const res = await this.client.bahamut.musicHandler.manager.search(`${this.client.bahamut.config.website_link}/assets/bot_assets/games/musicquiz/countdown.mp3`);
-            if (res.loadType === "LOAD_FAILED" || res.loadType === "NO_MATCHES") {
+            if (!res) {
                 logger.error(this.client.shardId, `MusicQuiz: Failed to load countdown.mp3 from url ${this.client.bahamut.config.website_link}/assets/bot_assets/games/musicquiz/countdown.mp3`);
                 const err = createErrorResponse(this.client, "An internal error occurred while doing that. Please try again later.");
                 if (!this.message) return err;
@@ -143,8 +139,8 @@ export class MusicQuiz {
                 this.finish();
             }
 
-            this.player.queue.add(res.tracks[0], 0);
-            this.player.play();
+            this.player!.kazaPlayer.queue.unshift(res.tracks[0]);
+            this.player!.kazaPlayer.play();
 
             handleResponseToMessage(this.client, this.message, false, true, {
                 embeds: [
@@ -190,7 +186,7 @@ export class MusicQuiz {
                     temp.push(s);
                 }
             }
-            this.songs = temp;
+            this.songs = temp as KazagumoTrack[];
         } catch (e) {
             console.log("Error mapping non latin songs:", e);
             this.startPlaying();
@@ -198,7 +194,7 @@ export class MusicQuiz {
     }
 
     handlePlayEndEvents() {
-        if (!this.player.get("running_music_quiz")) return;
+        if (!this.player?.getCurrentlyRunningGameName()) return;
 
         handleResponseToMessage(this.client, this.message, false, true, {
             embeds: [
@@ -216,14 +212,6 @@ export class MusicQuiz {
         if (this._firstPlay) this._firstPlay = false;
 
         this.startPlaying();
-    }
-
-    handleNodeErrorEvents() {
-        if (!this.player.get("running_music_quiz")) return;
-
-        handleErrorResponseToMessage(this.client, this.message, false, true, "Connection got interrupted. Please try again");
-
-        this.finish();
     }
 
     async startPlaying() {
@@ -267,8 +255,8 @@ export class MusicQuiz {
 
             // @ts-ignore
             this.player.setVolume(this.settings.music_volume);
-            this.player.queue.add(song, 0);
-            if (!this.player.playing) this.player.play();
+            this.player!.kazaPlayer.queue.unshift(song);
+            if (!this.player!.kazaPlayer.playing) this.player!.kazaPlayer.play();
         } catch (e) {
             console.error(e);
 
@@ -342,9 +330,8 @@ export class MusicQuiz {
         if (this.messageCollector) this.messageCollector.stop();
         if (this.player) this.player.destroy();
 
-        this.client.bahamut.musicHandler.manager.removeListener("trackError", this.handlePlayEndEvents);
-        this.client.bahamut.musicHandler.manager.removeListener("queueEnd", this.handlePlayEndEvents);
-        this.client.bahamut.musicHandler.manager.removeListener("nodeError", this.handleNodeErrorEvents);
+        this.client.bahamut.musicHandler.manager.removeListener("playerException", this.handlePlayEndEvents);
+        this.client.bahamut.musicHandler.manager.removeListener("playerEmpty", this.handlePlayEndEvents);
 
         // @ts-ignore
         for (const k of Object.keys(this.scores)) {
@@ -354,8 +341,8 @@ export class MusicQuiz {
         }
 
         this.finished = true;
-        this.player.set("running_music_quiz", false);
 
+        this.player?.setCurrentlyRunningGameName(null);
         this.client.bahamut.runningGames.delete(this.textChannel.id);
     }
 
@@ -369,7 +356,7 @@ export class MusicQuiz {
 
         this.currentSong++;
         this.skippers = [];
-        if (this.player.playing) this.player.stop();
+        if (this.player!.kazaPlayer.playing) this.player!.destroy();
         // this.startPlaying();
     }
 
@@ -426,7 +413,7 @@ export class MusicQuiz {
         }
     }
 
-    async getSongs(playlists: string[], amount: number): Promise<UnresolvedTrack[] | null> {
+    async getSongs(playlists: string[], amount: number): Promise<KazagumoTrack[] | null> {
         const spotify = new Spotify(this.client.bahamut.config.spotify_client_id, this.client.bahamut.config.spotify_client_secret);
         await spotify.authorize();
         let temp: any[] = [];
@@ -452,9 +439,9 @@ export class MusicQuiz {
 
             const t2 = await Promise.all(temp.map(async (song) => {
                 const res = (await this.client.bahamut.musicHandler.manager.search(`https://open.spotify.com/track/${song.id}`));
-                if (res.loadType === "LOAD_FAILED" || res.loadType === "NO_MATCHES") return null;
+                if (!res) return null;
 
-                return res.tracks[0];
+                return new KazagumoTrack(res.tracks[0].getRaw(), this.member);
             }));
 
             // @ts-ignore

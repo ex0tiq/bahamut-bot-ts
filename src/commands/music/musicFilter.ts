@@ -88,22 +88,19 @@ export default {
             filterText += `• ${toProperCase(name)} \n`;
         }
 
-        const player = client.bahamut.musicHandler.manager.create({
-            guild: channel.guild.id,
-            textChannel: channel.id,
-        });
+        const player = client.bahamut.musicHandler.getPlayer(channel.guild.id);
 
         const musicPlayingCheck = new BahamutCommandPreChecker(client, { client, message, channel, interaction }, config, [
-            { type: PreCheckType.MUSIC_IS_PLAYING, player: player },
+            { type: PreCheckType.MUSIC_IS_AVAILABLE, player: player },
         ]);
 
         if (args.length <= 0) {
             if (message) await message.reactions.removeAll();
-
-            if (!player || !player.get("music_filter")) {
+            
+            if (!player || !player.getCurrentFilterName()) {
                 return handleResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("control_knobs")} There is currently no filter applied!`);
             } else {
-                return handleResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("control_knobs")} The filter \`${toProperCase(player.get("music_filter"))}\` is currently applied!`);
+                return handleResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("control_knobs")} The filter \`${toProperCase(player.getCurrentFilterName()!)}\` is currently applied!`);
             }
         } else if (args.length > 0) {
             if (args[0].toLowerCase() === "list") {
@@ -120,16 +117,11 @@ export default {
             }
             if ((Object.keys(filters).includes(args[0].toLowerCase())) || args[0].toLowerCase() === "off") {
                 if (await musicPlayingCheck.runChecks()) return;
-                if (!player.queue.current) return handleResponseToMessage(client, message || interaction, false, config.deferReply, "There are no songs in the queue to apply a filter!");
+                if (!player!.kazaPlayer.queue.current) return handleResponseToMessage(client, message || interaction, false, config.deferReply, "There are no songs in the queue to apply a filter!");
 
                 if (["off", "reset"].includes(args[0].toLowerCase())) {
-                    const obj = {
-                        op: "filters",
-                        guildId: channel.guild.id,
-                    };
-
-                    await player.node.send(obj);
-                    player.set("music_filter", null);
+                    await player!.kazaPlayer.shoukaku.clearFilters();
+                    
                 } else if (args[0].toLowerCase() === "bassboost") {
                     const obj = {
                         op: "filters",
@@ -147,8 +139,8 @@ export default {
                     // @ts-ignore
                     obj.equalizer = [...Array(6).fill(boostPercent / 100).map((x: number, i: number) => ({ band: i, gain: x }))];
 
-                    await player.node.send(obj);
-                    player.set("music_filter", "bassboost");
+                    await player?.kazaPlayer.shoukaku.setFilters(obj);
+                    player!.setCurrentFilterName("bassboost");
 
                     if (message) await message.reactions.removeAll();
 
@@ -161,8 +153,8 @@ export default {
                         ...filters[args[0].toLowerCase()],
                     };
 
-                    await player.node.send(obj);
-                    player.set("music_filter", args[0].toLowerCase());
+                    await player!.kazaPlayer.shoukaku.setFilters(obj);
+                    player!.setCurrentFilterName(args[0].toLowerCase());
                 }
 
                 return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("ballot_box_with_check")} Current queue filter has been set to \`${args[0] ? toProperCase(args[0]) : "Off"}\`!`);

@@ -53,19 +53,16 @@ export default {
         ]);
         if (await checks.runChecks()) return;
 
-        const player = client.bahamut.musicHandler.manager.create({
-            guild: channel.guild.id,
-            textChannel: channel.id,
-        });
+        const player = client.bahamut.musicHandler.getPlayer(channel.guild.id);
 
         if (args.length < 1) {
-            return handleResponseToMessage(client, message || interaction, false, config.deferReply, `${player.volume <= 0 ? emoji.get("mute") : (player.volume < 50 ? emoji.get("sound") : emoji.get("loud_sound"))} Volume is currently set to \`${player.volume}%\``);
+            return handleResponseToMessage(client, message || interaction, false, config.deferReply, `${settings.music_volume <= 0 ? emoji.get("mute") : (settings.music_volume < 50 ? emoji.get("sound") : emoji.get("loud_sound"))} Volume is currently set to \`${settings.music_volume}%\``);
         }
 
         const volume = parseInt(args[0]);
         if (isNaN(volume) || (volume < 0 || volume > 100)) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, createMissingParamsErrorResponse(client, config));
 
-        if (player.queue.current || player.queue.size > 0) player.setVolume(volume);
+        if (player && (player.kazaPlayer.queue.current || player.kazaPlayer.queue.size > 0)) player.kazaPlayer.setVolume(volume);
 
         if (await client.bahamut.dbHandler.guildSettings.setDBGuildSetting(channel.guild, "music_volume", args[0])) {
             client.bahamut.settings.set(channel.guild.id, await client.bahamut.dbHandler.guildSettings.getDBGuildSettings(channel.guild));

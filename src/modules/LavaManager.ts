@@ -1,12 +1,15 @@
-import { Manager, Track, SearchResult, Player } from "erela.js";
-import Spotify from "erela.js-spotify";
-import Deezer from "erela.js-deezer";
+import { Connectors } from "shoukaku";
+import { Kazagumo, KazagumoTrack, Plugins, PlayerState, KazagumoPlayer, KazagumoSearchResult } from "kazagumo";
+import Spotify from "kazagumo-spotify"; 
+import Deezer from "kazagumo-deezer";
+
+
 import { Client } from "genius-lyrics";
 import * as emoji from 'node-emoji'
 import ytdl from "ytdl-core";
 import { randomIntBetween, toProperCase } from "../lib/toolFunctions.js";
 import { DateTime } from "luxon";
-import Discord from "discord.js";
+import Discord, { ClientUser, GuildMember } from "discord.js";
 import { Bahamut } from "../bahamut.js";
 import { ExtendedTrack, RadioStation } from "../../typings.js";
 import { getGuildSettings } from "../lib/getFunctions.js";
@@ -20,6 +23,7 @@ import logger from "./Logger.js";
 import { isUserAdminOfGuild, isUserModOfGuild } from "../lib/checkFunctions.js";
 import { readFileSync } from 'fs';
 import { resolve } from "path";
+import ExtendedKazagumoPlayer from "./ExtendedKazagumoPlayer.js";
 
 export default class LavaManager {
     // Bahamut parent class
@@ -32,11 +36,13 @@ export default class LavaManager {
     private _leaveTimers: Map<string, ReturnType<typeof setTimeout>> = new Map<string, ReturnType<typeof setTimeout>>;
     // Contains all vote skips
     private _voteSkips: Map<string, string[]> = new Map<string, string[]>;
+    // Contains all extended kazagumo players
+    private _players: Map<string, ExtendedKazagumoPlayer> = new Map<string, ExtendedKazagumoPlayer>;
     
     // Contains the genius client
     private _geniusClient: Client;
-    // Contains the erela.js manager
-    private _manager: Manager;
+    // Contains the Kazagumo manager
+    private _manager: Kazagumo;
     
     constructor(bahamut: Bahamut) {
         this._bahamut = bahamut;
@@ -50,36 +56,37 @@ export default class LavaManager {
         this._geniusClient = new Client(this._bahamut.config.genius_token);
 
         // Init new lavamanager
-        this._manager = new Manager({
-            nodes: this._bahamut.config.lavalink_settings.nodes,
-            send: (id, payload) => {
-                const guild = this._bahamut.client.guilds.cache.get(id);
+        this._manager = new Kazagumo({
+            defaultSearchEngine: "youtube",
+
+            send: (guildId, payload) => {
+                const guild = bahamut.client.guilds.cache.get(guildId);
                 if (guild) guild.shard.send(payload);
             },
+                
             plugins: [
-                // Spotify limits x * 100
+                new Plugins.PlayerMoved(this._bahamut.client),
                 new Spotify({
-                    "clientID": this._bahamut.config.spotify_client_id,
-                    "clientSecret": this._bahamut.config.spotify_client_secret,
-                    "playlistLimit": 0,
-                    "albumLimit": 0,
-                    "convertUnresolved": false,
+                    clientId: this._bahamut.config.spotify_client_id,
+                    clientSecret: this._bahamut.config.spotify_client_secret,
+                    playlistPageLimit: 50,
+                    albumPageLimit: 50,
+                    searchLimit: 25,
+                    searchMarket: "US"
                 }),
-                // Deezer limits not x * 100. Just x
-                new Deezer({
-                    "playlistLimit": 0,
-                    "albumLimit": 0,
-                    "convertUnresolved": false,
-                }),
-            ],
-        });
+                new Deezer()
+            ]
+        }, 
+        new Connectors.DiscordJS(bahamut.client), 
+        this._bahamut.config.lavalink_settings.nodes);
+
 
         // Add schedule job to implement regular leave check
         this._bahamut.schedules.set("musicLeaveCheck", this._bahamut.scheduler.scheduleJob("*/5 * * * *", async () => {
             for(const [guild, player] of this._manager.players) {
                 const guild_settings = await getGuildSettings(this._bahamut.client, guild),
-                    voiceChannel = player.voiceChannel ? this._bahamut.client.channels.cache.get(player.voiceChannel) as Discord.VoiceBasedChannel : null,
-                    textChannel = player.textChannel ? this._bahamut.client.channels.cache.get(player.textChannel) as Discord.GuildTextBasedChannel : null;
+                    voiceChannel = player.voiceId ? this._bahamut.client.channels.cache.get(player.voiceId) as Discord.VoiceBasedChannel : null,
+                    textChannel = player.textId ? this._bahamut.client.channels.cache.get(player.textId) as Discord.GuildTextBasedChannel : null;
 
                 if (!voiceChannel || !textChannel) continue;
                 if (guild_settings.premium_user && !guild_settings.music_leave_on_empty) continue;
@@ -103,7 +110,7 @@ export default class LavaManager {
         }));
 
         // Update raw voice state
-        this._bahamut.client.on("raw", d => this._manager.updateVoiceState(d));
+        // this._bahamut.client.on("raw", d => this._manager.updateVoiceState(d));
 
         // If not premium, end stream playback after 60 seconds if channel is empty
         // eslint-disable-next-line no-unused-vars
@@ -112,8 +119,8 @@ export default class LavaManager {
             if (!this._manager.players.has(oldState.guild.id)) return;
 
             const player = this._manager.players.get(oldState.guild.id),
-                voiceChannel = player?.voiceChannel ? this._bahamut.client.channels.cache.get(player.voiceChannel) as Discord.VoiceBasedChannel : null,
-                textChannel = player?.textChannel ? this._bahamut.client.channels.cache.get(player.textChannel) as Discord.GuildTextBasedChannel : null;
+                voiceChannel = player?.voiceId ? this._bahamut.client.channels.cache.get(player.voiceId) as Discord.VoiceBasedChannel : null,
+                textChannel = player?.textId ? this._bahamut.client.channels.cache.get(player.textId) as Discord.GuildTextBasedChannel : null;
 
             if (!voiceChannel || !textChannel) return;
 
@@ -152,30 +159,30 @@ export default class LavaManager {
         });
 
         // Emitted whenever a node connects
-        this._manager.on("nodeConnect", node => {
-            logger.log(this._bahamut.client.shardId, `Lavalink Node "${node.options.identifier}" connected.`);
-        });
+        // this._manager.on("nodeConnect", node => {
+        //    logger.log(this._bahamut.client.shardId, `Lavalink Node "${node.options.identifier}" connected.`);
+        //});
 
         // Emitted whenever a node encountered an error
-        this._manager.on("nodeError", (node, error) => {
-            logger.log(this._bahamut.client.shardId, `Lavalink Node "${node.options.identifier}" encountered an error: ${error.message}.`);
+        this._manager.shoukaku.on("error", (node, error) => {
+            logger.log(this._bahamut.client.shardId, `Lavalink encountered an error: ${error.message}.`);
         });
 
         // Listen for when the client becomes ready
-        this._bahamut.client.once("ready", () => {
+        //this._bahamut.client.once("ready", () => {
             // Initiates the manager and connects to all the nodes
-            this._manager.init(this._bahamut.client.user!.id);
-        });
+        //    this._manager.init(this._bahamut.client.user!.id);
+        //});
 
         // eslint-disable-next-line no-unused-vars
-        this._manager.on("playerMove", async (player, oldChannel, newChannel) => {
-            if (!this._bahamut.client.guilds.cache.has(player.guild)) return;
+        this._manager.on("playerMoved", async (player, oldChannel, newChannel) => {
+            if (!this._bahamut.client.guilds.cache.has(player.guildId)) return;
 
             // let guild = this.client.guilds.cache.get(player.guild);
             //    newChannel = await resolveChannel(null, newChannel, false, guild);
             // if (!newChannel) return;
 
-            if (player.state !== "CONNECTED") player.connect();
+            if (player.state !== PlayerState.CONNECTED && player.state !== PlayerState.CONNECTING) player.connect();
 
             // let current_position = player.position;
             // player.queue.add(player.queue.current, 0);
@@ -195,20 +202,21 @@ export default class LavaManager {
         });
 
         // Emitted when a track starts
-        // Distube Event: playSong
-        this._manager.on("trackStart", async (player, track) => {
-            if (player.get("running_music_quiz")) return;
+        this._manager.on("playerStart", async (player: KazagumoPlayer, track: KazagumoTrack) => {
+            const extPlayer = this.getPlayer(player.guildId);
 
-            const voiceChannel = player?.voiceChannel ? this._bahamut.client.channels.cache.get(player.voiceChannel) as Discord.VoiceBasedChannel : null,
-                textChannel = player?.textChannel ? this._bahamut.client.channels.cache.get(player.textChannel) as Discord.GuildTextBasedChannel : null;
+            if (extPlayer!.getCurrentlyRunningGameName()) return;
+
+            const voiceChannel = extPlayer?.kazaPlayer.voiceId ? this._bahamut.client.channels.cache.get(extPlayer.kazaPlayer.voiceId) as Discord.VoiceBasedChannel : null,
+                textChannel = extPlayer?.kazaPlayer.textId ? this._bahamut.client.channels.cache.get(extPlayer.kazaPlayer.textId) as Discord.GuildTextBasedChannel : null;
 
             if (!voiceChannel || !textChannel) return;
 
             const settings = await getGuildSettings(this._bahamut.client, textChannel.guild);
 
-            if (player.get("skip_trackstart")) {
-                player.set("skip_trackstart", null);
-                if (settings.premium_user) player.setVolume(settings.music_volume);
+            if (extPlayer!.getSkipTrackStart()) {
+                extPlayer!.setSkipTrackStart(false);
+                if (settings.premium_user) extPlayer!.kazaPlayer.setVolume(settings.music_volume);
                 return;
             }
 
@@ -231,7 +239,7 @@ export default class LavaManager {
                     }, true));
                 }
 
-                player.setVolume(settings.music_volume);
+                extPlayer!.kazaPlayer.setVolume(settings.music_volume);
             } else if (voiceChannel.members.filter(m => !m.user.bot).size <= 0) {
                 if (this._leaveTimers.has(voiceChannel.guild.id)) {
                     clearTimeout(this._leaveTimers.get(voiceChannel.guild.id));
@@ -252,27 +260,30 @@ export default class LavaManager {
 
             if (typeof track.requester !== "undefined") await this._bahamut.dbHandler.guildUserStat.addDBGuildUserStat(textChannel.guild, track.requester as Discord.GuildMember, "played_songs", 1);
 
-            await handleResponseToChannel(this._bahamut.client, textChannel, (await this.getPlaySongEmbed(textChannel, player, track, track.requester as Discord.GuildMember)));
+            await handleResponseToChannel(this._bahamut.client, textChannel, (await this.getPlaySongEmbed(textChannel, extPlayer!, track, track.requester as Discord.GuildMember)));
         });
 
         // Emitted the player queue ends
-        this._manager.on("queueEnd", async (player, track) => {
-            if (player.get("running_music_quiz")) return;
+        this._manager.on("playerEmpty", async (player: KazagumoPlayer) => {
+            const extPlayer = this.getPlayer(player.guildId);
 
-            const voiceChannel = player?.voiceChannel ? this._bahamut.client.channels.cache.get(player.voiceChannel) as Discord.VoiceBasedChannel : null,
-                textChannel = player?.textChannel ? this._bahamut.client.channels.cache.get(player.textChannel) as Discord.GuildTextBasedChannel : null;
+            if (extPlayer!.getCurrentlyRunningGameName()) return;
+
+            const voiceChannel = extPlayer?.kazaPlayer.voiceId ? this._bahamut.client.channels.cache.get(extPlayer.kazaPlayer.voiceId) as Discord.VoiceBasedChannel : null,
+                textChannel = extPlayer?.kazaPlayer.textId ? this._bahamut.client.channels.cache.get(extPlayer.kazaPlayer.textId) as Discord.GuildTextBasedChannel : null;
             if (!voiceChannel || !textChannel) return;
 
-            const settings = await getGuildSettings(this._bahamut.client, textChannel.guild);
+            const settings = await getGuildSettings(this._bahamut.client, textChannel.guild),
+                uri = extPlayer!.kazaPlayer.queue.previous?.realUri || extPlayer!.kazaPlayer.queue.previous?.uri;
 
             // Run music autoplay
-            if (track.uri && ytdl.validateURL(track.uri) && settings.music_autoplay && settings.premium_user) {
-                const data = await ytdl.getInfo(track.uri);
+            if (uri && ytdl.validateURL(uri) && settings.music_autoplay && settings.premium_user) {
+                const data = await ytdl.getInfo(uri);
                 if (data.related_videos && data.related_videos.length > 0) {
                     const res = await this._manager.search("https://www.youtube.com/watch?v=" + data.related_videos[0].id);
-                    if (res.loadType !== "LOAD_FAILED" && res.loadType !== "NO_MATCHES") {
-                        player.queue.add(res.tracks[0]);
-                        if (!player.playing && !player.paused && !player.queue.size) await player.play();
+                    if (res && res.tracks.length > 0) {
+                        extPlayer!.kazaPlayer.queue.add(res.tracks[0]);
+                        if (!extPlayer!.kazaPlayer.playing && !extPlayer!.kazaPlayer.paused && !extPlayer!.kazaPlayer.queue.size) await extPlayer!.kazaPlayer.play();
                         return;
                     }
                 } else {
@@ -304,9 +315,9 @@ export default class LavaManager {
                         // return this.client.premiumManager.getGuildNotPremiumMessage(channel.guild, null, `Playing music streams requires an active premium subscription.\nIf you want to know more about this, please check out our [website](${this.client.config.website_link}).`);
                     }
 
-                    if (res.loadType !== "LOAD_FAILED" && res.loadType !== "NO_MATCHES") {
-                        player.queue.add(res.tracks[rand]);
-                        if (!player.playing && !player.paused && !player.queue.size) await player.play();
+                    if (res && res.tracks.length > 0) {
+                        extPlayer!.kazaPlayer.queue.add(res.tracks[rand]);
+                        if (!extPlayer!.kazaPlayer.playing && !extPlayer!.kazaPlayer.paused && !extPlayer!.kazaPlayer.queue.size) await extPlayer!.kazaPlayer.play();
 
                         return;
                     }
@@ -346,17 +357,40 @@ export default class LavaManager {
     public get leaveTimers() {
         return this._leaveTimers;
     }
+    public get players() {
+        return this._players;
+    }
 
     // Misc functions
-    getTrackStartEmbed = async (player: Player, track: Track, requester: Discord.GuildMember) => {
-        const textChannel = player?.textChannel ? this._bahamut.client.channels.cache.get(player.textChannel) as Discord.GuildTextBasedChannel : null;
+    createPlayer = async(guildId: string, textId: string, voiceId: string) => {
+        const kazaPlayer = this.manager.getPlayer(guildId);
+        if (kazaPlayer) return (new ExtendedKazagumoPlayer(this, kazaPlayer));
+        
+
+        const extPlayer = new ExtendedKazagumoPlayer(this, await this.manager.createPlayer({
+            guildId: guildId,
+            voiceId: voiceId,
+            textId: textId
+        }));
+
+        this._players.set(guildId, extPlayer);
+
+        return extPlayer;
+    };
+
+    getPlayer = (guildId: string) => {
+        return (this._players.has(guildId) ? this._players.get(guildId) : null);
+    }
+
+    getTrackStartEmbed = async (player: ExtendedKazagumoPlayer, track: KazagumoTrack, requester: Discord.GuildMember) => {
+        const textChannel = player?.kazaPlayer.textId ? this._bahamut.client.channels.cache.get(player.kazaPlayer.textId) as Discord.GuildTextBasedChannel : null;
         if (!textChannel) return;
 
         return this.getPlaySongEmbed(textChannel, player, track, requester);
     };
 
-    getTrackAddEmbed = async (player: Player, track: Track, requester: Discord.GuildMember) => {
-        const textChannel = player?.textChannel ? this._bahamut.client.channels.cache.get(player.textChannel) as Discord.GuildTextBasedChannel : null;
+    getTrackAddEmbed = async (player: KazagumoPlayer, track: KazagumoTrack, requester: Discord.GuildMember) => {
+        const textChannel = player?.textId ? this._bahamut.client.channels.cache.get(player.textId) as Discord.GuildTextBasedChannel : null;
         if (!textChannel) return;
 
         const settings = await getGuildSettings(this._bahamut.client, textChannel.guild);
@@ -365,7 +399,7 @@ export default class LavaManager {
             embeds: [
                 new Discord.EmbedBuilder()
                     .setTitle(`${emoji.get("page_facing_up")} Music Queue`)
-                    .setDescription(`[${track.title}](${track.uri}) has been added to the queue!\n\nThere are now \`${player.queue.size}\` songs in the queue!`)
+                    .setDescription(`[${!["youtube","soundcloud"].includes(track.sourceName)  ? `${track.author} - ` : ""}${track.title}](${track.realUri || track.uri}) has been added to the queue!\n\nThere are now \`${player.queue.size}\` songs in the queue!`)
                     .setFields(
                         { name: "Requester", value: `${requester}`, inline: false }
                     )
@@ -374,8 +408,8 @@ export default class LavaManager {
         });
     };
 
-    getListStartEmbed = async (player: Player, playlist: SearchResult, requester: Discord.GuildMember) => {
-        const textChannel = player?.textChannel ? this._bahamut.client.channels.cache.get(player.textChannel) as Discord.GuildTextBasedChannel : null;
+    getListStartEmbed = async (player: KazagumoPlayer, playlist: KazagumoSearchResult, requester: Discord.GuildMember) => {
+        const textChannel = player?.textId ? this._bahamut.client.channels.cache.get(player.textId) as Discord.GuildTextBasedChannel : null;
         if (!textChannel) return;
 
         const settings = await getGuildSettings(this._bahamut.client, textChannel.guild);
@@ -384,7 +418,7 @@ export default class LavaManager {
             embeds: [
                 new Discord.EmbedBuilder()
                     .setTitle(`${emoji.get("page_facing_up")} Music Queue`)
-                    .setDescription(`Added \`${playlist.tracks.length}\` items from playlist ${playlist.playlist ? `\`${playlist.playlist.name}\`` : ""} to the queue!`)
+                    .setDescription(`Added \`${playlist.tracks.length}\` items from playlist ${playlist.playlistName ? `\`${playlist.playlistName}\`` : ""} to the queue!`)
                     .setFields(
                         { name: "Requester", value: `${requester}`, inline: false }
                     )
@@ -393,8 +427,8 @@ export default class LavaManager {
         });
     };
 
-    getListAddEmbed = async (player: Player, playlist: SearchResult, requester: Discord.GuildMember) => {
-        const textChannel = player?.textChannel ? this._bahamut.client.channels.cache.get(player.textChannel) as Discord.GuildTextBasedChannel : null;
+    getListAddEmbed = async (player: KazagumoPlayer, playlist: KazagumoSearchResult, requester: Discord.GuildMember) => {
+        const textChannel = player?.textId ? this._bahamut.client.channels.cache.get(player.textId) as Discord.GuildTextBasedChannel : null;
         if (!textChannel) return;
 
         const settings = await getGuildSettings(this._bahamut.client, textChannel.guild);
@@ -403,7 +437,7 @@ export default class LavaManager {
             embeds: [
                 new Discord.EmbedBuilder()
                     .setTitle(`${emoji.get("page_facing_up")} Music Queue`)
-                    .setDescription(`Added \`${playlist.tracks.length}\` additional items from playlist ${playlist.playlist ? `\`${playlist.playlist.name}\`` : ""} to the queue!\n\nThere are now \`${player.queue.size}\` songs in the queue!`)
+                    .setDescription(`Added \`${playlist.tracks.length}\` additional items from playlist ${playlist.playlistName ? `\`${playlist.playlistName}\`` : ""} to the queue!\n\nThere are now \`${player.queue.size}\` songs in the queue!`)
                     .setFields(
                         { name: "Requester", value: `${requester}`, inline: false }
                     )
@@ -412,28 +446,28 @@ export default class LavaManager {
         });
     };
 
-    musicStatus = async (player: Player, embed: Discord.EmbedBuilder) => {
-        const textChannel = player?.textChannel ? this._bahamut.client.channels.cache.get(player.textChannel) as Discord.GuildTextBasedChannel : null;
+    musicStatus = async (player: ExtendedKazagumoPlayer, embed: Discord.EmbedBuilder) => {
+        const textChannel = player?.kazaPlayer.textId ? this._bahamut.client.channels.cache.get(player.kazaPlayer.textId) as Discord.GuildTextBasedChannel : null;
         if (!textChannel) return embed;
 
         const settings = await getGuildSettings(this._bahamut.client, textChannel.guild);
 
-        embed.addFields({ name: "Volume", value: `${player.volume}%`, inline: true });
+        embed.addFields({ name: "Volume", value: `${player.kazaPlayer.volume * 100}%`, inline: true });
 
-        if (player.trackRepeat || player.queueRepeat) {
-            if (player.trackRepeat) embed.addFields({ name: "Repeat", value: "Song", inline: true });
+        if (player.kazaPlayer.loop === "track" || player.kazaPlayer.loop === "queue") {
+            if (player.kazaPlayer.loop === "track") embed.addFields({ name: "Repeat", value: "Song", inline: true });
             else embed.addFields({ name: "Repeat", value: "Queue", inline: true });
         } else {
             embed.addFields({ name: "Repeat", value: "Off", inline: true });
         }
 
-        embed.addFields({ name: "Filter", value: `${player.get("music_filter") ? toProperCase(player.get("music_filter") as string) : "Off"}`, inline: true });
+        embed.addFields({ name: "Filter", value: `${player.getCurrentFilterName() ? toProperCase(player.getCurrentFilterName()!) : "Off"}`, inline: true });
         embed.addFields({ name: "Autoplay", value: (settings.music_autoplay ? "On" : "Off"), inline: true });
 
         return embed;
     };
 
-    getPlaySongEmbed = async (channel: Discord.GuildTextBasedChannel, player: Player, track: Track, requester?: Discord.GuildMember) => {
+    getPlaySongEmbed = async (channel: Discord.GuildTextBasedChannel, player: ExtendedKazagumoPlayer, track: KazagumoTrack, requester?: Discord.GuildMember) => {
         if ((channel === null || typeof channel === "undefined") || (player === null || typeof player === "undefined") || (track === null || typeof track === "undefined")) {
             return createErrorResponse(this._bahamut.client, "Error while getting title information.");
         }
@@ -460,7 +494,7 @@ export default class LavaManager {
             */
             if (song.isStream) {
                 for (const [, val] of Object.entries(this._radioStations)) {
-                    if (val.name.toLowerCase() === player.get("radio_station")) {
+                    if (val.name.toLowerCase() === player.getCurrentRadioStationName()) {
                         song.website_url = val.website_url;
                         song.tracklist = val.tracklist;
                         song.title = val.name;
@@ -473,14 +507,14 @@ export default class LavaManager {
             if (song.isStream && song.website_url) {
                 link = song.website_url;
             } else {
-                link = song.uri;
+                link = song.realUri || song.uri;
             }
 
             const embed = createSuccessResponse(this._bahamut.client, {
                 embeds: [
                     new Discord.EmbedBuilder()
                         .setTitle(`${song.isStream ? emoji.get("radio") : emoji.get("notes")} Now playing${song.isStream ? " (Stream)" : ""}`)
-                        .setDescription(`**[${song.title}](${link})**${song.tracklist ? `\n\nPlaylist:\n${song.tracklist}` : ""}`)
+                        .setDescription(`**[${!["youtube","soundcloud"].includes(song.sourceName)  ? `${song.author} - ` : ""}${song.title}](${link})**${song.tracklist ? `\n\nPlaylist:\n${song.tracklist}` : ""}`)
                         .setFields(
                             { name: "Requester", value: `${(requester) ? requester : (typeof song.requester === "undefined" ? `${emoji.get("control_knobs")} Autoplay` : song.requester)}`, inline: false }
                         ),
@@ -489,12 +523,12 @@ export default class LavaManager {
 
             if (!song.isStream) {
                 for (const e of embed.embeds!) {
-                    e.setThumbnail((albumCover == null) ? song.thumbnail : albumCover);
+                    e.setThumbnail((albumCover == null) ? (song.thumbnail || null) : albumCover);
                     e.setFooter({ text: `Use "${settings.prefix}lyrics" to see the lyrics of this song!` });
                 }
             } else if (song.isStream && song.thumbnail !== null) {
                 for (const e of embed.embeds!) {
-                    e.setThumbnail(song.thumbnail);
+                    e.setThumbnail(song.thumbnail || null);
                 }
             }
 

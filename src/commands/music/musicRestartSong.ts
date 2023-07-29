@@ -44,21 +44,18 @@ export default {
         ]);
         if (await checks.runChecks()) return;
 
-        const player = client.bahamut.musicHandler.manager.create({
-            guild: channel.guild.id,
-            textChannel: channel.id,
-        });
+        const player = client.bahamut.musicHandler.getPlayer(channel.guild.id);
 
         const musicPlayingCheck = new BahamutCommandPreChecker(client, { client, message, channel, interaction }, config, [
-            { type: PreCheckType.MUSIC_IS_PLAYING, player: player },
+            { type: PreCheckType.MUSIC_IS_AVAILABLE, player: player },
         ]);
         if (await musicPlayingCheck.runChecks()) return;
 
         if ([...client.bahamut.runningGames.entries()].filter(([key, val]) => key === channel.guild.id && val.type === "musicquiz").length > 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There is a running music quiz on this server. Please finish it.");
 
-        if (player.queue.size <= 0 && !player.queue.current) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There are no songs in the queue to restart!");
+        if (!player || (player.kazaPlayer.queue.size <= 0 && !player.kazaPlayer.queue.current)) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There are no songs in the queue to restart!");
 
-        player.seek(0);
+        player.kazaPlayer.seek(0);
 
         return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("repeat")} Current track has been restarted!`);
     },

@@ -39,12 +39,8 @@ export default {
         ]);
         if (await checks.runChecks()) return;
 
-        const player = client.bahamut.musicHandler.manager.create({
-            guild: channel.guild.id,
-            textChannel: channel.id,
-        });
-
-        if (!player.playing && !player.paused) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There is nothing playing at the moment!");
+        const player = client.bahamut.musicHandler.getPlayer(channel.guild.id);
+        if (!player || !player.kazaPlayer.playing && !player.kazaPlayer.paused) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There is nothing playing at the moment!");
 
         player.destroy();
 

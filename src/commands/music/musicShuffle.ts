@@ -24,6 +24,8 @@ export default {
         // Abort if module is disabled
         if (settings.disabled_categories.includes("music")) return;
 
+        const player = client.bahamut.musicHandler.getPlayer(channel.guild.id);
+
         // Run pre checks
         const checks = new BahamutCommandPreChecker(client, { client, message, channel, member, interaction }, config, [
             { type: PreCheckType.USER_IS_DJ },
@@ -31,19 +33,15 @@ export default {
             { type: PreCheckType.USER_IN_VOICE_CHANNEL },
             { type: PreCheckType.USER_IN_SAME_VOICE_CHANNEL_AS_BOT },
             { type: PreCheckType.MUSIC_NODES_AVAILABLE },
+            { type: PreCheckType.MUSIC_IS_AVAILABLE, player: player }
         ]);
         if (await checks.runChecks()) return;
 
         if ([...client.bahamut.runningGames.entries()].filter(([key, val]) => key === channel.guild.id && val.type === "musicquiz").length > 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There is a running music quiz on this server. Please finish it before you shuffle the queue.");
 
-        const player = client.bahamut.musicHandler.manager.create({
-            guild: channel.guild.id,
-            textChannel: channel.id,
-        });
+        if (player!.kazaPlayer.queue.size <= 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There are no songs in the queue to shuffle!");
 
-        if (player.queue.size <= 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There are no songs in the queue to shuffle!");
-
-        player.queue.shuffle();
+        player!.kazaPlayer.queue.shuffle();
 
         return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("twisted_rightwards_arrows")} Queue has been shuffled!`);
     },

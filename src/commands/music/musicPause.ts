@@ -36,19 +36,16 @@ export default {
         ]);
         if (await checks.runChecks()) return;
 
-        const player = client.bahamut.musicHandler.manager.create({
-            guild: channel.guild.id,
-            textChannel: channel.id,
-        });
+        const player = client.bahamut.musicHandler.getPlayer(channel.guild.id);
 
         const musicPlayingCheck = new BahamutCommandPreChecker(client, { client, message, channel, interaction }, config, [
             { type: PreCheckType.MUSIC_IS_PLAYING, player: player },
         ]);
         if (await musicPlayingCheck.runChecks()) return;
         if ([...client.bahamut.runningGames.entries()].filter(([key, val]) => key === channel.guild.id && val.type === "musicquiz").length > 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There is a running music quiz on this server. Please finish it before pausing music.");
-        if (player.paused) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "Playback is already paused!");
+        if (player!.kazaPlayer.paused) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "Playback is already paused!");
 
-        player.pause(true);
+        player!.kazaPlayer.pause(true);
 
         return handleSuccessResponseToMessage(client, message || interaction, false, config.deferReply, `${emoji.get("pause_button")} Playback has been paused!`);
     },

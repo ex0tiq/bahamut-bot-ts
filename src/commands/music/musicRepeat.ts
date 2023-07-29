@@ -61,27 +61,24 @@ export default {
         ]);
         if (await checks.runChecks()) return;
 
-        const player = client.bahamut.musicHandler.manager.create({
-            guild: channel.guild.id,
-            textChannel: channel.id,
-        });
+        const player = client.bahamut.musicHandler.getPlayer(channel.guild.id);
 
         const musicPlayingCheck = new BahamutCommandPreChecker(client, { client, message, channel, interaction }, config, [
-            { type: PreCheckType.MUSIC_IS_PLAYING, player: player },
+            { type: PreCheckType.MUSIC_IS_AVAILABLE, player: player },
         ]);
         if (await musicPlayingCheck.runChecks()) return;
 
         let mode = null, stringMode = null;
         if (["off", "reset"].includes(args[0].toLowerCase())) {
             mode = 0;
-            player.setTrackRepeat(false);
-            player.setQueueRepeat(false);
+            player!.kazaPlayer.setLoop("track");
+            player!.kazaPlayer.setLoop("queue");
         } else if (["song", "s"].includes(args[0].toLowerCase())) {
             mode = 1;
-            player.setTrackRepeat(true);
+            player!.kazaPlayer.setLoop("track");
         } else if (["queue", "q"].includes(args[0].toLowerCase())) {
             mode = 2;
-            player.setQueueRepeat(true);
+            player!.kazaPlayer.setLoop("queue");
         } else {
             return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, createMissingParamsErrorResponse(client, config));
         }

@@ -9,8 +9,8 @@ import {
     handleErrorResponseToMessage
 } from "../lib/messageHandlers.js";
 import {getGuildSettings} from "../lib/getFunctions.js";
-import {Player} from "erela.js";
 import Discord from "discord.js";
+import ExtendedKazagumoPlayer from "./ExtendedKazagumoPlayer.js";
 
 export class BahamutCommandPreChecker {
     // Bahamut Client
@@ -114,7 +114,7 @@ export class BahamutCommandPreChecker {
                     );
                 }
             } else if (check.type === PreCheckType.MUSIC_NODES_AVAILABLE) {
-                if (!(this._client.bahamut.musicHandler.manager.leastUsedNodes.first())) {
+                if (!(this._client.bahamut.musicHandler.manager.getLeastUsedNode())) {
                     error = true;
                     await handleErrorResponseToMessage(
                         this._client,
@@ -134,8 +134,18 @@ export class BahamutCommandPreChecker {
                         createMissingParamsErrorResponse(this._client, this._commandConf)
                     );
                 }
+            } else if (check.type === PreCheckType.MUSIC_IS_AVAILABLE) {
+                if (!check.player || !check.player.kazaPlayer || (check.player.kazaPlayer.queue.size <= 0 && !check.player.kazaPlayer.queue.current)) {
+                    error = true;
+                    await handleErrorResponseToMessage(
+                        this._client,
+                        this._command.message || this._command.interaction,
+                        false, this._commandConf.deferReply,
+                        check.customErrorMessage ? check.customErrorMessage : 'There is nothing playing at the moment!'
+                    );
+                }
             } else if (check.type === PreCheckType.MUSIC_IS_PLAYING) {
-                if (!check.player || !check.player.playing) {
+                if (!check.player || !check.player.kazaPlayer || !check.player.kazaPlayer.playing) {
                     error = true;
                     await handleErrorResponseToMessage(
                         this._client,
@@ -162,7 +172,7 @@ export interface PreCheck {
     customErrorMessage?: string,
     requiredPermissions?: UserPermission[],
     paramsCheck?: boolean,
-    player?: Player
+    player?: ExtendedKazagumoPlayer | null
 }
 
 export interface UserPermission {
@@ -179,5 +189,6 @@ export enum PreCheckType {
     USER_IN_SAME_VOICE_CHANNEL_AS_BOT = "USER_IN_SAME_VOICE_CHANNEL_AS_BOT",
     MUSIC_NODES_AVAILABLE = "MUSIC_NODES_AVAILABLE",
     ALL_PARAMS_PROVIDED = "ALL_PARAMS_PROVIDED",
-    "MUSIC_IS_PLAYING" = "MUSIC_IS_PLAYING"
+    MUSIC_IS_PLAYING = "MUSIC_IS_PLAYING",
+    MUSIC_IS_AVAILABLE = "MUSIC_IS_AVAILABLE"
 }

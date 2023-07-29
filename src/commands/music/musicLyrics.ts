@@ -62,26 +62,23 @@ export default {
             ]);
             if (await checks.runChecks()) return;
 
-            const player = client.bahamut.musicHandler.manager.create({
-                guild: channel.guild.id,
-                textChannel: channel.id,
-            });
+            const player = client.bahamut.musicHandler.getPlayer(channel.guild.id);
 
             const musicPlayingCheck = new BahamutCommandPreChecker(client, { client, message, channel, interaction }, config, [
-                { type: PreCheckType.MUSIC_IS_PLAYING, player: player },
+                { type: PreCheckType.MUSIC_IS_AVAILABLE, player: player },
             ]);
             if (await musicPlayingCheck.runChecks()) return;
             if ([...client.bahamut.runningGames.entries()].filter(([key, val]) => key === channel.guild.id && val.type === "musicquiz").length > 0) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "There is a running music quiz on this server. Please finish it before searching for lyrics.");
-            if (player.queue.current!.isStream) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "Lyrics cannot be searched for webstreams!");
+            if (player!.kazaPlayer.queue.current!.isStream) return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, "Lyrics cannot be searched for webstreams!");
 
-            const search = await searchLyrics(client, GeniusClient, player.queue.current!.title);
+            const search = await searchLyrics(client, GeniusClient, `${!["youtube","soundcloud"].includes(player!.kazaPlayer.queue.current!.sourceName) ? `${player!.kazaPlayer.queue.current!.author} - ` : ""}${player!.kazaPlayer.queue.current!.title}`);
 
             if (!search || search.result === null) {
-                return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Sorry, I couldn't find any lyrics for \`${player.queue.current!.title}\`.`);
+                return handleErrorResponseToMessage(client, message || interaction, false, config.deferReply, `Sorry, I couldn't find any lyrics for \`${!["youtube","soundcloud"].includes(player!.kazaPlayer.queue.current!.sourceName) ? `${player!.kazaPlayer.queue.current!.author} - ` : ""}${player!.kazaPlayer.queue.current!.title}\`.`);
             } else {
                 const templyrics = search.lyrics.replace(/\n/g, "%b");
                 if (templyrics.length >= 2000) {
-                    await handleErrorResponseToMessage(
+                    await handleResponseToMessage(
                         client,
                         message || interaction,
                         false,
