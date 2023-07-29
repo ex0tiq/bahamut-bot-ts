@@ -74,13 +74,9 @@ const handleResponseToMessage = async (
             if (deferReply) {
                 if (!sendToAuthor) {
                     if (sendToChannel) {
-                        response = await initMessage.channel!.send({
-                            ...newMessageContent,
-                        });
+                        response = await initMessage.channel!.send(newMessageContent);
                     } else {
-                        response = await initMessage.editReply({
-                            ...newMessageContent,
-                        });
+                        response = await initMessage.editReply(newMessageContent);
                     }
                 } else {
                     response = await initMessage.user.send(newMessageContent);
