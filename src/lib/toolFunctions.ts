@@ -66,9 +66,16 @@ const getAllFiles = async (path: string, foldersOnly = false) => {
         }
         continue;
       }
-      if (!file.name.endsWith('.js') && !file.name.endsWith('.ts')) continue
   
-      const fileContents = await import(filePath);
+      let fileContents;
+      if (file.name.endsWith(".json")) {
+        fileContents = JSON.parse(
+          readFileSync(filePath, "utf-8")
+        );
+      } else {
+        fileContents = await import(filePath);
+      }
+
       filesFound.push({
         filePath,
         fileContents: fileContents?.default || fileContents,
