@@ -11,12 +11,12 @@ import { handleErrorResponseToMessage, handleSuccessResponseToMessage } from "..
 const config: CommandConfig = {
     name: "seek",
     type: CommandType.LEGACY,
-    description: "Seek the current song to position X (e.g. XX:XX or in seconds, these can be prepended with + or - for relational seeking)",
+    description: "Seek the current song to position X (e.g. XX:XX or in seconds, these can be prepended with + or -)",
     expectedArgs: "<seconds>",
     options: [
         {
             name: "position",
-            description: "Seek the current song to position X (e.g. XX:XX or in seconds, these can be prepended with + or - for relational seeking)",
+            description: "Seek the current song to position X (e.g. XX:XX or in seconds, these can be prepended with + or -)",
             type: Discord.ApplicationCommandOptionType.String,
             required: true,
         },
