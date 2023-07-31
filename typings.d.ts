@@ -128,7 +128,7 @@ export interface LavalinkNode {
     name: string;
     url: string;
     auth: string;
-    secure?: boolean = false;
+    secure?: boolean;
 }
 
 export interface RadioStation {
