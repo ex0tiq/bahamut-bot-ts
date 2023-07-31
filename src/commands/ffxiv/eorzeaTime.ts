@@ -1,7 +1,7 @@
 import { CommandConfig } from "../../../typings.js";
 import { CommandType } from "wokcommands";
 import * as emoji from "node-emoji";
-import EZTime from "eorzea-time";
+import { default as EZTime } from "eorzea-time";
 import BahamutClient from "../../modules/BahamutClient.js";
 import Discord from "discord.js";
 import { getGuildSettings } from "../../lib/getFunctions.js";
@@ -26,7 +26,8 @@ export default {
         // Abort if module is disabled
         if (settings.disabled_categories.includes("ffxiv")) return;
 
-        const ezt = new EZTime.default(), time = DateTime.fromFormat(ezt.toString(), "HH:mm:ss");
+        // @ts-expect-error
+        const ezt = new EZTime(), time = DateTime.fromFormat(ezt.toString(), "HH:mm:ss");
         let timeString = "";
 
         if (settings.time_format_24h) timeString = time.toFormat("HH:mm:ss");
