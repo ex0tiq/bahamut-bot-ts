@@ -1,7 +1,8 @@
 import { CommandConfig } from "../../../typings.js";
 import Discord from "discord.js";
 import * as emoji from "node-emoji";
-import EorzeaWeather from "eorzea-weather";
+// @ts-ignore
+import { default as EorzeaWeather } from "eorzea-weather";
 import { CommandType } from "wokcommands";
 import { toProperCase } from "../../lib/toolFunctions.js";
 import { handleErrorResponseToMessage, handleResponseToMessage } from "../../lib/messageHandlers.js";
@@ -90,7 +91,8 @@ export default {
         }
 
         try {
-            const weather = [{ weather: EorzeaWeather.default.getWeather(zone, curDate.toJSDate()), date: curDate }];
+            // @ts-ignore
+            const weather = [{ weather: EorzeaWeather.getWeather(zone, curDate.toJSDate()), date: curDate }];
 
             for (let i = 0; i < 12600; i += 5) {
                 if (weather.length > 5) {
@@ -99,7 +101,8 @@ export default {
 
                 const t = curDate.setZone(settings.timezone || "Europe/Berlin").plus({ seconds: i });
                 const w = {
-                    weather: EorzeaWeather.default.getWeather(zone, t.toJSDate()),
+                    // @ts-ignore
+                    weather: EorzeaWeather.getWeather(zone, t.toJSDate()),
                     date: t,
                 };
 
@@ -122,12 +125,12 @@ export default {
             return handleResponseToMessage(client, message || interaction, false, config.deferReply, {
                 embeds: [
                     new Discord.EmbedBuilder()
-                        .setAuthor({ name: `Current Weather in ${convertZoneToString(convertStringToZone(search, true))}`, iconURL: client.bahamut.config.game_icons.ffxiv })
+                        .setAuthor({ name: `Current weather in ${convertZoneToString(convertStringToZone(search, true))}`, iconURL: client.bahamut.config.game_icons.ffxiv })
                         .setDescription(`${getEmojiForWeather(weather[0].weather)} ${weather[0].weather}`)
                         .setFields(
                             { name: "Forecast", value: weatherText, inline: true },
                             { name: "Time until", value: untilText, inline: true },
-                            { name: "Time", value: whenText, inline: true }
+                            { name: "Local time", value: whenText, inline: true }
                         ),
                 ],
             });
@@ -140,6 +143,8 @@ export default {
 
 const getEmojiForWeather = (weather: string) => {
     switch (weather.toLowerCase()) {
+        case "astromagnetic storm":
+            return emoji.get("cloud_tornado");
         case "blizzards":
             return emoji.get("cloud_snow");
         case "clear skies":
@@ -149,19 +154,21 @@ const getEmojiForWeather = (weather: string) => {
         case "dust storms":
             return emoji.get("cloud_tornado");
         case "fair skies":
-            return emoji.get("white_sun_cloud");
+            return emoji.get("sun_behind_large_cloud");
         case "fog":
             return emoji.get("fog");
         case "gales":
-            return emoji.get("wind_blowing_face");
+            return emoji.get("dash");
         case "gloom":
-            return emoji.get("white_sun_cloud");
+            return emoji.get("sun_behind_large_cloud");
         case "heat waves":
             return emoji.get("sunny");
+        case "moon dust":
+            return emoji.get("dash");
         case "rain":
-            return emoji.get("cloud_rain");
+            return emoji.get("cloud_with_rain");
         case "showers":
-            return emoji.get("cloud_rain");
+            return emoji.get("cloud_with_rain");
         case "snow":
             return emoji.get("cloud_snow");
         case "thunder":
@@ -169,11 +176,11 @@ const getEmojiForWeather = (weather: string) => {
         case "thunderstorms":
             return emoji.get("thunder_cloud_rain");
         case "umbral static":
-            return emoji.get("white_sun_cloud");
+            return emoji.get("sun_behind_large_cloud");
         case "umbral wind":
-            return emoji.get("wind_blowing_face");
+            return emoji.get("dash");
         case "wind":
-            return emoji.get("wind_blowing_face");
+            return emoji.get("dash");
         default:
             return "";
     }
