@@ -42,14 +42,14 @@ const setGuildPrefixes = (bahamut: Bahamut) => {
 const startBotActivityUpdates = async (bahamut: Bahamut) => {
     // Schedule a EorzeaTime Update every 12 seconds (5 times is max amount per minute, accepted by discord)
     bahamut.schedules.set("botActivityScheduler",
-        bahamut.scheduler.scheduleJob("*/12 * * * * *", async () => {
+        bahamut.scheduler.scheduleJob("* * * * *", async () => {
             const act = await getBotActivity(bahamut.client);
-            bahamut.client.user?.setActivity(`reigning over ${act.totalGuilds} servers with ${act.totalUsers} users`, { type: ActivityType.Playing });
+            bahamut.client.user?.setActivity(`${act.totalGuilds} Guilds with ${act.totalUsers} total users! | /help`, { type: ActivityType.Watching });
         })
     );
 
     const act = await getBotActivity(bahamut.client);
-    bahamut.client.user?.setActivity(`reigning over ${act.totalGuilds} servers with ${act.totalUsers} users`, { type: ActivityType.Playing });
+    bahamut.client.user?.setActivity(`${act.totalGuilds} Guilds with ${act.totalUsers} total users! | /help`, { type: ActivityType.Watching });
 };
 
 const registerCommands = (bahamut: Bahamut) => {
@@ -76,15 +76,15 @@ const registerCommands = (bahamut: Bahamut) => {
 
         // User your own ID
         // If you only have 1 ID then you can pass in a string instead
-        botOwners: [bahamut.config.owner_id!],
+        botOwners: [bahamut.config.owner_id!, ...bahamut.config.admins],
 
         // Configure the cooldowns for your commands and features
         cooldownConfig: {
             errorMessage: "Please wait {TIME} before doing that again.",
-            botOwnersBypass: false,
+            botOwnersBypass: true,
             // The amount of seconds required for a cooldown to be
             // persistent via MongoDB.
-            dbRequired: 300,
+            dbRequired: 600,
         },
 
         // What built-in commands should be disabled.
