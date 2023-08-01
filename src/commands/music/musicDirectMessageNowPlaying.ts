@@ -110,7 +110,7 @@ export default {
             let embed = new Discord.EmbedBuilder()
                 .setTitle(`${emoji.get("notes")} Now playing`)
                 .setThumbnail(song.thumbnail || null)
-                .setDescription(`**[${!["youtube","soundcloud"].includes(song.sourceName) ? `${song.author} - ` : ""}${song.title}](${song.realUri || song.uri})**`)
+                .setDescription(`**[${!["youtube", "soundcloud"].includes(song.sourceName) ? `${song.author} - ` : ""}${song.title}](${song.realUri || song.uri})**`)
                 .setFields(
                     {
                         name: "Requester",
