@@ -8,9 +8,9 @@ import { CommandType, CooldownTypes } from "wokcommands";
 import BahamutClient from "../modules/BahamutClient.js";
 import { createResponseToMessage, handleResponseToMessage } from "../lib/messageHandlers.js";
 import { getGuildSettings } from "../lib/getFunctions.js";
-import { readFileSync } from 'fs';
+import { readFileSync } from "fs";
 import { resolve } from "path";
-//@ts-ignore
+// @ts-ignore
 import cpu from "cpu-stat";
 
 const config: CommandConfig = {

@@ -54,57 +54,58 @@ export default {
                             { 
                                 name: `<:crown:${client.bahamut.config.status_emojis.crown}> Owner`, 
                                 value: channel.guild.members.cache.get(channel.guild.ownerId)?.toString() || "-", 
-                                inline: false 
+                                inline: false,
                             },
                             { 
                                 name: `<:user:${client.bahamut.config.status_emojis.user}> Members`, 
                                 value: numberWithCommas(channel.guild.memberCount) || "0", 
-                                inline: true 
+                                inline: true,
                             },
                             { 
                                 name: `<:stack:${client.bahamut.config.status_emojis.stack}> Shard`, 
                                 value: `${client.shardId + 1}/${data.length}` || "-", 
-                                inline: true 
+                                inline: true,
                             },
                             // eslint-disable-next-line no-useless-escape
                             { 
                                 name: `<:heart:${client.bahamut.config.status_emojis.heart}> Premium`, 
+                                // eslint-disable-next-line no-useless-escape
                                 value: `${settings.premium_user ? "\:white_check_mark: Yes" : "\:x: No"}` || "No", 
-                                inline: true 
+                                inline: true,
                             },
                             { 
                                 name: `<:region:${client.bahamut.config.status_emojis.region}> Language`, 
                                 value: (channel.guild.preferredLocale ?
                                     (ISO6391.getName(channel.guild.preferredLocale.split("-")[0]) ? ISO6391.getName(channel.guild.preferredLocale.split("-")[0]) : toProperCase(channel.guild.preferredLocale.toString())) :
                                     "N/A") || "N/A", 
-                                    inline: true 
+                                    inline: true,
                             },
                             { 
                                 name: `<:console:${client.bahamut.config.status_emojis.console}> Commands`, 
                                 value: (guildCommandCount ? numberWithCommas(guildCommandCount + 1) : "1") || "1", 
-                                inline: true 
+                                inline: true,
                             },
-                            // eslint-disable-next-line no-useless-escape
                             { 
+                                // eslint-disable-next-line no-useless-escape
                                 name: "\:cookie: Cookies", 
                                 value: (guildUserStats && guildUserStats.has("cookies") ? (guildUserStats.has("cookies") ? numberWithCommas(guildUserStats.get("cookies")?.val || 0) : "0") : "0") || "0", 
-                                inline: true 
+                                inline: true,
                             },
                             { 
                                 name: `<:toolbox:${client.bahamut.config.status_emojis.toolbox}> Settings`, 
                                 value: `Prefix: \`${settings.prefix}\``, 
-                                inline: true 
+                                inline: true,
                             },
-                            // eslint-disable-next-line no-useless-escape
                             { 
+                                // eslint-disable-next-line no-useless-escape
                                 name: "\:headphones: DJ", 
                                 value: (settings.music_dj_role ? channel.guild.roles.resolve(settings.music_dj_role)?.toString() : "Not set") || "Not set", 
-                                inline: true 
+                                inline: true,
                             },
                             { 
                                 name: `<:cancel:${client.bahamut.config.status_emojis.cancel}> Ignored Channels`, 
                                 value: "NaN", 
-                                inline: true 
+                                inline: true,
                             },
                         ]),
                 ],

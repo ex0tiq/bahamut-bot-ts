@@ -8,7 +8,7 @@ import {
     handleSuccessResponseToMessage,
 } from "../../lib/messageHandlers.js";
 import logger from "../../modules/Logger.js";
-import { readFileSync } from 'fs';
+import { readFileSync } from "fs";
 import { resolve } from "path";
 
 const config: CommandConfig = {

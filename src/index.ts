@@ -10,7 +10,7 @@ import BahamutShardingManager from "./modules/BahamutShardingManager.js";
 import BotAPIHandler from "./modules/BotAPIHandler.js";
 import DB from "./modules/ShardManDBHandler.js";
 import { BahamutShardingBootManager, BootConfig, BootManager } from "../typings.js";
-import { readFileSync } from 'fs';
+import { readFileSync } from "fs";
 import { resolve } from "path";
 
 console.log(`Running Bahamut v${process.env.npm_package_version} on NodeJS ${process.version} and discord.js v${Discord.version}.`);
@@ -64,8 +64,6 @@ async function startup() {
         ...bootManager.config,
         ...bootConf,
     };
-
-    logger.log("SM", "Booting with token: " + bootConf.token);
 
     // Create ShardingManger instance
     const manager = new BahamutShardingManager("./dist/bahamut.js", {

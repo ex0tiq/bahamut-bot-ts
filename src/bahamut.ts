@@ -17,7 +17,7 @@ import { Settings } from "luxon";
 import FFXIV from "./modules/FFXIV.js";
 import LanguageMessageHandler from "./lib/languageMessageHandlers.js";
 import * as Events from "events";
-import { readFileSync } from 'fs';
+import { readFileSync } from "fs";
 import { resolve } from "path";
 // @ts-ignore
 import { client as tjsClient } from "tenorjs";
