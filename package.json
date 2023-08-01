@@ -1,6 +1,6 @@
 {
   "name": "bahamut-bot-ts",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Rewrite of Bahamut Bot in TypeScript",
   "type": "module",
   "main": "./dist/index.js",
@@ -87,7 +87,7 @@
     "uuid": "^9.0.0",
     "validator": "^13.9.0",
     "wikijs": "^6.4.1",
-    "wokcommands": "git+https://github.com/ex0tiq/WOKCommands-v2.git",
+    "wokcommands": "file:../WOKCommands-v2",
     "youtube-sr": "^4.3.4",
     "ytdl-core": "^4.11.5",
     "ytdl-core-discord": "^1.3.1",
