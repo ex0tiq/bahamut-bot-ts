@@ -8,7 +8,7 @@ const config = {
     aliases: [],
     type: CommandType.BOTH,
     description: "It like... Pings. Then Pongs. And it's not Ping Pong.",
-    category: "Miscellaneous",
+    category: "System",
     cooldowns: {
         type: CooldownTypes.perUserPerGuild,
         duration: "10 s",
