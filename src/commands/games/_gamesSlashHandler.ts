@@ -7,7 +7,7 @@ import { handleErrorResponseToMessage } from "../../lib/messageHandlers.js";
 
 import url from "url";
 const __filename = url.fileURLToPath(import.meta.url);
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
 let allGamesCommands: FileData[] = [];
 
@@ -19,7 +19,7 @@ const config: CommandConfig = {
     description: "Different commands for Discord games.",
     options: [],
     minArgs: 0,
-    category: "Games",
+    category: "Games (/games)",
     guildOnly: true,
     testOnly: false,
     // Set this to false, so WOKCommand doesn't apply any deferring

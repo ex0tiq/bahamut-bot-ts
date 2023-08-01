@@ -28,7 +28,7 @@ const config: CommandConfig = {
             maxValue: 21600,
         },
     ],
-    category: "Moderation",
+    category: "Moderation (/moderation)",
     guildOnly: true,
     testOnly: false,
     deferReply: true,

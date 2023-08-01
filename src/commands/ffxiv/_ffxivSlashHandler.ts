@@ -20,7 +20,7 @@ const config: CommandConfig = {
     description: "Different commands related to FF XIV.",
     options: [],
     minArgs: 0,
-    category: "FFXIV",
+    category: "FFXIV (/ffxiv)",
     guildOnly: true,
     testOnly: false,
     // Set this to false, so WOKCommand doesn't apply any deferring

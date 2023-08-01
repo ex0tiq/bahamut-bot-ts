@@ -23,7 +23,7 @@ const config: CommandConfig = {
         },
     ],
     minArgs: 0,
-    category: "Music",
+    category: "Music (/music)",
     cooldowns: {
         type: CooldownTypes.perUserPerGuild,
         duration: "10 s",

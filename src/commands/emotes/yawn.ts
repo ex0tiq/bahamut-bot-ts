@@ -11,7 +11,7 @@ const config: CommandConfig = {
     type: CommandType.LEGACY,
     testOnly: false,
     description: "You are yawning",
-    category: "Emotes",
+    category: "Emotes (/emote)",
     guildOnly: true,
     deferReply: true,
 };

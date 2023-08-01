@@ -19,7 +19,7 @@ const config: CommandConfig = {
     aliases: ["dmnp"],
     type: CommandType.LEGACY,
     description: "Show the currently playing song and send it per DM to you.",
-    category: "Music",
+    category: "Music (/music)",
     guildOnly: true,
     deferReply: "ephemeral",
     testOnly: false,

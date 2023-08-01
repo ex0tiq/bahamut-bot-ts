@@ -14,7 +14,7 @@ const config: CommandConfig = {
     name: "pause",
     type: CommandType.LEGACY,
     description: "Pause the current song.",
-    category: "Music",
+    category: "Music (/music)",
     guildOnly: true,
     deferReply: true,
     testOnly: false,

@@ -35,7 +35,7 @@ const config: CommandConfig = {
             autocomplete: true,
         },
     ],
-    category: "Games",
+    category: "Games (/games)",
     guildOnly: true,
     deferReply: true,
 };

@@ -34,7 +34,7 @@ const config: CommandConfig = {
         },
     ],
     minArgs: 1,
-    category: "Emotes",
+    category: "Emotes (/emote)",
     guildOnly: true,
     testOnly: false,
     // Set this to false, so WOKCommand doesn't apply any deferring
@@ -43,8 +43,8 @@ const config: CommandConfig = {
 
 export default {
     ...config,
-    init: async() => {
-        allEmoteCommands = (await getAllJSFiles(__dirname)).filter(e => e.filePath !== __filename)
+    init: async () => {
+        allEmoteCommands = (await getAllJSFiles(__dirname)).filter(e => e.filePath !== __filename);
     },
     autocomplete: () => {
         return ["List"].concat(allEmoteCommands.filter(e => e.fileContents.type !== CommandType.SLASH).map(e => toProperCase(e.fileContents.name)));

@@ -26,7 +26,7 @@ const config: CommandConfig = {
             required: false,
         },
     ],
-    category: "FFXIV",
+    category: "FFXIV (/ffxiv)",
     cooldowns: {
         type: CooldownTypes.perUserPerGuild,
         duration: "10 s",

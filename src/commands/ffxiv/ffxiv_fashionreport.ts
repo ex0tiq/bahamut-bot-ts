@@ -10,7 +10,7 @@ const config: CommandConfig = {
     name: "fashionreport",
     type: CommandType.LEGACY,
     description: "Get the latest fashion report.",
-    category: "FFXIV",
+    category: "FFXIV (/ffxiv)",
     guildOnly: true,
     cooldowns: {
         type: CooldownTypes.perUserPerGuild,

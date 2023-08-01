@@ -32,7 +32,7 @@ const config: CommandConfig = {
             required: true,
         },
     ],
-    category: "Fun",
+    category: "Fun (/fun)",
     cooldowns: {
         type: CooldownTypes.perUserPerGuild,
         duration: "10 s",

@@ -46,7 +46,7 @@ const config: CommandConfig = {
             required: true,
         },
     ],
-    category: "FFXIV",
+    category: "FFXIV (/ffxiv)",
     guildOnly: true,
     deferReply: false,
 };

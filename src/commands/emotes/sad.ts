@@ -11,7 +11,7 @@ const config: CommandConfig = {
     type: CommandType.LEGACY,
     testOnly: false,
     description: "Sad emote",
-    category: "Emotes",
+    category: "Emotes (/emote)",
     guildOnly: true,
     deferReply: true,
 };

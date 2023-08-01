@@ -13,7 +13,7 @@ const config: CommandConfig = {
     type: CommandType.LEGACY,
     description: "Get ffxiv character information of your current user.",
     options: [],
-    category: "FFXIV",
+    category: "FFXIV (/ffxiv)",
     cooldowns: {
         type: CooldownTypes.perUserPerGuild,
         duration: "10 s",

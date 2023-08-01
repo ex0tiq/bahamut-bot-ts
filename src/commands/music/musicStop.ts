@@ -11,7 +11,7 @@ const config: CommandConfig = {
     name: "stop",
     type: CommandType.LEGACY,
     description: "Stop the currently running music and clear the queue.",
-    category: "Music",
+    category: "Music (/music)",
     guildOnly: true,
     deferReply: true,
     testOnly: false,

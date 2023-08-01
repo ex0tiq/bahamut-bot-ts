@@ -12,7 +12,7 @@ const config: CommandConfig = {
     type: CommandType.LEGACY,
     testOnly: false,
     description: "Shocked emote",
-    category: "Emotes",
+    category: "Emotes (/emote)",
     guildOnly: true,
     deferReply: true,
 };

@@ -30,7 +30,7 @@ const config: CommandConfig = {
         },
     ],
     minArgs: 0,
-    category: "Music",
+    category: "Music (/music)",
     guildOnly: true,
     testOnly: false,
     deferReply: true,

@@ -11,7 +11,7 @@ const config: CommandConfig = {
     name: "resume",
     type: CommandType.LEGACY,
     description: "Resume playing the current song.",
-    category: "Music",
+    category: "Music (/music)",
     guildOnly: true,
     testOnly: false,
     deferReply: true,

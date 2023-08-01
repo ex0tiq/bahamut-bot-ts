@@ -11,7 +11,7 @@ const config: CommandConfig = {
     type: CommandType.LEGACY,
     testOnly: false,
     description: "Get the cookie leaderboard.",
-    category: "Fun",
+    category: "Fun (/fun)",
     cooldowns: {
         type: CooldownTypes.perUserPerGuild,
         duration: "10 s",

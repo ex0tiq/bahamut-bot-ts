@@ -21,7 +21,7 @@ const config: CommandConfig = {
             required: true,
         },
     ],
-    category: "Searches",
+    category: "Searches (/search)",
     cooldowns: {
         type: CooldownTypes.perUserPerGuild,
         duration: "10 s",

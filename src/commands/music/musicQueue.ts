@@ -39,7 +39,7 @@ const config: CommandConfig = {
             required: false,
         },
     ],
-    category: "Music",
+    category: "Music (/music)",
     guildOnly: true,
     testOnly: false,
     deferReply: true,

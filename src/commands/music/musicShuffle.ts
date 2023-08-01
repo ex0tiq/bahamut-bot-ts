@@ -11,7 +11,7 @@ const config: CommandConfig = {
     name: "shuffle",
     type: CommandType.LEGACY,
     description: "Shuffle the current queue.",
-    category: "Music",
+    category: "Music (/music)",
     guildOnly: true,
     testOnly: false,
     deferReply: true,

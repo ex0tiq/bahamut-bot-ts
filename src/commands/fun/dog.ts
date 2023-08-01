@@ -11,7 +11,7 @@ const config: CommandConfig = {
     type: CommandType.LEGACY,
     testOnly: false,
     description: "Get a random dog image or video.",
-    category: "Fun",
+    category: "Fun (/fun)",
     guildOnly: true,
     deferReply: true,
 };

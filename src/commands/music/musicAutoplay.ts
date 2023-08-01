@@ -38,7 +38,7 @@ const config: CommandConfig = {
         },
     ],
     minArgs: 0,
-    category: "Music",
+    category: "Music (/music)",
     guildOnly: true,
     deferReply: false,
     testOnly: false,

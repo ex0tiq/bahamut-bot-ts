@@ -19,7 +19,7 @@ const config: CommandConfig = {
     aliases: ["np"],
     type: CommandType.LEGACY,
     description: "Show the currently playing song.",
-    category: "Music",
+    category: "Music (/music)",
     guildOnly: true,
     deferReply: true,
     testOnly: false,

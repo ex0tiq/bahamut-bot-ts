@@ -23,7 +23,7 @@ const config: CommandConfig = {
             required: true,
         },
     ],
-    category: "Fun",
+    category: "Fun (/fun)",
     guildOnly: true,
     testOnly: false,
     deferReply: true,

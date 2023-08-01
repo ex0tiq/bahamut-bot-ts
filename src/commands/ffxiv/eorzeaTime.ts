@@ -14,7 +14,7 @@ const config: CommandConfig = {
     type: CommandType.LEGACY,
     testOnly: false,
     description: "Shows the current eorzean time.",
-    category: "FFXIV",
+    category: "FFXIV (/ffxiv)",
     guildOnly: true,
     deferReply: false,
 };

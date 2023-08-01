@@ -13,7 +13,7 @@ const config: CommandConfig = {
     type: CommandType.LEGACY,
     testOnly: false,
     description: "Play the slot machine with your cookies.",
-    category: "Fun",
+    category: "Fun (/fun)",
     guildOnly: true,
     deferReply: true,
 };

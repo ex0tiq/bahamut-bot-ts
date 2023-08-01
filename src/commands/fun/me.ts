@@ -11,7 +11,7 @@ const config: CommandConfig = {
     minArgs: 1,
     expectedArgs: "<something>",
 
-    category: "Fun",
+    category: "Fun (/fun)",
     guildOnly: true,
     testOnly: false,
     deferReply: true,

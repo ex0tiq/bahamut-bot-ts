@@ -33,7 +33,7 @@ const config: CommandConfig = {
             type: Discord.ApplicationCommandOptionType.String,
         },
     ],
-    category: "Moderation",
+    category: "Moderation (/moderation)",
     guildOnly: true,
     testOnly: false,
     deferReply: true,

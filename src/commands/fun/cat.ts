@@ -40,7 +40,7 @@ const config: CommandConfig = {
             required: false,
         },
     ],
-    category: "Fun",
+    category: "Fun (/fun)",
     guildOnly: true,
     deferReply: true,
     testOnly: false,

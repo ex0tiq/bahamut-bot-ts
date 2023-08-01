@@ -14,7 +14,7 @@ const config: CommandConfig = {
     name: "restart",
     type: CommandType.LEGACY,
     description: "Restart the current song.",
-    category: "Music",
+    category: "Music (/music)",
     guildOnly: true,
     deferReply: true,
     testOnly: false,

@@ -12,7 +12,7 @@ const config: CommandConfig = {
     testOnly: false,
     description: "You are rolling your eyes",
     minArgs: 0,
-    category: "Emotes",
+    category: "Emotes (/emote)",
     guildOnly: true,
     deferReply: true,
 };

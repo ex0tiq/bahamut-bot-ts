@@ -23,7 +23,7 @@ const config: CommandConfig = {
             required: true,
         },
     ],
-    category: "FFXIV",
+    category: "FFXIV (/ffxiv)",
     guildOnly: true,
     cooldowns: {
         type: CooldownTypes.perUserPerGuild,

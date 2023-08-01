@@ -27,7 +27,7 @@ const config: CommandConfig = {
         },
     ],
     minArgs: 1,
-    category: "Searches",
+    category: "Searches (/search)",
     cooldowns: {
         type: CooldownTypes.perUserPerGuild,
         duration: "10 s",

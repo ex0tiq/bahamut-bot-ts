@@ -15,7 +15,7 @@ const config: CommandConfig = {
     name: "skip",
     type: CommandType.LEGACY,
     description: "Vote to skip the song. If the majority of people listening agrees, the current song will be skipped.",
-    category: "Music",
+    category: "Music (/music)",
     guildOnly: true,
     testOnly: false,
     deferReply: true,

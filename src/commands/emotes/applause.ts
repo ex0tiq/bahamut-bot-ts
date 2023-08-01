@@ -27,7 +27,7 @@ const config: CommandConfig = {
             required: false,
         },
     ],
-    category: "Emotes",
+    category: "Emotes (/emote)",
     guildOnly: true,
     deferReply: true,
 };

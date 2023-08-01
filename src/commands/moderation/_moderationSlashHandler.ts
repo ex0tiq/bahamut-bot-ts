@@ -7,7 +7,7 @@ import { handleErrorResponseToMessage } from "../../lib/messageHandlers.js";
 
 import url from "url";
 const __filename = url.fileURLToPath(import.meta.url);
-const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
 
 let allModCommands: FileData[] = [];
 
@@ -20,7 +20,7 @@ const config: CommandConfig = {
     description: "Moderate things on this server.",
     options: [],
     minArgs: 0,
-    category: "Moderation",
+    category: "Moderation (/moderation)",
     guildOnly: true,
     testOnly: false,
     // Set this to false, so WOKCommand doesn't apply any deferring
@@ -30,7 +30,7 @@ const config: CommandConfig = {
 export default {
     ...config,
     init: async function() {
-        allModCommands =  (await getAllJSFiles(__dirname)).filter(e => e.filePath !== __filename);
+        allModCommands = (await getAllJSFiles(__dirname)).filter(e => e.filePath !== __filename);
 
         this.options = allModCommands.filter(e => e.fileContents.type !== CommandType.SLASH).map(e => {
                 return {

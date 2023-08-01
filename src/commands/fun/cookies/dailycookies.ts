@@ -12,7 +12,7 @@ const config: CommandConfig = {
     type: CommandType.LEGACY,
     testOnly: false,
     description: "Get a random amount of cookies per day.",
-    category: "Fun",
+    category: "Fun (/fun)",
     guildOnly: true,
     deferReply: true,
 };

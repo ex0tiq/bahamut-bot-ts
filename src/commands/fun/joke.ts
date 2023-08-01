@@ -9,7 +9,7 @@ const config: CommandConfig = {
     name: "joke",
     type: CommandType.LEGACY,
     description: "Get a random joke.",
-    category: "Fun",
+    category: "Fun (/fun)",
     guildOnly: true,
     testOnly: false,
     deferReply: true,

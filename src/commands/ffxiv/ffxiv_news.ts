@@ -10,7 +10,7 @@ const config: CommandConfig = {
     type: CommandType.LEGACY,
     testOnly: false,
     description: "Get the latest lodestone news.",
-    category: "FFXIV",
+    category: "FFXIV (/ffxiv)",
     guildOnly: true,
     cooldowns: {
         type: CooldownTypes.perUserPerGuild,

@@ -25,7 +25,7 @@ const config: CommandConfig = {
             }],
         },
     ],
-    category: "Games",
+    category: "Games (/games)",
     guildOnly: true,
     deferReply: true,
 };
