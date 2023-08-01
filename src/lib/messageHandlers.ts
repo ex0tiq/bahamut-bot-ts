@@ -62,7 +62,7 @@ const handleResponseToMessage = async (
             }
         }
     } else {
-        newMessageContent = createSuccessResponse(client, newMessageContent, true);
+        newMessageContent = createSuccessResponse(client, newMessageContent, undefined);
     }
 
     try {
@@ -95,7 +95,7 @@ const handleResponseToMessage = async (
     }
 };
 const createResponseToMessage = (client: BahamutClient, newMessageContent: HandleMessageOptions | string) => {
-    return createSuccessResponse(client, newMessageContent, true);
+    return createSuccessResponse(client, newMessageContent, undefined);
 };
 
 const handleErrorResponseToMessage = async (
@@ -277,6 +277,7 @@ const handleDeleteMessage = async (
     initMessage: Discord.Message | Discord.ChatInputCommandInteraction | Discord.InteractionResponse | null,
     responseMessage: Discord.Message | Discord.ChatInputCommandInteraction | Discord.InteractionResponse | null | undefined,
     // if null use default
+    // eslint-disable-next-line no-unused-vars
     deleteOptions: MessageDeleteOptions | null = null
 ) => {
     // implement delete message checks
